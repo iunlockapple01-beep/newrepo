@@ -16,6 +16,11 @@
         "photoURL": {
           "type": "string",
           "description": "The URL of the user's profile picture"
+        },
+        "lastLogin": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The last time the user logged in"
         }
       },
       "required": ["displayName", "email"]
