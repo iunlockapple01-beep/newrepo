@@ -23,11 +23,13 @@ const StarRating = ({ rating }: { rating: number }) => {
   );
 };
 
+const ADMIN_EMAIL = 'iunlockapple01@gmail.com';
+
 export default function IcloudServerPage() {
   const [deviceCheckModalOpen, setDeviceCheckModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState('');
   const { data: user } = useUser();
-  const isAdmin = (user as any)?.customClaims?.role === 'admin';
+  const isAdmin = user?.email === ADMIN_EMAIL;
 
   const scrollToServices = () => {
     document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
@@ -327,5 +329,3 @@ export default function IcloudServerPage() {
     </div>
   );
 }
-
-    

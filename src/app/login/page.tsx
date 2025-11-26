@@ -11,6 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 
+const ADMIN_EMAIL = 'iunlockapple01@gmail.com';
+
 export default function LoginPage() {
   const { auth, firestore } = useFirebase();
   const router = useRouter();
@@ -24,8 +26,7 @@ export default function LoginPage() {
     try {
       const userCredential = await signInWithGoogle(auth, firestore);
       if (userCredential) {
-        const token = await userCredential.user.getIdTokenResult();
-        if (token.claims.role === 'admin') {
+        if (userCredential.user.email === ADMIN_EMAIL) {
           router.push('/admin');
         } else {
           router.push('/');
@@ -49,8 +50,7 @@ export default function LoginPage() {
     try {
       const userCredential = await signInWithEmail(auth, email, password);
        if (userCredential) {
-        const token = await userCredential.user.getIdTokenResult();
-        if (token.claims.role === 'admin') {
+        if (userCredential.user.email === ADMIN_EMAIL) {
           router.push('/admin');
         } else {
           router.push('/');
