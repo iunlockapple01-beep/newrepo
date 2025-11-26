@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, useEffect } from 'react';
 import {
@@ -6,6 +7,7 @@ import {
   signInWithPopup,
   User,
   Auth,
+  UserCredential,
 } from 'firebase/auth';
 import {
   doc,
@@ -17,17 +19,32 @@ import { useAuth } from '../provider';
 import { errorEmitter } from '../error-emitter';
 import { FirestorePermissionError } from '../errors';
 
+interface CustomUser extends User {
+    customClaims?: {
+        role?: string;
+    }
+}
+
 export function useUser() {
   const auth = useAuth();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<CustomUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(
       auth,
-      (user) => {
-        setUser(user);
+      async (user) => {
+        if (user) {
+            const tokenResult = await user.getIdTokenResult();
+            const userWithClaims: CustomUser = { 
+                ...user, 
+                customClaims: tokenResult.claims as { role?: string }
+            };
+            setUser(userWithClaims);
+        } else {
+            setUser(null);
+        }
         setLoading(false);
       },
       (error) => {
@@ -42,7 +59,7 @@ export function useUser() {
   return { data: user, loading, error };
 }
 
-export async function signInWithGoogle(auth: Auth, firestore: Firestore) {
+export async function signInWithGoogle(auth: Auth, firestore: Firestore): Promise<UserCredential | null> {
   const provider = new GoogleAuthProvider();
   try {
     const result = await signInWithPopup(auth, provider);
@@ -65,6 +82,7 @@ export async function signInWithGoogle(auth: Auth, firestore: Firestore) {
       });
       errorEmitter.emit('permission-error', permissionError);
     });
+    return result;
   } catch (error) {
     if (
       error instanceof Error &&
@@ -72,9 +90,10 @@ export async function signInWithGoogle(auth: Auth, firestore: Firestore) {
       error.code === 'auth/popup-closed-by-user'
     ) {
       // Don't treat this as an application error.
-      return;
+      return null;
     }
     console.error('Error signing in with Google', error);
+    return null;
   }
 }
 
@@ -85,3 +104,5 @@ export async function signOut(auth: Auth) {
     console.error('Error signing out', error);
   }
 }
+
+    

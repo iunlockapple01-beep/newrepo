@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Cloud, Apple, Tablet, Laptop, Watch, Star, Mail, Phone, Clock, Twitter, Facebook, Instagram } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
+import { useUser } from '@/firebase';
 
 
 const StarRating = ({ rating }: { rating: number }) => {
@@ -25,6 +26,8 @@ const StarRating = ({ rating }: { rating: number }) => {
 export default function IcloudServerPage() {
   const [deviceCheckModalOpen, setDeviceCheckModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState('');
+  const { data: user } = useUser();
+  const isAdmin = (user as any)?.customClaims?.role === 'admin';
 
   const scrollToServices = () => {
     document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
@@ -52,6 +55,9 @@ export default function IcloudServerPage() {
                 <Link href="/services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</Link>
                 <a href="#about" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
                 <a href="#contact" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
+                {isAdmin && (
+                  <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>
+                )}
                 <LoginButton />
               </div>
             </div>
@@ -321,3 +327,5 @@ export default function IcloudServerPage() {
     </div>
   );
 }
+
+    

@@ -1,3 +1,4 @@
+
 'use client';
 import {
   useAuth,
@@ -17,17 +18,26 @@ import {
 } from './ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { LogIn, LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export function LoginButton() {
   const { auth, firestore } = useFirebase();
   const { data: user } = useUser();
+  const router = useRouter();
 
   const handleSignIn = async () => {
-    await signInWithGoogle(auth, firestore);
+    const userCredential = await signInWithGoogle(auth, firestore);
+    if (userCredential) {
+      const token = await userCredential.user.getIdTokenResult();
+      if (token.claims.role === 'admin') {
+        router.push('/admin');
+      }
+    }
   };
 
   const handleSignOut = async () => {
     await signOut(auth);
+    router.push('/');
   };
 
   if (user) {
@@ -71,3 +81,5 @@ export function LoginButton() {
     </Button>
   );
 }
+
+    
