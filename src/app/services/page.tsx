@@ -26,8 +26,13 @@ export default function ServicesPage() {
         params.append('image', deviceImage.imageUrl);
     }
 
-    // Always go to the client portal, login is not mandatory to check IMEI
-    router.push(`/client-portal?${params.toString()}`);
+    const portalUrl = `/client-portal?${params.toString()}`;
+
+    if (!user) {
+      router.push(`/login?redirect=${encodeURIComponent(portalUrl)}`);
+    } else {
+      router.push(portalUrl);
+    }
   };
 
   const iphoneModels = [

@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,7 @@ import {
 import { LoginButton } from '@/components/login-button';
 import { Cloud, Twitter, Facebook, Instagram } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useUser } from '@/firebase';
 
 // Define the structure for a submission
 interface Submission {
@@ -51,6 +52,8 @@ const writeSubmissions = (submissions: Submission[]) => {
 };
 
 function DeviceCheckContent() {
+  const { data: user, loading: userLoading } = useUser();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const model = searchParams.get('model') || 'Unknown Model';
   const price = Number(searchParams.get('price')) || 0;
@@ -64,6 +67,14 @@ function DeviceCheckContent() {
   const [isCryptoModalOpen, setCryptoModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
+
+  useEffect(() => {
+    if (!userLoading && !user) {
+      // Build the redirect path with all current query parameters
+      const redirectPath = `/client-portal?${searchParams.toString()}`;
+      router.push(`/login?redirect=${encodeURIComponent(redirectPath)}`);
+    }
+  }, [user, userLoading, router, searchParams]);
 
   const handleSubmitImei = () => {
     if (!imei.trim()) {
@@ -180,7 +191,14 @@ function DeviceCheckContent() {
   }, [isEligible, isPaid]);
 
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
-
+  
+  if (userLoading || !user) {
+    return (
+        <div className="flex justify-center items-center h-screen">
+            <div>Loading...</div>
+        </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 text-gray-800">
@@ -309,7 +327,7 @@ function DeviceCheckContent() {
                         <a href="#" className="text-gray-400 hover:text-white"><Facebook className="text-xl" /></a>
                         <a href="#" className="text-gray-400 hover:text-white"><Instagram className="text-xl" /></a>
                     </div>
-                     <a href="https://t.me/iCloudServer" className="text-gray-400 hover:text-white inline-flex items-center mt-4">
+                     <a href="https.me/iCloudServer" className="text-gray-400 hover:text-white inline-flex items-center mt-4">
                         Telegram
                         {telegramIconImage && (
                         <Image 
