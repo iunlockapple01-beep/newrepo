@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Cloud, Apple, Tablet, Laptop, Watch, Star, Mail, Phone, Clock, Twitter, Facebook, Instagram } from 'lucide-react';
+import { LoginButton } from '@/components/login-button';
+
 
 const StarRating = ({ rating }: { rating: number }) => {
   return (
@@ -20,7 +22,6 @@ const StarRating = ({ rating }: { rating: number }) => {
 };
 
 export default function IcloudServerPage() {
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [deviceCheckModalOpen, setDeviceCheckModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState('');
 
@@ -50,9 +51,7 @@ export default function IcloudServerPage() {
                 <a href="#services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</a>
                 <a href="#about" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
                 <a href="#contact" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
-                <Button onClick={() => setLoginModalOpen(true)} className="btn-primary text-white px-4 py-2 rounded-md text-sm font-medium">
-                  Login
-                </Button>
+                <LoginButton />
               </div>
             </div>
           </div>
@@ -289,26 +288,6 @@ export default function IcloudServerPage() {
             </div>
         </div>
       </footer>
-
-      {/* Login Modal */}
-      <Dialog open={loginModalOpen} onOpenChange={setLoginModalOpen}>
-        <DialogContent className="bg-white rounded-2xl p-8 max-w-md w-full">
-          <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold text-gray-900">Login to Your Account</DialogTitle>
-            <DialogDescription className="text-center text-gray-600 mt-2">Access your orders and device status</DialogDescription>
-          </DialogHeader>
-          <form className="space-y-4" onSubmit={e => e.preventDefault()}>
-            <Input type="email" placeholder="Email" className="w-full form-input rounded-lg px-4 py-3 h-auto" />
-            <Input type="password" placeholder="Password" className="w-full form-input rounded-lg px-4 py-3 h-auto" />
-            <Button type="submit" className="w-full btn-primary text-white py-3 rounded-lg font-semibold h-auto">
-              Login
-            </Button>
-          </form>
-          <div className="text-center mt-4">
-            <p className="text-gray-600">Don't have an account? <a href="#" className="text-gradient font-semibold">Register</a></p>
-          </div>
-        </DialogContent>
-      </Dialog>
       
       {/* Device Check Modal */}
       <Dialog open={deviceCheckModalOpen} onOpenChange={setDeviceCheckModalOpen}>
@@ -340,4 +319,3 @@ export default function IcloudServerPage() {
   );
 }
 
-    
