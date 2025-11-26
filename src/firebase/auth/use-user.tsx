@@ -8,6 +8,8 @@ import {
   User,
   Auth,
   UserCredential,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
 } from 'firebase/auth';
 import {
   doc,
@@ -97,6 +99,45 @@ export async function signInWithGoogle(auth: Auth, firestore: Firestore): Promis
   }
 }
 
+export async function signInWithEmail(auth: Auth, email:string, password:string): Promise<UserCredential | null> {
+    try {
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        return result;
+    } catch(error) {
+        console.error('Error signing in with email', error);
+        throw error;
+    }
+}
+
+export async function signUpWithEmail(auth: Auth, firestore: Firestore, email: string, password: string, displayName: string): Promise<UserCredential | null> {
+    try {
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        const user = result.user;
+
+        const userRef = doc(firestore, 'users', user.uid);
+        const userData = {
+            displayName: displayName,
+            email: user.email,
+            photoURL: '',
+            lastLogin: serverTimestamp(),
+        };
+
+        setDoc(userRef, userData, { merge: true }).catch(async (serverError) => {
+          const permissionError = new FirestorePermissionError({
+            path: userRef.path,
+            operation: 'create',
+            requestResourceData: userData,
+          });
+          errorEmitter.emit('permission-error', permissionError);
+        });
+
+        return result;
+    } catch (error) {
+        console.error('Error signing up with email', error);
+        throw error;
+    }
+}
+
 export async function signOut(auth: Auth) {
   try {
     await auth.signOut();
@@ -104,5 +145,3 @@ export async function signOut(auth: Auth) {
     console.error('Error signing out', error);
   }
 }
-
-    

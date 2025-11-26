@@ -1,3 +1,4 @@
+
 import { initializeApp, getApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
@@ -11,7 +12,7 @@ import {
   useAuth,
 } from './provider';
 
-import { useUser, signInWithGoogle, signOut } from './auth/use-user';
+import { useUser, signInWithGoogle, signOut, signInWithEmail, signUpWithEmail } from './auth/use-user';
 import { useCollection } from './firestore/use-collection';
 import { useDoc } from './firestore/use-doc';
 import firebaseConfig from './config';
@@ -42,4 +43,6 @@ export {
   useDoc,
   signInWithGoogle,
   signOut,
+  signInWithEmail,
+  signUpWithEmail,
 };

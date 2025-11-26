@@ -3,8 +3,6 @@
 import {
   useAuth,
   useUser,
-  useFirebase,
-  signInWithGoogle,
   signOut,
 } from '@/firebase';
 import { Button } from './ui/button';
@@ -21,18 +19,12 @@ import { LogIn, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export function LoginButton() {
-  const { auth, firestore } = useFirebase();
+  const { auth } = useFirebase();
   const { data: user } = useUser();
   const router = useRouter();
 
   const handleSignIn = async () => {
-    const userCredential = await signInWithGoogle(auth, firestore);
-    if (userCredential) {
-      const token = await userCredential.user.getIdTokenResult();
-      if (token.claims.role === 'admin') {
-        router.push('/admin');
-      }
-    }
+    router.push('/login');
   };
 
   const handleSignOut = async () => {
@@ -81,5 +73,3 @@ export function LoginButton() {
     </Button>
   );
 }
-
-    
