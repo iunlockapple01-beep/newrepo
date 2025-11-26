@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -41,14 +42,14 @@ export default function IcloudServerPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <div className="text-2xl font-bold text-gradient flex items-center gap-2">
+              <Link href="/" className="text-2xl font-bold text-gradient flex items-center gap-2">
                 <Cloud /> iCloud Server
-              </div>
+              </Link>
             </div>
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
-                <a href="#home" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
-                <a href="#services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</a>
+                <Link href="/" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</Link>
+                <Link href="/services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</Link>
                 <a href="#about" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
                 <a href="#contact" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
                 <LoginButton />
@@ -69,9 +70,11 @@ export default function IcloudServerPage() {
             Unlock your Apple devices safely and professionally. We support iPhones, iPads, MacBooks, and Apple Watches.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
-            <Button onClick={scrollToServices} className="btn-primary text-white px-8 py-4 rounded-lg font-semibold text-lg h-auto">
-              View Services
-            </Button>
+            <Link href="/services">
+                <Button className="btn-primary text-white px-8 py-4 rounded-lg font-semibold text-lg h-auto">
+                    View Services
+                </Button>
+            </Link>
             <Button onClick={() => showDeviceCheck()} className="glass-effect text-white px-8 py-4 rounded-lg font-semibold text-lg hover-lift h-auto">
               Check Device
             </Button>
@@ -259,10 +262,10 @@ export default function IcloudServerPage() {
                 <div>
                     <h4 className="font-semibold mb-4">Services</h4>
                     <ul className="space-y-2 text-gray-400">
-                        <li><a href="#" className="hover:text-white">iPhone Unlock</a></li>
-                        <li><a href="#" className="hover:text-white">iPad Unlock</a></li>
-                        <li><a href="#" className="hover:text-white">MacBook Unlock</a></li>
-                        <li><a href="#" className="hover:text-white">Apple Watch Unlock</a></li>
+                        <li><Link href="/services" className="hover:text-white">iPhone Unlock</Link></li>
+                        <li><Link href="/services" className="hover:text-white">iPad Unlock</Link></li>
+                        <li><Link href="/services" className="hover:text-white">MacBook Unlock</Link></li>
+                        <li><Link href="/services" className="hover:text-white">Apple Watch Unlock</Link></li>
                     </ul>
                 </div>
                 <div>
@@ -318,4 +321,3 @@ export default function IcloudServerPage() {
     </div>
   );
 }
-
