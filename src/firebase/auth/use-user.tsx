@@ -10,6 +10,7 @@ import {
   UserCredential,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  updateProfile,
 } from 'firebase/auth';
 import {
   doc,
@@ -79,7 +80,7 @@ export async function signInWithGoogle(auth: Auth, firestore: Firestore): Promis
     setDoc(userRef, userData, { merge: true }).catch(async (serverError) => {
       const permissionError = new FirestorePermissionError({
         path: userRef.path,
-        operation: 'create',
+        operation: 'write',
         requestResourceData: userData,
       });
       errorEmitter.emit('permission-error', permissionError);
@@ -95,7 +96,7 @@ export async function signInWithGoogle(auth: Auth, firestore: Firestore): Promis
       return null;
     }
     console.error('Error signing in with Google', error);
-    return null;
+    throw error;
   }
 }
 
@@ -114,11 +115,14 @@ export async function signUpWithEmail(auth: Auth, firestore: Firestore, email: s
         const result = await createUserWithEmailAndPassword(auth, email, password);
         const user = result.user;
 
+        // Update the user's profile with the display name
+        await updateProfile(user, { displayName });
+
         const userRef = doc(firestore, 'users', user.uid);
         const userData = {
             displayName: displayName,
             email: user.email,
-            photoURL: '',
+            photoURL: user.photoURL, // Initially will be null
             lastLogin: serverTimestamp(),
         };
 
@@ -131,6 +135,9 @@ export async function signUpWithEmail(auth: Auth, firestore: Firestore, email: s
           errorEmitter.emit('permission-error', permissionError);
         });
 
+        // Re-read user to get updated profile
+        await user.reload();
+        
         return result;
     } catch (error) {
         console.error('Error signing up with email', error);

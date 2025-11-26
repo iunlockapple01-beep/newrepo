@@ -27,6 +27,12 @@ export default function RegisterPage() {
       const userCredential = await signUpWithEmail(auth, firestore, email, password, displayName);
       if (userCredential) {
         router.push('/');
+      } else {
+        toast({
+            title: 'Error signing up',
+            description: 'Could not create account. Please try again.',
+            variant: 'destructive',
+        });
       }
     } catch (error: any) {
       console.error(error);
