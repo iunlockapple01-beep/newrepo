@@ -1,171 +1,169 @@
 
 'use client';
 
+import {
+  useUser,
+  useFirebase,
+  useCollection,
+} from '@/firebase';
+import {
+  collection,
+  doc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+} from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { AdminProvider } from '@/firebase/admin-provider';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Cloud } from 'lucide-react';
-import { useUser, useCollection, useFirebase } from '@/firebase';
 import { LoginButton } from '@/components/login-button';
-import { collection, doc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
 
-// Define the structure for a submission
 interface Submission {
   id: string;
   userId: string;
   model: string;
   price: number;
-  image: string;
   imei: string;
   status: 'waiting' | 'feedback' | 'paid';
   feedback: string[] | null;
-  createdAt: any; // Firestore timestamp
-  updatedAt?: any; // Firestore timestamp
 }
 
 function AdminDashboard() {
+  const { data: user, loading: userLoading } = useUser();
   const { firestore } = useFirebase();
-  const { data: user } = useUser();
-  const { data: requests, loading } = useCollection<Submission>('submissions');
-  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
+  const router = useRouter();
 
-  const handleSendFeedback = async (id: string) => {
-    const textarea = document.getElementById(`feedback-${id}`) as HTMLTextAreaElement;
-    if (!textarea) return;
+  const { data: submissions, loading: submissionsLoading } =
+    useCollection<Submission>('submissions');
 
-    const feedbackText = textarea.value.trim();
-    if (!feedbackText) return alert('Please enter feedback.');
+  const [feedbackValues, setFeedbackValues] = useState<{ [key: string]: string }>({});
 
-    const lines = feedbackText.split('\n').filter(l => l.trim());
-    
-    const submissionRef = doc(firestore, 'submissions', id);
-    const updatedData = {
-        feedback: lines,
-        status: 'feedback' as const,
-        updatedAt: serverTimestamp(),
-      };
-
-    updateDoc(submissionRef, updatedData)
-        .then(() => {
-            alert('Feedback sent to client successfully!');
-        })
-        .catch(async (serverError) => {
-          const permissionError = new FirestorePermissionError({
-            path: submissionRef.path,
-            operation: 'update',
-            requestResourceData: updatedData,
-          });
-          errorEmitter.emit('permission-error', permissionError);
-          console.error("Error sending feedback: ", serverError);
-          alert('Failed to send feedback.');
-        });
+  const handleFeedbackChange = (id: string, value: string) => {
+    setFeedbackValues(prev => ({ ...prev, [id]: value }));
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this submission?')) return;
-    
-    const submissionRef = doc(firestore, 'submissions', id);
-    deleteDoc(submissionRef)
-        .then(() => {
-            alert('Submission deleted.');
-        })
-        .catch(async (serverError) => {
-            const permissionError = new FirestorePermissionError({
-                path: submissionRef.path,
-                operation: 'delete',
-            });
-            errorEmitter.emit('permission-error', permissionError);
-            console.error("Error deleting submission: ", serverError);
-            alert('Failed to delete submission.');
-        });
+  const handleSendFeedback = async (submissionId: string) => {
+    const feedbackText = feedbackValues[submissionId];
+    if (!feedbackText || !feedbackText.trim()) {
+      return alert('Please enter feedback.');
+    }
+    const lines = feedbackText.split('\n').filter(l => l.trim());
+
+    const submissionRef = doc(firestore, 'submissions', submissionId);
+    await updateDoc(submissionRef, {
+      feedback: lines,
+      status: 'feedback',
+      updatedAt: serverTimestamp(),
+    });
+
+    alert('Feedback sent to client successfully!');
+  };
+
+  const handleDelete = async (submissionId: string) => {
+    if (window.confirm('Are you sure you want to delete this submission?')) {
+      const submissionRef = doc(firestore, 'submissions', submissionId);
+      await deleteDoc(submissionRef);
+      alert('Submission deleted.');
+    }
+  };
+
+  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
+
+  if (userLoading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
+
+  if (!user) {
+    router.push('/login?redirect=/admin');
+    return null;
+  }
+  
+  if (!isAdmin) {
+      router.push('/');
+      return null;
   }
 
   return (
-    <>
-     <nav className="glass-effect fixed w-full top-0 z-50">
+    <div className="bg-gray-50 text-gray-800 min-h-screen">
+       <nav className="glass-effect fixed w-full top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="text-2xl font-bold text-gradient flex items-center gap-2">
-                <Cloud /> iCloud Server - Admin
+                <Cloud /> iCloud Server
               </Link>
             </div>
-             <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
-                    <Link href="/" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</Link>
-                    <Link href="/services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</Link>
-                    {user && (
-                        <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>
-                    )}
-                    {isAdmin && (
-                        <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>
-                    )}
-                    <LoginButton />
-                </div>
+            <div className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-4">
+                <Link href="/" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</Link>
+                <Link href="/services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</Link>
+                 {user && (
+                    <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>
+                )}
+                {isAdmin && (
+                  <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>
+                )}
+                <a href="#about" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
+                <a href="#contact" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
+                <LoginButton />
+              </div>
             </div>
           </div>
         </div>
       </nav>
+
       <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-bold text-center mb-10">Admin Dashboard</h1>
+
+        {submissionsLoading && <p>Loading submissions...</p>}
         
+        {!submissionsLoading && (!submissions || submissions.length === 0) && (
+            <p className='text-center text-gray-500'>No pending IMEI submissions found.</p>
+        )}
+
         <div className="space-y-6">
-          {loading ? (
-            <p className="text-center text-gray-500">Loading submissions...</p>
-          ) : !requests || requests.length === 0 ? (
-            <p className="text-center text-gray-500">No pending IMEI submissions found.</p>
-          ) : (
-            requests.map(sub => (
-              <Card key={sub.id} className="request">
-                <CardHeader>
-                  <CardTitle>{sub.model}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="info">IMEI/Serial: <strong>{sub.imei}</strong></p>
-                  <p className="info">Price: ${sub.price}</p>
-                  <p className="info">
-                    Status: <span className="font-semibold text-primary">{sub.status}</span>
-                  </p>
-                  <div className='mt-4'>
-                    <label htmlFor={`feedback-${sub.id}`} className="block text-sm font-medium text-gray-700 mb-1">
-                      Enter Feedback (paste full details):
-                    </label>
-                    <Textarea 
-                      id={`feedback-${sub.id}`} 
-                      defaultValue={sub.feedback ? sub.feedback.join('\n') : ''}
-                      rows={8}
-                      className="font-mono"
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
+          {submissions && submissions.map(sub => (
+            <Card key={sub.id} className="bg-white">
+              <CardHeader>
+                <CardTitle className='flex justify-between items-center'>
+                    <span>{sub.model}</span>
+                    <span className="text-sm font-medium text-blue-600">
+                        Status: {sub.status}
+                    </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600">User ID: {sub.userId}</p>
+                <p className="text-sm text-gray-600">IMEI/Serial: <strong>{sub.imei}</strong></p>
+                <p className="text-sm text-gray-600">Price: ${sub.price}</p>
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Enter Feedback (paste full details):
+                  </label>
+                  <Textarea
+                    value={feedbackValues[sub.id] || sub.feedback?.join('\n') || ''}
+                    onChange={(e) => handleFeedbackChange(sub.id, e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+                <div className='mt-4 flex justify-end gap-2'>
                     <Button onClick={() => handleSendFeedback(sub.id)} className="btn-primary text-white">Send Feedback</Button>
                     <Button onClick={() => handleDelete(sub.id)} variant="destructive">Delete</Button>
-                </CardFooter>
-              </Card>
-            ))
-          )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </main>
-      <footer className="bg-gray-900 text-white py-12 mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400">
-            <p>&copy; 2025 iCloud Server. All rights reserved.</p>
-        </div>
-      </footer>
-    </>
+    </div>
   );
 }
 
-export default function AdminPage() {
-    return (
-        <AdminProvider>
-            <AdminDashboard />
-        </AdminProvider>
-    )
-}
 
-    
+export default function AdminPage() {
+    return <AdminDashboard />
+}
