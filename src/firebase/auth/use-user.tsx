@@ -14,6 +14,8 @@ import {
   Firestore,
 } from 'firebase/firestore';
 import { useAuth } from '../provider';
+import { errorEmitter } from '../error-emitter';
+import { FirestorePermissionError } from '../errors';
 
 export function useUser() {
   const auth = useAuth();
@@ -48,17 +50,30 @@ export async function signInWithGoogle(auth: Auth, firestore: Firestore) {
 
     // Create or update user in Firestore
     const userRef = doc(firestore, 'users', user.uid);
-    await setDoc(
-      userRef,
-      {
-        displayName: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        lastLogin: serverTimestamp(),
-      },
-      { merge: true }
-    );
+    const userData = {
+      displayName: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL,
+      lastLogin: serverTimestamp(),
+    };
+
+    setDoc(userRef, userData, { merge: true }).catch(async (serverError) => {
+      const permissionError = new FirestorePermissionError({
+        path: userRef.path,
+        operation: 'create',
+        requestResourceData: userData,
+      });
+      errorEmitter.emit('permission-error', permissionError);
+    });
   } catch (error) {
+    if (
+      error instanceof Error &&
+      'code' in error &&
+      error.code === 'auth/popup-closed-by-user'
+    ) {
+      // Don't treat this as an application error.
+      return;
+    }
     console.error('Error signing in with Google', error);
   }
 }
