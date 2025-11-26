@@ -56,12 +56,30 @@ function DeviceCheckContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
   
+  const handleClear = () => {
+    setImei('');
+    setSubmissionId(null);
+    if(typeof window !== 'undefined') {
+      sessionStorage.removeItem('current_submission_id');
+    }
+  };
+
   useEffect(() => {
     const currentId = sessionStorage.getItem('current_submission_id');
     if (currentId) {
       setSubmissionId(currentId);
+    } else {
+        setImei(''); // Clear IMEI if there's no submission in session
     }
   }, []);
+
+  // Effect to handle model changes and reset state
+  useEffect(() => {
+    if (submission && submission.model !== model) {
+      handleClear();
+    }
+  }, [submission, model]);
+
 
   useEffect(() => {
     if (!userLoading && !user) {
@@ -105,14 +123,6 @@ function DeviceCheckContent() {
         console.error("Error creating submission: ", serverError);
         alert('Failed to create submission.');
       });
-  };
-
-  const handleClear = () => {
-    setImei('');
-    setSubmissionId(null);
-    if(typeof window !== 'undefined') {
-      sessionStorage.removeItem('current_submission_id');
-    }
   };
 
   const openCryptoModal = () => {
@@ -211,10 +221,10 @@ function DeviceCheckContent() {
                 value={imei}
                 onChange={(e) => setImei(e.target.value)}
                 className="w-full sm:w-80"
-                disabled={!!submissionId}
+                disabled={!!submission}
               />
               <div className="flex gap-3">
-                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={!!submissionId}>Check IMEI</Button>
+                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={!!submission}>Check IMEI</Button>
                 <Button onClick={handleClear} variant="outline">Clear</Button>
               </div>
             </div>
