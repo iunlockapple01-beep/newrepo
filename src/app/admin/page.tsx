@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { AdminProvider } from '@/firebase/admin-provider';
 import Link from 'next/link';
 import { Cloud } from 'lucide-react';
@@ -91,6 +91,17 @@ function AdminDashboard() {
     });
   };
 
+  const handleDelete = (id: string) => {
+    if (!confirm('Are you sure you want to delete this submission?')) return;
+    
+    setRequests(prevRequests => {
+      const newRequests = prevRequests.filter(req => req.id !== id);
+      writeSubmissions(newRequests);
+      alert('Submission deleted.');
+      return newRequests;
+    });
+  }
+
   return (
     <>
      <nav className="glass-effect fixed w-full top-0 z-50">
@@ -146,8 +157,11 @@ function AdminDashboard() {
                       className="font-mono"
                     />
                   </div>
-                  <Button onClick={() => handleSendFeedback(sub.id)} className="mt-4 btn-primary text-white">Send Feedback</Button>
                 </CardContent>
+                <CardFooter className="flex justify-between">
+                    <Button onClick={() => handleSendFeedback(sub.id)} className="btn-primary text-white">Send Feedback</Button>
+                    <Button onClick={() => handleDelete(sub.id)} variant="destructive">Delete</Button>
+                </CardFooter>
               </Card>
             ))
           )}

@@ -161,6 +161,11 @@ function DeviceCheckContent() {
         } else if (match.status === 'waiting') {
             setStatus('waiting');
         }
+    } else {
+        // Submission was not found, likely deleted by admin
+        setStatus('initial');
+        sessionStorage.removeItem('current_submission_id');
+        setImei(''); // Clear IMEI input as well
     }
   };
 
