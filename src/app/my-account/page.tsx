@@ -17,7 +17,8 @@ interface Order {
   id: string;
   createdAt: { toDate: () => Date };
   model: string;
-  status: 'waiting' | 'feedback' | 'paid';
+  imei: string;
+  status: 'confirming_payment' | 'approved' | 'declined';
   price: number;
 }
 
@@ -26,8 +27,8 @@ function MyAccountContent() {
   const router = useRouter();
   
   const { data: orders, loading: ordersLoading } = useCollection<Order>(
-    'submissions',
-    user ? { constraints: [where('userId', '==', user.uid), where('status', '==', 'paid')] } : undefined
+    'orders',
+    user ? { constraints: [where('userId', '==', user.uid)] } : undefined
   );
 
   useEffect(() => {
@@ -119,10 +120,10 @@ function MyAccountContent() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Order ID</TableHead>
-                    <TableHead>Date</TableHead>
+                    <TableHead>Order Date</TableHead>
                     <TableHead>Service</TableHead>
                     <TableHead>Device</TableHead>
+                    <TableHead>IMEI</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Amount</TableHead>
                   </TableRow>
@@ -130,15 +131,16 @@ function MyAccountContent() {
                 <TableBody>
                   {orders.map(order => (
                     <TableRow key={order.id}>
-                      <TableCell className="font-mono text-xs">{order.id}</TableCell>
                       <TableCell>{order.createdAt.toDate().toLocaleDateString()}</TableCell>
                       <TableCell>iCloud Unlock</TableCell>
                       <TableCell>{order.model}</TableCell>
+                      <TableCell className="font-mono text-xs">{order.imei}</TableCell>
                       <TableCell>
                         <Badge variant={
-                            order.status === 'paid' ? 'secondary' : 'default'
-                        }>
-                          {order.status === 'paid' ? 'processing' : order.status}
+                            order.status === 'approved' ? 'secondary' : 
+                            order.status === 'declined' ? 'destructive' : 'default'
+                        } className={order.status === 'confirming_payment' ? 'animate-pulse' : ''}>
+                          {order.status.replace('_', ' ')}
                         </Badge>
                       </TableCell>
                       <TableCell>${order.price.toFixed(2)}</TableCell>

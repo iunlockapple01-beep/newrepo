@@ -19,7 +19,7 @@ import { LoginButton } from '@/components/login-button';
 import { Cloud, Twitter, Facebook, Instagram } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirebase, useDoc } from '@/firebase';
-import { addDoc, collection, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, serverTimestamp } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
@@ -30,12 +30,9 @@ interface Submission {
   price: number;
   image: string;
   imei: string;
-  status: 'waiting' | 'feedback' | 'paid';
+  status: 'waiting' | 'eligible' | 'not_supported' | 'paid';
   feedback: string[] | null;
   createdAt: any;
-  paid?: boolean;
-  paidAt?: any;
-  userId: string;
 }
 
 function DeviceCheckContent() {
@@ -52,9 +49,8 @@ function DeviceCheckContent() {
 
   const { data: submission, loading: submissionLoading } = useDoc<Submission>('submissions', submissionId || ' ');
 
-  const [isCryptoModalOpen, setCryptoModalOpen] = useState(false);
+  const [isPaymentModalOpen, setPaymentModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showPaymentDetails, setShowPaymentDetails] = useState(false);
   
   const handleClear = () => {
     setImei('');
@@ -67,18 +63,17 @@ function DeviceCheckContent() {
   useEffect(() => {
     const currentId = sessionStorage.getItem('current_submission_id');
     if (currentId) {
-      setSubmissionId(currentId);
+      // Temporarily load submission from session to check model
+      const tempSub = JSON.parse(sessionStorage.getItem(`submission_data_${currentId}`) || '{}');
+      if (tempSub.model === model) {
+        setSubmissionId(currentId);
+      } else {
+        handleClear();
+      }
     } else {
         setImei(''); // Clear IMEI if there's no submission in session
     }
-  }, []);
-
-  // Effect to handle model changes and reset state
-  useEffect(() => {
-    if (submission && submission.model !== model) {
-      handleClear();
-    }
-  }, [submission, model]);
+  }, [model]);
 
 
   useEffect(() => {
@@ -88,6 +83,12 @@ function DeviceCheckContent() {
     }
   }, [user, userLoading, router, searchParams]);
   
+  useEffect(() => {
+    if (submission && submissionId) {
+        sessionStorage.setItem(`submission_data_${submissionId}`, JSON.stringify({ model: submission.model, imei: submission.imei }));
+    }
+  }, [submission, submissionId]);
+
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   const handleSubmitImei = async () => {
@@ -111,6 +112,7 @@ function DeviceCheckContent() {
         setSubmissionId(docRef.id);
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('current_submission_id', docRef.id);
+          sessionStorage.setItem(`submission_data_${docRef.id}`, JSON.stringify({ model: newSubmission.model, imei: newSubmission.imei }));
         }
       })
       .catch(async (serverError) => {
@@ -125,42 +127,43 @@ function DeviceCheckContent() {
       });
   };
 
-  const openCryptoModal = () => {
+  const openPaymentModal = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      setCryptoModalOpen(true);
-      setShowPaymentDetails(false);
-      setTimeout(() => {
-        setShowPaymentDetails(true);
-      }, 2000);
+      setPaymentModalOpen(true);
     }, 1200);
   };
   
-  const handleMarkAsPaid = async () => {
-      if (!submissionId) return alert('No submission selected.');
+  const handlePaid = async () => {
+      if (!submissionId || !submission || !user) return alert('No submission selected.');
       
-      const submissionRef = doc(firestore, 'submissions', submissionId);
-      const updatedData = {
-          paid: true,
-          status: 'paid' as const,
-          paidAt: serverTimestamp(),
-        };
+      const newOrder = {
+          userId: user.uid,
+          submissionId: submissionId,
+          imei: submission.imei,
+          model: submission.model,
+          price: submission.price,
+          status: 'confirming_payment' as const,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+      };
 
-      updateDoc(submissionRef, updatedData)
+      addDoc(collection(firestore, 'orders'), newOrder)
         .then(() => {
-            setCryptoModalOpen(false);
-            alert('Marked as paid. Admin will process unlocking.');
+            setPaymentModalOpen(false);
+            alert('Payment submitted for confirmation. You will be redirected to your account page.');
+            router.push('/my-account');
         })
         .catch(async (serverError) => {
             const permissionError = new FirestorePermissionError({
-              path: submissionRef.path,
-              operation: 'update',
-              requestResourceData: updatedData,
+              path: `orders/unknown`,
+              operation: 'create',
+              requestResourceData: newOrder,
             });
             errorEmitter.emit('permission-error', permissionError);
-            console.error("Error marking as paid: ", serverError);
-            alert('Failed to mark as paid.');
+            console.error("Error creating order: ", serverError);
+            alert('Failed to create order.');
       });
   };
 
@@ -173,8 +176,6 @@ function DeviceCheckContent() {
         </div>
     );
   }
-
-  const isEligible = submission?.status === 'feedback' && submission?.feedback?.some(line => line.toLowerCase().includes('eligible'));
   
   return (
     <div className="bg-gray-50 text-gray-800">
@@ -218,7 +219,7 @@ function DeviceCheckContent() {
                 id="imei-input"
                 type="text"
                 placeholder="Enter IMEI or Serial number"
-                value={imei}
+                value={submission ? submission.imei : imei}
                 onChange={(e) => setImei(e.target.value)}
                 className="w-full sm:w-80"
                 disabled={!!submission}
@@ -254,7 +255,7 @@ function DeviceCheckContent() {
               <p className="text-sm text-gray-500">Admin will run checks and send feedback here.</p>
             </div>
           )}
-          {submission && submission.status === 'feedback' && (
+          {submission && (submission.status === 'eligible' || submission.status === 'not_supported') && (
             <div className="w-full text-left">
               <div className="space-y-2">
                 {submission.feedback?.map((line, index) => (
@@ -263,24 +264,15 @@ function DeviceCheckContent() {
                   </div>
                 ))}
               </div>
-              {!submission.paid && isEligible && (
+              {submission.status === 'eligible' && (
                 <div className="mt-4 text-right flex items-center justify-end gap-4 animate-fade-in">
                   <p className="bg-green-100 text-green-800 font-semibold p-2 px-3 rounded-lg">✅ This device is eligible for iCloud Unlock</p>
-                  <Button onClick={openCryptoModal} className="btn-primary text-white">Unlock Now</Button>
+                  <Button onClick={openPaymentModal} className="btn-primary text-white">Proceed with Unlock</Button>
                 </div>
               )}
-            </div>
-          )}
-           {submission && submission.status === 'paid' && (
-             <div className="w-full text-left">
-              <div className="space-y-2">
-                {submission.feedback?.map((line, index) => (
-                  <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm whitespace-pre-wrap font-mono">
-                    {line}
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm text-gray-600 mt-3">Confirming your payment — Please refresh the My Account page. Once your payment is confirmed, your order details will appear there. If your order isn’t updated within 5 minutes, contact the admin with your payment details.</p>
+               {submission.status === 'not_supported' && (
+                 <p className="bg-red-100 text-red-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">❌ This device is not supported for unlock.</p>
+               )}
             </div>
           )}
            {!submission && !submissionLoading && submissionId && (
@@ -291,11 +283,6 @@ function DeviceCheckContent() {
            )}
         </div>
       </main>
-
-      <section className="text-center py-10">
-        <h2 className="text-2xl font-bold">Contact Us</h2>
-        <p className="mt-2 text-gray-600">Need help? <a href="mailto:info@icloudserver.com" className="text-blue-600 hover:underline">info@icloudserver.com</a></p>
-      </section>
 
       <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -358,17 +345,11 @@ function DeviceCheckContent() {
         </div>
       </footer>
       
-      <Dialog open={isCryptoModalOpen} onOpenChange={setCryptoModalOpen}>
+      <Dialog open={isPaymentModalOpen} onOpenChange={setPaymentModalOpen}>
         <DialogContent>
             <DialogHeader>
                 <DialogTitle>Pay with Crypto</DialogTitle>
             </DialogHeader>
-            {!showPaymentDetails && (
-                <DialogDescription className='text-destructive font-semibold'>
-                    ⚠️ No balance in account
-                </DialogDescription>
-            )}
-            {showPaymentDetails && (
                 <div className="space-y-3 animate-fade-in">
                     <div className="text-sm">
                         <div className="text-gray-500">Service</div>
@@ -387,10 +368,9 @@ function DeviceCheckContent() {
                         <div className="font-mono bg-gray-100 p-2 rounded-md break-all">0x69dfEded84C7E5baAB723FF65e1C587f2E50b3f4</div>
                     </div>
                 </div>
-            )}
             <DialogFooter className="mt-4">
-                <Button variant="outline" onClick={() => setCryptoModalOpen(false)}>Close</Button>
-                <Button onClick={handleMarkAsPaid} disabled={!showPaymentDetails} className="btn-primary text-white">I Paid</Button>
+                <Button variant="outline" onClick={() => setPaymentModalOpen(false)}>Cancel</Button>
+                <Button onClick={handlePaid} className="btn-primary text-white">I Paid</Button>
             </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -398,7 +378,7 @@ function DeviceCheckContent() {
       {isLoading && (
         <div className="fixed inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center z-50">
            <div className="spinner w-16 h-16 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-           <p className="font-semibold text-gray-600">Checking account balance...</p>
+           <p className="font-semibold text-gray-600">Processing payment...</p>
         </div>
       )}
 
@@ -414,5 +394,3 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
-
-    

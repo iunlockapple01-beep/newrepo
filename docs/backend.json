@@ -52,7 +52,7 @@
         },
         "status": {
           "type": "string",
-          "enum": ["waiting", "feedback", "paid"],
+          "enum": ["waiting", "feedback", "paid", "eligible", "not_supported"],
           "description": "The current status of the submission"
         },
         "feedback": {
@@ -69,16 +69,50 @@
         "updatedAt": {
           "type": "string",
           "format": "date-time"
+        }
+      },
+      "required": ["userId", "model", "price", "imei", "status", "createdAt"]
+    },
+    "order": {
+      "title": "Order",
+      "description": "A confirmed and paid unlock order",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who placed the order"
         },
-        "paid": {
-          "type": "boolean"
+        "submissionId": {
+          "type": "string",
+          "description": "The ID of the original submission"
         },
-        "paidAt": {
+        "imei": {
+          "type": "string",
+          "description": "The IMEI or serial number of the device"
+        },
+        "model": {
+          "type": "string",
+          "description": "The device model"
+        },
+        "price": {
+          "type": "number",
+          "description": "The price paid for the service"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["confirming_payment", "approved", "declined"],
+          "description": "The current status of the order"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
           "type": "string",
           "format": "date-time"
         }
       },
-      "required": ["userId", "model", "price", "imei", "status", "createdAt"]
+      "required": ["userId", "submissionId", "imei", "model", "price", "status", "createdAt"]
     }
   },
   "auth": {
@@ -96,6 +130,12 @@
         "$ref": "#/backend/entities/submission"
       },
       "description": "IMEI submissions from users"
+    },
+    "/orders/{orderId}": {
+      "schema": {
+        "$ref": "#/backend/entities/order"
+      },
+      "description": "Confirmed unlock orders from users"
     }
   }
 }
