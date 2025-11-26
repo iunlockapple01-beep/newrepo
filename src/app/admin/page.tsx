@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,8 @@ import { Cloud } from 'lucide-react';
 import { useUser, useCollection, useFirebase } from '@/firebase';
 import { LoginButton } from '@/components/login-button';
 import { collection, doc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 // Define the structure for a submission
 interface Submission {
@@ -40,29 +43,45 @@ function AdminDashboard() {
     const lines = feedbackText.split('\n').filter(l => l.trim());
     
     const submissionRef = doc(firestore, 'submissions', id);
-    try {
-      await updateDoc(submissionRef, {
+    const updatedData = {
         feedback: lines,
-        status: 'feedback',
+        status: 'feedback' as const,
         updatedAt: serverTimestamp(),
-      });
-      alert('Feedback sent to client successfully!');
-    } catch (error) {
-      console.error("Error sending feedback: ", error);
-      alert('Failed to send feedback.');
-    }
+      };
+
+    updateDoc(submissionRef, updatedData)
+        .then(() => {
+            alert('Feedback sent to client successfully!');
+        })
+        .catch(async (serverError) => {
+          const permissionError = new FirestorePermissionError({
+            path: submissionRef.path,
+            operation: 'update',
+            requestResourceData: updatedData,
+          });
+          errorEmitter.emit('permission-error', permissionError);
+          console.error("Error sending feedback: ", serverError);
+          alert('Failed to send feedback.');
+        });
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this submission?')) return;
     
-    try {
-      await deleteDoc(doc(firestore, 'submissions', id));
-      alert('Submission deleted.');
-    } catch (error) {
-      console.error("Error deleting submission: ", error);
-      alert('Failed to delete submission.');
-    }
+    const submissionRef = doc(firestore, 'submissions', id);
+    deleteDoc(submissionRef)
+        .then(() => {
+            alert('Submission deleted.');
+        })
+        .catch(async (serverError) => {
+            const permissionError = new FirestorePermissionError({
+                path: submissionRef.path,
+                operation: 'delete',
+            });
+            errorEmitter.emit('permission-error', permissionError);
+            console.error("Error deleting submission: ", serverError);
+            alert('Failed to delete submission.');
+        });
   }
 
   return (
@@ -148,3 +167,5 @@ export default function AdminPage() {
         </AdminProvider>
     )
 }
+
+    

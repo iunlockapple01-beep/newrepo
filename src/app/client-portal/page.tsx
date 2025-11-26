@@ -20,6 +20,8 @@ import { Cloud, Twitter, Facebook, Instagram } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirebase, useDoc } from '@/firebase';
 import { addDoc, collection, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 // Define the structure for a submission
 interface Submission {
@@ -85,16 +87,24 @@ function DeviceCheckContent() {
       feedback: null,
       createdAt: serverTimestamp(),
     };
-    try {
-      const docRef = await addDoc(collection(firestore, 'submissions'), newSubmission);
-      setSubmissionId(docRef.id);
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('current_submission_id', docRef.id);
-      }
-    } catch (error) {
-      console.error("Error creating submission: ", error);
-      alert('Failed to create submission.');
-    }
+    
+    addDoc(collection(firestore, 'submissions'), newSubmission)
+      .then(docRef => {
+        setSubmissionId(docRef.id);
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('current_submission_id', docRef.id);
+        }
+      })
+      .catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: `submissions/unknown`, // Path is unknown until doc is created
+          operation: 'create',
+          requestResourceData: newSubmission,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        console.error("Error creating submission: ", serverError);
+        alert('Failed to create submission.');
+      });
   };
 
   const handleClear = () => {
@@ -121,18 +131,27 @@ function DeviceCheckContent() {
       if (!submissionId) return alert('No submission selected.');
       
       const submissionRef = doc(firestore, 'submissions', submissionId);
-      try {
-        await updateDoc(submissionRef, {
+      const updatedData = {
           paid: true,
-          status: 'paid',
+          status: 'paid' as const,
           paidAt: serverTimestamp(),
-        });
-        setCryptoModalOpen(false);
-        alert('Marked as paid. Admin will process unlocking.');
-      } catch (error) {
-        console.error("Error marking as paid: ", error);
-        alert('Failed to mark as paid.');
-      }
+        };
+
+      updateDoc(submissionRef, updatedData)
+        .then(() => {
+            setCryptoModalOpen(false);
+            alert('Marked as paid. Admin will process unlocking.');
+        })
+        .catch(async (serverError) => {
+            const permissionError = new FirestorePermissionError({
+              path: submissionRef.path,
+              operation: 'update',
+              requestResourceData: updatedData,
+            });
+            errorEmitter.emit('permission-error', permissionError);
+            console.error("Error marking as paid: ", serverError);
+            alert('Failed to mark as paid.');
+      });
   };
 
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
@@ -385,3 +404,5 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
+
+    
