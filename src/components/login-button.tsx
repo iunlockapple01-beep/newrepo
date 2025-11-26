@@ -1,7 +1,7 @@
 
 'use client';
 import {
-  useAuth,
+  useFirebase,
   useUser,
   signOut,
 } from '@/firebase';
