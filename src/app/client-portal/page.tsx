@@ -49,6 +49,8 @@ const readSubmissions = (): Submission[] => {
 const writeSubmissions = (submissions: Submission[]) => {
   if (typeof window === 'undefined') return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(submissions));
+  // Dispatch a storage event to notify other tabs/windows
+  window.dispatchEvent(new Event('storage'));
 };
 
 function DeviceCheckContent() {
@@ -177,10 +179,8 @@ function DeviceCheckContent() {
     
     const interval = setInterval(checkForUpdates, 2500);
     
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY) {
+    const handleStorageChange = () => {
         checkForUpdates();
-      }
     };
     
     window.addEventListener('storage', handleStorageChange);

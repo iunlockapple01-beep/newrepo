@@ -52,8 +52,7 @@ function AdminDashboard() {
     const loadRequests = () => setRequests(readSubmissions());
     loadRequests();
 
-    const handleStorageChange = (e: Event) => {
-        // Custom event dispatched from writeSubmissions
+    const handleStorageChange = () => {
         loadRequests();
     };
 
