@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import type { AnalyzeHtmlForImprovementsOutput } from "@/ai/flows/analyze-html-for-improvements";
-import { analyzeHtml } from "./actions";
+import { analyzeHtml, fixHtml } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,7 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Logo } from "@/components/logo";
-import { Accessibility, Link2Off, ImageOff, CodeXml, Download, CheckCircle, FileCode, Bot, Sparkles, AlertTriangle, Workflow, BrainCircuit } from "lucide-react";
+import { Accessibility, Link2Off, ImageOff, CodeXml, Download, CheckCircle, FileCode, Bot, Sparkles, BrainCircuit, Wand2 } from "lucide-react";
 
 type AnalysisCategory = keyof AnalyzeHtmlForImprovementsOutput;
 
@@ -52,7 +52,8 @@ const placeholderHtml = `<!DOCTYPE html>
 export default function Home() {
   const [htmlCode, setHtmlCode] = useState(placeholderHtml);
   const [analysis, setAnalysis] = useState<AnalyzeHtmlForImprovementsOutput | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [isAnalyzing, startAnalyzing] = useTransition();
+  const [isFixing, startFixing] = useTransition();
   const { toast } = useToast();
 
   const handleAnalyze = () => {
@@ -64,7 +65,7 @@ export default function Home() {
       });
       return;
     }
-    startTransition(async () => {
+    startAnalyzing(async () => {
       const result = await analyzeHtml(htmlCode);
       if (result) {
         setAnalysis(result);
@@ -73,6 +74,7 @@ export default function Home() {
           description: "We've analyzed your HTML and found some areas for improvement.",
         });
       } else {
+        setAnalysis(null);
         toast({
           variant: "destructive",
           title: "Analysis Failed",
@@ -81,6 +83,37 @@ export default function Home() {
       }
     });
   };
+
+  const handleFixCode = () => {
+    if (!analysis) return;
+
+    const allSuggestions = Object.values(analysis).flat();
+    if(allSuggestions.length === 0) {
+      toast({
+        title: "No issues to fix!",
+        description: "Your code is already looking great.",
+      });
+      return;
+    }
+
+    startFixing(async () => {
+      const result = await fixHtml({ htmlCode, suggestions: allSuggestions });
+      if (result && result.fixedHtmlCode) {
+        setHtmlCode(result.fixedHtmlCode);
+        setAnalysis(null); // Clear analysis to prompt re-analysis
+        toast({
+          title: "Code Fixed!",
+          description: "We've applied the suggestions to your code. You can analyze it again to see the changes.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Fix Failed",
+          description: "Could not apply the fixes. Please try again later.",
+        });
+      }
+    });
+  }
   
   const handleDownload = () => {
     try {
@@ -102,9 +135,11 @@ export default function Home() {
     }
   };
 
+  const isPending = isAnalyzing || isFixing;
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="p-4 border-b">
+    <div className="min-h-screen flex flex-col bg-muted/20">
+      <header className="p-4 border-b bg-background">
         <div className="container mx-auto flex items-center gap-4">
           <Logo />
         </div>
@@ -112,17 +147,17 @@ export default function Home() {
       <main className="flex-1 container mx-auto p-4 md:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="flex flex-col gap-4">
-             <Card>
+             <Card className="flex-1 flex flex-col">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <FileCode className="w-6 h-6"/>
                         Your HTML Code
                     </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex-1 flex">
                     <Textarea
                     placeholder="Paste your HTML code here..."
-                    className="h-full min-h-[500px] font-code text-sm bg-card"
+                    className="h-full min-h-[500px] font-code text-sm bg-card flex-1"
                     value={htmlCode}
                     onChange={(e) => setHtmlCode(e.target.value)}
                     aria-label="HTML Code Input"
@@ -130,7 +165,7 @@ export default function Home() {
                 </CardContent>
                 <CardFooter className="flex-col sm:flex-row gap-2">
                     <Button onClick={handleAnalyze} disabled={isPending} className="w-full sm:w-auto">
-                      {isPending ? (
+                      {isAnalyzing ? (
                         <>
                           <Sparkles className="mr-2 h-4 w-4 animate-spin" />
                           Analyzing...
@@ -151,34 +186,48 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col gap-4">
-            {isPending ? (
+            {isAnalyzing ? (
               <AnalysisSkeleton />
             ) : analysis ? (
-              <AnalysisResults analysis={analysis} />
+              <AnalysisResults analysis={analysis} onFixCode={handleFixCode} isFixing={isFixing} />
             ) : (
               <InitialState />
             )}
           </div>
         </div>
       </main>
-      <footer className="p-4 border-t text-center text-sm text-muted-foreground">
+      <footer className="p-4 border-t text-center text-sm text-muted-foreground bg-background">
         <p>Powered by AI. Built with Next.js and Firebase.</p>
       </footer>
     </div>
   );
 }
 
-function AnalysisResults({ analysis }: { analysis: AnalyzeHtmlForImprovementsOutput }) {
+function AnalysisResults({ analysis, onFixCode, isFixing }: { analysis: AnalyzeHtmlForImprovementsOutput; onFixCode: () => void; isFixing: boolean }) {
   const analysisKeys = Object.keys(analysis) as AnalysisCategory[];
+  const totalIssues = analysisKeys.reduce((acc, key) => acc + analysis[key].length, 0);
 
   return (
      <div className="space-y-4">
         <Card className="bg-primary/10 border-primary/20">
-            <CardHeader>
+            <CardHeader className="flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-primary">
                     <Sparkles className="w-6 h-6" />
                     Analysis Results
                 </CardTitle>
+                <Button onClick={onFixCode} disabled={isFixing || totalIssues === 0} size="sm">
+                  {isFixing ? (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4 animate-spin" />
+                      Applying Fixes...
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="mr-2 h-4 w-4" />
+                      Fix It For Me
+                    </>
+                  )}
+                </Button>
             </CardHeader>
         </Card>
         {analysisKeys.map((key) => {
@@ -210,7 +259,7 @@ function AnalysisResults({ analysis }: { analysis: AnalyzeHtmlForImprovementsOut
                     ))}
                     </Accordion>
                 ) : (
-                    <div className="flex items-center gap-2 text-green-600">
+                    <div className="flex items-center gap-2 text-green-600 p-4 bg-green-50 rounded-md border border-green-200">
                         <CheckCircle className="w-5 h-5" />
                         <p className="font-medium">No issues found in this category. Great job!</p>
                     </div>
@@ -254,7 +303,7 @@ function AnalysisSkeleton() {
 
 function InitialState() {
   return (
-    <Card className="flex flex-col items-center justify-center min-h-[500px] text-center p-8 border-dashed">
+    <Card className="flex flex-col items-center justify-center min-h-[500px] text-center p-8 border-dashed bg-background">
       <div className="flex flex-col items-center gap-4">
         <div className="p-4 bg-primary/10 rounded-full">
             <Bot className="w-12 h-12 text-primary" />
