@@ -26,11 +26,8 @@ export default function ServicesPage() {
         params.append('image', deviceImage.imageUrl);
     }
 
-    if (!user) {
-      router.push(`/login?redirect=/client-portal&${params.toString()}`);
-    } else {
-      router.push(`/client-portal?${params.toString()}`);
-    }
+    // Always go to the client portal, login is not mandatory to check IMEI
+    router.push(`/client-portal?${params.toString()}`);
   };
 
   const iphoneModels = [
@@ -101,7 +98,6 @@ export default function ServicesPage() {
       { name: 'iPad Mini (6th Gen, 2021)', price: 80 },
   ];
 
-  const logoserverImage = getImage('logoserver');
   const telegramIconImage = getImage('telegram-icon');
 
 
@@ -119,8 +115,8 @@ export default function ServicesPage() {
                     <div className="ml-10 flex items-baseline space-x-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors ring-1 ring-inset ring-primary">Services</Link>
-                        <Link href="/orders" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>
-                        <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>
+                        <a href="/#about" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
+                        <a href="/#contact" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
                         <LoginButton />
                     </div>
                 </div>
@@ -308,3 +304,5 @@ export default function ServicesPage() {
     </div>
   );
 }
+
+    
