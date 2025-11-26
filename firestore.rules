@@ -16,6 +16,8 @@ service cloud.firestore {
 
     match /submissions/{submissionId} {
       allow read: if request.auth != null && (request.auth.uid == resource.data.userId || isAdmin());
+      // Admins can list all submissions, which is needed for the admin dashboard.
+      allow list: if request.auth != null && isAdmin();
       allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
       allow update: if request.auth != null && (request.auth.uid == resource.data.userId || isAdmin());
       allow delete: if request.auth != null && isAdmin();
