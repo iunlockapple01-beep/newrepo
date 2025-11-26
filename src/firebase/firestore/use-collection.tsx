@@ -4,16 +4,12 @@ import {
   onSnapshot,
   collection,
   query,
-  where,
-  orderBy,
-  limit,
-  startAfter,
   Query,
   DocumentData,
-  Firestore,
   QueryConstraint,
 } from 'firebase/firestore';
 import { useFirestore } from '../provider';
+import { useMemo } from 'react';
 
 interface UseCollectionOptions {
   constraints?: QueryConstraint[];
@@ -28,12 +24,22 @@ export function useCollection<T>(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const memoizedConstraints = useMemo(() => options?.constraints, [JSON.stringify(options?.constraints)]);
+
   useEffect(() => {
+    // If constraints are defined but some dependency is not ready (e.g. user is not loaded),
+    // don't fetch the collection.
+    if (options?.constraints && !memoizedConstraints) {
+      setLoading(false);
+      setData([]); // Set to empty array to avoid null issues
+      return;
+    }
+
     let q: Query<DocumentData>;
     const collectionRef = collection(firestore, collectionName);
 
-    if (options?.constraints) {
-      q = query(collectionRef, ...options.constraints);
+    if (memoizedConstraints) {
+      q = query(collectionRef, ...memoizedConstraints);
     } else {
       q = query(collectionRef);
     }
@@ -55,7 +61,7 @@ export function useCollection<T>(
     );
 
     return () => unsubscribe();
-  }, [firestore, collectionName, options]);
+  }, [firestore, collectionName, memoizedConstraints, options?.constraints]);
 
   return { data, loading, error };
 }

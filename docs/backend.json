@@ -24,6 +24,61 @@
         }
       },
       "required": ["displayName", "email"]
+    },
+    "submission": {
+      "title": "Submission",
+      "description": "An IMEI submission for checking",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who made the submission"
+        },
+        "model": {
+          "type": "string",
+          "description": "The device model"
+        },
+        "price": {
+          "type": "number",
+          "description": "The price for the unlock service"
+        },
+        "image": {
+          "type": "string",
+          "description": "URL of the device image"
+        },
+        "imei": {
+          "type": "string",
+          "description": "The IMEI or serial number of the device"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["waiting", "feedback", "paid"],
+          "description": "The current status of the submission"
+        },
+        "feedback": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Feedback provided by the admin"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "paid": {
+          "type": "boolean"
+        },
+        "paidAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["userId", "model", "price", "imei", "status", "createdAt"]
     }
   },
   "auth": {
@@ -35,6 +90,12 @@
         "$ref": "#/backend/entities/user"
       },
       "description": "User profile information"
+    },
+    "/submissions/{submissionId}": {
+      "schema": {
+        "$ref": "#/backend/entities/submission"
+      },
+      "description": "IMEI submissions from users"
     }
   }
 }

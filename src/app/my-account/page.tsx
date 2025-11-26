@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useUser } from '@/firebase';
+import { useUser, useFirebase, useCollection } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -11,45 +11,30 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Cloud, Twitter, Facebook, Instagram } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
+import { query, where } from 'firebase/firestore';
 
 interface Order {
   id: string;
-  date: string;
-  service: string;
+  createdAt: { toDate: () => Date };
   model: string;
-  status: 'pending' | 'processing' | 'complete';
-  amount: number;
+  status: 'waiting' | 'feedback' | 'paid';
+  price: number;
 }
 
 function MyAccountContent() {
   const { data: user, loading: userLoading } = useUser();
   const router = useRouter();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [totalOrders, setTotalOrders] = useState(0);
+  
+  const { data: orders, loading: ordersLoading } = useCollection<Order>(
+    'submissions',
+    user ? { constraints: [where('userId', '==', user.uid), where('status', '==', 'paid')] } : undefined
+  );
 
   useEffect(() => {
     if (!userLoading && !user) {
       router.push('/login?redirect=/my-account');
     }
   }, [user, userLoading, router]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && user) {
-        // For demonstration, we use submissions from client portal as "orders"
-        const submissions = JSON.parse(localStorage.getItem('icloud_submissions') || '[]');
-        const userOrders = submissions.filter((sub: any) => sub.status === 'paid').map((sub: any) => ({
-            id: sub.id.substring(0, 10),
-            date: sub.paidAt || sub.createdAt,
-            service: 'iCloud Unlock',
-            model: sub.model,
-            status: 'processing', // Or derive from your logic
-            amount: sub.price,
-        }));
-        
-        setOrders(userOrders);
-        setTotalOrders(userOrders.length);
-    }
-  }, [user]);
 
   const usdtImage = PlaceHolderImages.find(img => img.id === 'usdt-icon');
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
@@ -98,7 +83,7 @@ function MyAccountContent() {
                 <div className="grid md:grid-cols-2 gap-6">
                     <div>
                         <p><strong>Current Balance:</strong> $0.00</p>
-                        <p><strong>Total Orders:</strong> {totalOrders}</p>
+                        <p><strong>Total Orders:</strong> {orders ? orders.length : 0}</p>
                     </div>
                     <div>
                         <p><strong>Deposit via Crypto:</strong></p>
@@ -125,7 +110,11 @@ function MyAccountContent() {
 
         <section>
           <h2 className="text-3xl font-bold mb-6">Order History</h2>
-          {orders.length > 0 ? (
+          {ordersLoading ? (
+            <div className="text-center py-16 px-6 bg-white rounded-2xl shadow-lg">
+                <p className="text-gray-600">Loading orders...</p>
+            </div>
+          ) : orders && orders.length > 0 ? (
             <Card>
               <Table>
                 <TableHeader>
@@ -142,18 +131,17 @@ function MyAccountContent() {
                   {orders.map(order => (
                     <TableRow key={order.id}>
                       <TableCell className="font-mono text-xs">{order.id}</TableCell>
-                      <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
-                      <TableCell>{order.service}</TableCell>
+                      <TableCell>{order.createdAt.toDate().toLocaleDateString()}</TableCell>
+                      <TableCell>iCloud Unlock</TableCell>
                       <TableCell>{order.model}</TableCell>
                       <TableCell>
                         <Badge variant={
-                            order.status === 'complete' ? 'default' : 
-                            order.status === 'processing' ? 'secondary' : 'destructive'
+                            order.status === 'paid' ? 'secondary' : 'default'
                         }>
-                          {order.status}
+                          {order.status === 'paid' ? 'processing' : order.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>${order.amount.toFixed(2)}</TableCell>
+                      <TableCell>${order.price.toFixed(2)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

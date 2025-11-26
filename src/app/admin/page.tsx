@@ -1,68 +1,36 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { AdminProvider } from '@/firebase/admin-provider';
 import Link from 'next/link';
 import { Cloud } from 'lucide-react';
-import { useUser } from '@/firebase';
+import { useUser, useCollection, useFirebase } from '@/firebase';
 import { LoginButton } from '@/components/login-button';
+import { collection, doc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 // Define the structure for a submission
 interface Submission {
   id: string;
+  userId: string;
   model: string;
   price: number;
   image: string;
   imei: string;
   status: 'waiting' | 'feedback' | 'paid';
   feedback: string[] | null;
-  createdAt: string;
-  updatedAt?: string;
+  createdAt: any; // Firestore timestamp
+  updatedAt?: any; // Firestore timestamp
 }
 
-const STORAGE_KEY = 'icloud_submissions';
-
-// Helper functions to interact with localStorage
-const readSubmissions = (): Submission[] => {
-  if (typeof window === 'undefined') return [];
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  } catch (e) {
-    return [];
-  }
-};
-
-const writeSubmissions = (submissions: Submission[]) => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(submissions));
-  // Dispatch a storage event to notify other tabs/windows
-  window.dispatchEvent(new Event('storage'));
-};
-
 function AdminDashboard() {
-  const [requests, setRequests] = useState<Submission[]>([]);
+  const { firestore } = useFirebase();
   const { data: user } = useUser();
+  const { data: requests, loading } = useCollection<Submission>('submissions');
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
-  useEffect(() => {
-    const loadRequests = () => setRequests(readSubmissions());
-    loadRequests();
-
-    const handleStorageChange = () => {
-        loadRequests();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-
-  const handleSendFeedback = (id: string) => {
+  const handleSendFeedback = async (id: string) => {
     const textarea = document.getElementById(`feedback-${id}`) as HTMLTextAreaElement;
     if (!textarea) return;
 
@@ -71,33 +39,30 @@ function AdminDashboard() {
 
     const lines = feedbackText.split('\n').filter(l => l.trim());
     
-    setRequests(prevRequests => {
-      const newRequests = prevRequests.map(req => {
-        if (req.id === id) {
-          return {
-            ...req,
-            feedback: lines,
-            status: 'feedback' as 'feedback',
-            updatedAt: new Date().toISOString(),
-          };
-        }
-        return req;
+    const submissionRef = doc(firestore, 'submissions', id);
+    try {
+      await updateDoc(submissionRef, {
+        feedback: lines,
+        status: 'feedback',
+        updatedAt: serverTimestamp(),
       });
-      writeSubmissions(newRequests);
       alert('Feedback sent to client successfully!');
-      return newRequests;
-    });
+    } catch (error) {
+      console.error("Error sending feedback: ", error);
+      alert('Failed to send feedback.');
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this submission?')) return;
     
-    setRequests(prevRequests => {
-      const newRequests = prevRequests.filter(req => req.id !== id);
-      writeSubmissions(newRequests);
+    try {
+      await deleteDoc(doc(firestore, 'submissions', id));
       alert('Submission deleted.');
-      return newRequests;
-    });
+    } catch (error) {
+      console.error("Error deleting submission: ", error);
+      alert('Failed to delete submission.');
+    }
   }
 
   return (
@@ -130,7 +95,9 @@ function AdminDashboard() {
         <h1 className="text-4xl font-bold text-center mb-10">Admin Dashboard</h1>
         
         <div className="space-y-6">
-          {requests.length === 0 ? (
+          {loading ? (
+            <p className="text-center text-gray-500">Loading submissions...</p>
+          ) : !requests || requests.length === 0 ? (
             <p className="text-center text-gray-500">No pending IMEI submissions found.</p>
           ) : (
             requests.map(sub => (

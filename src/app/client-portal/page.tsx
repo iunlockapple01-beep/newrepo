@@ -18,7 +18,8 @@ import {
 import { LoginButton } from '@/components/login-button';
 import { Cloud, Twitter, Facebook, Instagram } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { useUser } from '@/firebase';
+import { useUser, useFirebase, useDoc } from '@/firebase';
+import { addDoc, collection, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 
 // Define the structure for a submission
 interface Submission {
@@ -29,32 +30,15 @@ interface Submission {
   imei: string;
   status: 'waiting' | 'feedback' | 'paid';
   feedback: string[] | null;
-  createdAt: string;
+  createdAt: any;
   paid?: boolean;
-  paidAt?: string;
+  paidAt?: any;
+  userId: string;
 }
-
-const STORAGE_KEY = 'icloud_submissions';
-
-// Helper functions to interact with localStorage
-const readSubmissions = (): Submission[] => {
-  if (typeof window === 'undefined') return [];
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  } catch (e) {
-    return [];
-  }
-};
-
-const writeSubmissions = (submissions: Submission[]) => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(submissions));
-  // Dispatch a storage event to notify other tabs/windows
-  window.dispatchEvent(new Event('storage'));
-};
 
 function DeviceCheckContent() {
   const { data: user, loading: userLoading } = useUser();
+  const { firestore } = useFirebase();
   const router = useRouter();
   const searchParams = useSearchParams();
   const model = searchParams.get('model') || 'Unknown Model';
@@ -62,17 +46,23 @@ function DeviceCheckContent() {
   const image = searchParams.get('image') || '/placeholder.svg';
 
   const [imei, setImei] = useState('');
-  const [status, setStatus] = useState<'initial' | 'waiting' | 'feedback'>('initial');
-  const [feedbackLines, setFeedbackLines] = useState<string[]>([]);
-  const [isEligible, setIsEligible] = useState(false);
-  const [isPaid, setIsPaid] = useState(false);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
+
+  const { data: submission, loading: submissionLoading } = useDoc<Submission>('submissions', submissionId || ' ');
+
   const [isCryptoModalOpen, setCryptoModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
+  
+  useEffect(() => {
+    const currentId = sessionStorage.getItem('current_submission_id');
+    if (currentId) {
+      setSubmissionId(currentId);
+    }
+  }, []);
 
   useEffect(() => {
     if (!userLoading && !user) {
-      // Build the redirect path with all current query parameters
       const redirectPath = `/client-portal?${searchParams.toString()}`;
       router.push(`/login?redirect=${encodeURIComponent(redirectPath)}`);
     }
@@ -80,33 +70,39 @@ function DeviceCheckContent() {
   
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
-  const handleSubmitImei = () => {
-    if (!imei.trim()) {
+  const handleSubmitImei = async () => {
+    if (!imei.trim() || !user) {
       alert('Please enter an IMEI or Serial number.');
       return;
     }
-    const newSubmission: Submission = {
-      id: `id-${Date.now()}-${Math.floor(Math.random() * 9000 + 1000)}`,
+    const newSubmission = {
+      userId: user.uid,
       model,
       price,
       image,
       imei: imei.trim(),
-      status: 'waiting',
+      status: 'waiting' as 'waiting',
       feedback: null,
-      createdAt: new Date().toISOString(),
+      createdAt: serverTimestamp(),
     };
-    const submissions = readSubmissions();
-    submissions.push(newSubmission);
-    writeSubmissions(submissions);
-
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('current_submission_id', newSubmission.id);
+    try {
+      const docRef = await addDoc(collection(firestore, 'submissions'), newSubmission);
+      setSubmissionId(docRef.id);
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('current_submission_id', docRef.id);
+      }
+    } catch (error) {
+      console.error("Error creating submission: ", error);
+      alert('Failed to create submission.');
     }
-    setStatus('waiting');
   };
 
   const handleClear = () => {
     setImei('');
+    setSubmissionId(null);
+    if(typeof window !== 'undefined') {
+      sessionStorage.removeItem('current_submission_id');
+    }
   };
 
   const openCryptoModal = () => {
@@ -121,81 +117,23 @@ function DeviceCheckContent() {
     }, 1200);
   };
   
-  const handleMarkAsPaid = () => {
-      const payingId = sessionStorage.getItem('current_paying_id');
-      if (!payingId) return alert('No submission selected.');
+  const handleMarkAsPaid = async () => {
+      if (!submissionId) return alert('No submission selected.');
       
-      const submissions = readSubmissions();
-      const submissionIndex = submissions.findIndex(s => s.id === payingId);
-      if (submissionIndex === -1) return alert('Submission not found.');
-      
-      submissions[submissionIndex].paid = true;
-      submissions[submissionIndex].status = 'paid';
-      submissions[submissionIndex].paidAt = new Date().toISOString();
-      
-      writeSubmissions(submissions);
-      setCryptoModalOpen(false);
-      alert('Marked as paid. Admin will process unlocking.');
-      checkForUpdates(); // Re-check status immediately
-  };
-  
-
-  const checkForUpdates = () => {
-    const currentId = sessionStorage.getItem('current_submission_id');
-    if (!currentId) return;
-
-    const submissions = readSubmissions();
-    const match = submissions.find(s => s.id === currentId);
-
-    if (match) {
-        if (match.status === 'feedback' && match.feedback) {
-            setStatus('feedback');
-            setFeedbackLines(match.feedback);
-            setIsPaid(!!match.paid);
-            // Simple eligibility check for demo purposes
-            const isDeviceEligible = match.feedback.some(line => line.toLowerCase().includes('eligible'));
-            setIsEligible(isDeviceEligible);
-        } else if (match.status === 'paid') {
-            setStatus('feedback');
-            setFeedbackLines(match.feedback || ['Paid - unlocking...']);
-            setIsPaid(true);
-            setIsEligible(false);
-        } else if (match.status === 'waiting') {
-            setStatus('waiting');
-        }
-    } else {
-        // Submission was not found, likely deleted by admin
-        setStatus('initial');
-        sessionStorage.removeItem('current_submission_id');
-        setImei(''); // Clear IMEI input as well
-    }
-  };
-
-  useEffect(() => {
-    const currentId = sessionStorage.getItem('current_submission_id');
-    if (currentId) {
-      checkForUpdates();
-    }
-    
-    const interval = setInterval(checkForUpdates, 2500);
-    
-    const handleStorageChange = () => {
-        checkForUpdates();
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-  
-  useEffect(() => {
-      if (isEligible && !isPaid) {
-        sessionStorage.setItem('current_paying_id', sessionStorage.getItem('current_submission_id') || '');
+      const submissionRef = doc(firestore, 'submissions', submissionId);
+      try {
+        await updateDoc(submissionRef, {
+          paid: true,
+          status: 'paid',
+          paidAt: serverTimestamp(),
+        });
+        setCryptoModalOpen(false);
+        alert('Marked as paid. Admin will process unlocking.');
+      } catch (error) {
+        console.error("Error marking as paid: ", error);
+        alert('Failed to mark as paid.');
       }
-  }, [isEligible, isPaid]);
+  };
 
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
   
@@ -207,6 +145,8 @@ function DeviceCheckContent() {
     );
   }
 
+  const isEligible = submission?.status === 'feedback' && submission?.feedback?.some(line => line.toLowerCase().includes('eligible'));
+  
   return (
     <div className="bg-gray-50 text-gray-800">
       <nav className="glass-effect fixed w-full top-0 z-50">
@@ -252,9 +192,10 @@ function DeviceCheckContent() {
                 value={imei}
                 onChange={(e) => setImei(e.target.value)}
                 className="w-full sm:w-80"
+                disabled={!!submissionId}
               />
               <div className="flex gap-3">
-                <Button onClick={handleSubmitImei} className="btn-primary text-white">Check IMEI</Button>
+                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={!!submissionId}>Check IMEI</Button>
                 <Button onClick={handleClear} variant="outline">Clear</Button>
               </div>
             </div>
@@ -265,32 +206,35 @@ function DeviceCheckContent() {
         </div>
 
         <div className="mt-5 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[120px] flex items-center justify-center flex-col text-center">
-          {status === 'initial' && (
+          {!submissionId && !submissionLoading && (
             <div>
               <p className="font-semibold text-gray-700">No IMEI submitted yet.</p>
               <p className="text-sm text-gray-500">Submit your IMEI or serial number to check if unlock is supported.</p>
             </div>
           )}
-          {status === 'waiting' && (
+          {submissionLoading && (
+             <div className="flex flex-col items-center">
+              <div className="spinner w-14 h-14 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
+              <p className="font-semibold">Loading submission...</p>
+            </div>
+          )}
+          {submission && submission.status === 'waiting' && (
             <div className="flex flex-col items-center">
               <div className="spinner w-14 h-14 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
               <p className="font-semibold">Waiting for results...</p>
               <p className="text-sm text-gray-500">Admin will run checks and send feedback here.</p>
             </div>
           )}
-          {status === 'feedback' && (
+          {submission && submission.status === 'feedback' && (
             <div className="w-full text-left">
               <div className="space-y-2">
-                {feedbackLines.map((line, index) => (
+                {submission.feedback?.map((line, index) => (
                   <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm whitespace-pre-wrap font-mono">
                     {line}
                   </div>
                 ))}
               </div>
-              {isPaid && (
-                  <p className="text-sm text-gray-600 mt-3">Confirming your payment — Please refresh the My Account page. Once your payment is confirmed, your order details will appear there. If your order isn’t updated within 5 minutes, contact the admin with your payment details.</p>
-              )}
-              {!isPaid && isEligible && (
+              {!submission.paid && isEligible && (
                 <div className="mt-4 text-right flex items-center justify-end gap-4 animate-fade-in">
                   <p className="bg-green-100 text-green-800 font-semibold p-2 px-3 rounded-lg">✅ This device is eligible for iCloud Unlock</p>
                   <Button onClick={openCryptoModal} className="btn-primary text-white">Unlock Now</Button>
@@ -298,6 +242,24 @@ function DeviceCheckContent() {
               )}
             </div>
           )}
+           {submission && submission.status === 'paid' && (
+             <div className="w-full text-left">
+              <div className="space-y-2">
+                {submission.feedback?.map((line, index) => (
+                  <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm whitespace-pre-wrap font-mono">
+                    {line}
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-gray-600 mt-3">Confirming your payment — Please refresh the My Account page. Once your payment is confirmed, your order details will appear there. If your order isn’t updated within 5 minutes, contact the admin with your payment details.</p>
+            </div>
+          )}
+           {!submission && !submissionLoading && submissionId && (
+            <div>
+              <p className="font-semibold text-destructive">This submission was not found.</p>
+              <p className="text-sm text-gray-500">It may have been deleted by an administrator. Please clear and try again.</p>
+            </div>
+           )}
         </div>
       </main>
 
