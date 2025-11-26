@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Cloud } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
@@ -41,6 +41,19 @@ function AdminDashboard() {
     useCollection<Submission>('submissions');
 
   const [feedbackValues, setFeedbackValues] = useState<{ [key: string]: string }>({});
+  
+  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
+
+  useEffect(() => {
+    if (userLoading) {
+      return; // Wait until user status is determined
+    }
+    if (!user) {
+      router.push('/login?redirect=/admin');
+    } else if (!isAdmin) {
+      router.push('/');
+    }
+  }, [user, userLoading, isAdmin, router]);
 
   const handleFeedbackChange = (id: string, value: string) => {
     setFeedbackValues(prev => ({ ...prev, [id]: value }));
@@ -54,10 +67,18 @@ function AdminDashboard() {
     const lines = feedbackText.split('\n').filter(l => l.trim());
 
     const submissionRef = doc(firestore, 'submissions', submissionId);
-    await updateDoc(submissionRef, {
+    updateDoc(submissionRef, {
       feedback: lines,
       status: 'feedback',
       updatedAt: serverTimestamp(),
+    }).catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+            path: submissionRef.path,
+            operation: 'update',
+            requestResourceData: { status: 'feedback' },
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        alert('Failed to send feedback.');
     });
 
     alert('Feedback sent to client successfully!');
@@ -66,25 +87,20 @@ function AdminDashboard() {
   const handleDelete = async (submissionId: string) => {
     if (window.confirm('Are you sure you want to delete this submission?')) {
       const submissionRef = doc(firestore, 'submissions', submissionId);
-      await deleteDoc(submissionRef);
+      deleteDoc(submissionRef).catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+            path: submissionRef.path,
+            operation: 'delete',
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        alert('Failed to delete submission.');
+      });
       alert('Submission deleted.');
     }
   };
 
-  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
-
-  if (userLoading) {
+  if (userLoading || !user || !isAdmin) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  }
-
-  if (!user) {
-    router.push('/login?redirect=/admin');
-    return null;
-  }
-  
-  if (!isAdmin) {
-      router.push('/');
-      return null;
   }
 
   return (
