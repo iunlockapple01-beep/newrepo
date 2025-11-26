@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { onSnapshot, doc, DocumentData, Firestore } from 'firebase/firestore';
 import { useFirestore } from '../provider';
+import { errorEmitter } from '../error-emitter';
+import { FirestorePermissionError } from '../errors';
 
 export function useDoc<T>(collectionName: string, docId: string) {
   const firestore = useFirestore();
@@ -10,7 +12,7 @@ export function useDoc<T>(collectionName: string, docId: string) {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (!docId) {
+    if (!docId || docId.trim() === '') {
         setLoading(false);
         setData(null);
         return;
@@ -28,13 +30,14 @@ export function useDoc<T>(collectionName: string, docId: string) {
         }
         setLoading(false);
       },
-      (error) => {
-        setError(error);
+      (serverError) => {
+        setError(serverError);
         setLoading(false);
-        console.error(
-          `Error fetching document ${collectionName}/${docId}:`,
-          error
-        );
+        const permissionError = new FirestorePermissionError({
+            path: docRef.path,
+            operation: 'get',
+        });
+        errorEmitter.emit('permission-error', permissionError);
       }
     );
 

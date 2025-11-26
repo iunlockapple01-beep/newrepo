@@ -10,6 +10,8 @@ import {
 } from 'firebase/firestore';
 import { useFirestore } from '../provider';
 import { useMemo } from 'react';
+import { errorEmitter } from '../error-emitter';
+import { FirestorePermissionError } from '../errors';
 
 interface UseCollectionOptions {
   constraints?: QueryConstraint[];
@@ -53,10 +55,14 @@ export function useCollection<T>(
         setData(docs);
         setLoading(false);
       },
-      (error) => {
-        setError(error);
+      (serverError) => {
+        setError(serverError);
         setLoading(false);
-        console.error(`Error fetching collection ${collectionName}:`, error);
+        const permissionError = new FirestorePermissionError({
+          path: collectionRef.path,
+          operation: 'list',
+        });
+        errorEmitter.emit('permission-error', permissionError);
       }
     );
 
