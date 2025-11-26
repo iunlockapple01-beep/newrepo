@@ -1,26 +1,9 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    function isAdmin() {
-      return request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-
-    // User collection
-    match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
-    }
-
-    // Submissions collection
-    match /submissions/{id} {
-      // Admin full access
-      allow list, read, write, delete: if isAdmin();
-
-      // Normal user can create their own submission
-      allow create: if request.auth != null;
+    match /{document=**} {
+      allow read: if true;
+      allow write: if true;
     }
   }
 }
-

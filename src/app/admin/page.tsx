@@ -21,6 +21,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Cloud } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 interface Submission {
   id: string;
@@ -67,27 +69,34 @@ function AdminDashboard() {
     const lines = feedbackText.split('\n').filter(l => l.trim());
 
     const submissionRef = doc(firestore, 'submissions', submissionId);
-    updateDoc(submissionRef, {
+    const updatedData = {
       feedback: lines,
-      status: 'feedback',
+      status: 'feedback' as const,
       updatedAt: serverTimestamp(),
-    }).catch(async (serverError) => {
+    };
+    updateDoc(submissionRef, updatedData)
+      .then(() => {
+          alert('Feedback sent to client successfully!');
+      })
+      .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
             path: submissionRef.path,
             operation: 'update',
-            requestResourceData: { status: 'feedback' },
+            requestResourceData: updatedData,
         });
         errorEmitter.emit('permission-error', permissionError);
         alert('Failed to send feedback.');
     });
-
-    alert('Feedback sent to client successfully!');
   };
 
   const handleDelete = async (submissionId: string) => {
     if (window.confirm('Are you sure you want to delete this submission?')) {
       const submissionRef = doc(firestore, 'submissions', submissionId);
-      deleteDoc(submissionRef).catch(async (serverError) => {
+      deleteDoc(submissionRef)
+        .then(() => {
+            alert('Submission deleted.');
+        })
+        .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
             path: submissionRef.path,
             operation: 'delete',
@@ -95,7 +104,6 @@ function AdminDashboard() {
         errorEmitter.emit('permission-error', permissionError);
         alert('Failed to delete submission.');
       });
-      alert('Submission deleted.');
     }
   };
 
