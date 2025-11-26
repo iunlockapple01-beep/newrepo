@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AdminProvider } from '@/firebase/admin-provider';
 import Link from 'next/link';
 import { Cloud } from 'lucide-react';
+import { useUser } from '@/firebase';
+import { LoginButton } from '@/components/login-button';
 
 // Define the structure for a submission
 interface Submission {
@@ -43,6 +45,8 @@ const writeSubmissions = (submissions: Submission[]) => {
 
 function AdminDashboard() {
   const [requests, setRequests] = useState<Submission[]>([]);
+  const { data: user } = useUser();
+  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   useEffect(() => {
     const loadRequests = () => setRequests(readSubmissions());
@@ -91,13 +95,26 @@ function AdminDashboard() {
     <>
      <nav className="glass-effect fixed w-full top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-                <div className="flex items-center">
-                    <Link href="/" className="text-2xl font-bold text-gradient flex items-center gap-2">
-                        <Cloud /> iCloud Server - Admin
-                    </Link>
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Link href="/" className="text-2xl font-bold text-gradient flex items-center gap-2">
+                <Cloud /> iCloud Server - Admin
+              </Link>
+            </div>
+             <div className="hidden md:block">
+                <div className="ml-10 flex items-baseline space-x-4">
+                    <Link href="/" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</Link>
+                    <Link href="/services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</Link>
+                    {user && (
+                        <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>
+                    )}
+                    {isAdmin && (
+                        <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>
+                    )}
+                    <LoginButton />
                 </div>
             </div>
+          </div>
         </div>
       </nav>
       <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
@@ -152,5 +169,3 @@ export default function AdminPage() {
         </AdminProvider>
     )
 }
-
-    

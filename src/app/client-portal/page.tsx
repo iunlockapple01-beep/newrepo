@@ -75,6 +75,8 @@ function DeviceCheckContent() {
       router.push(`/login?redirect=${encodeURIComponent(redirectPath)}`);
     }
   }, [user, userLoading, router, searchParams]);
+  
+  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   const handleSubmitImei = () => {
     if (!imei.trim()) {
@@ -214,6 +216,12 @@ function DeviceCheckContent() {
                     <div className="ml-10 flex items-baseline space-x-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</Link>
+                        {user && (
+                            <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>
+                        )}
+                        {isAdmin && (
+                            <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>
+                        )}
                         <a href="/#about" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
                         <a href="/#contact" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
                         <LoginButton />
@@ -410,5 +418,3 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
-
-    
