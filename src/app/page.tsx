@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Mail, Phone, Clock, MessageSquare } from 'lucide-react';
+import { Mail, Phone, Clock, MessageSquare, Users, LockOpen } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
 import { useUser } from '@/firebase';
 import Image from 'next/image';
@@ -148,6 +148,55 @@ const services = [
     },
 ];
 
+const AnimatedCounter = ({ endValue, duration = 2000, label, icon: Icon }: { endValue: number, duration?: number, label: string, icon: React.ElementType }) => {
+    const [count, setCount] = useState(0);
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    let start = 0;
+                    const end = endValue;
+                    if (start === end) return;
+
+                    const totalMiliseconds = duration;
+                    const
+                        incrementTime = (totalMiliseconds / end) * 0.1;
+                    
+                    const timer = setInterval(() => {
+                        start += Math.ceil(end / (totalMiliseconds / incrementTime) * 0.1);
+                        if (start >= end) {
+                            setCount(end);
+                            clearInterval(timer);
+                        } else {
+                            setCount(start);
+                        }
+                    }, incrementTime);
+
+                    observer.disconnect();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (ref.current) {
+            observer.observe(ref.current);
+        }
+
+        return () => observer.disconnect();
+    }, [endValue, duration]);
+    
+    return (
+        <div ref={ref} className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-center border border-white/20">
+            <Icon className="h-8 w-8 mx-auto mb-2 text-white" />
+            <p className="text-3xl font-bold">{Math.round(count).toLocaleString()}+</p>
+            <p className="text-sm uppercase tracking-wider">{label}</p>
+        </div>
+    );
+};
+
+
 export default function IcloudServerPage() {
   const { data: user } = useUser();
   const isAdmin = user?.email === ADMIN_EMAIL;
@@ -164,6 +213,20 @@ export default function IcloudServerPage() {
         dismiss();
     }, 3000);
   };
+  
+  const [counters, setCounters] = useState({ users: 9378, devices: 5676 });
+
+  useEffect(() => {
+      const startDate = new Date('2024-01-01');
+      const today = new Date();
+      const timeDiff = today.getTime() - startDate.getTime();
+      const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
+      
+      const registeredUsers = 9378 + Math.floor(daysPassed * 3.5); // avg of 2-5
+      const unlockedDevices = 5676 + Math.floor(daysPassed * 9.5); // avg of 6-13
+
+      setCounters({ users: registeredUsers, devices: unlockedDevices });
+  }, []);
 
   return (
     <div className="bg-gray-50">
@@ -203,12 +266,16 @@ export default function IcloudServerPage() {
           <p className="text-xl md:text-2xl mb-8 opacity-90 animate-fade-in">
             Unlock your Apple devices safely and professionally. We support iPhones, iPads, MacBooks, and Apple Watches.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in mb-8">
             <Link href="/services">
                 <Button className="btn-primary text-white px-8 py-4 rounded-lg font-semibold text-lg h-auto">
                     View Services
                 </Button>
             </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-md mx-auto animate-fade-in">
+             <AnimatedCounter endValue={counters.users} label="Registered Users" icon={Users} />
+             <AnimatedCounter endValue={counters.devices} label="Unlocked Devices" icon={LockOpen} />
           </div>
         </div>
       </section>
