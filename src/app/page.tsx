@@ -67,6 +67,58 @@ const reviews = [
     review: '"Fantastic service for my Apple Watch Series 6! iCloud Server provided a super fast and secure unlock. Their customer service was excellent, answering all my questions promptly. I am very impressed with their professionalism and highly recommend them!"',
     unlockedDevice: 'Apple Watch Series 6',
     imageHints: ['keypad', 'security']
+  },
+  {
+    name: 'Liam B.',
+    avatarUrl: 'https://picsum.photos/seed/liam/40/40',
+    flag: '🇨🇦',
+    date: 'June 10, 2024',
+    images: [
+      'https://picsum.photos/seed/review5a/200/300',
+      'https://picsum.photos/seed/review5b/200/300'
+    ],
+    review: '"Top-notch service! My MacBook Pro was stuck on the iCloud activation screen, and they unlocked it within a day. Communication was excellent throughout. I\'m amazed at how simple they made it. Will definitely use again if needed."',
+    unlockedDevice: 'MacBook Pro 14"',
+    imageHints: ['laptop', 'desk']
+  },
+  {
+    name: 'Aisha N.',
+    avatarUrl: 'https://picsum.photos/seed/aisha/40/40',
+    flag: '🇳🇬',
+    date: 'June 08, 2024',
+    images: [
+      'https://picsum.photos/seed/review6a/200/300',
+      'https://picsum.photos/seed/review6b/200/300'
+    ],
+    review: '"I was about to give up on my old iPhone 12, but iCloud Server came to the rescue. The unlock was successful, and the price was very reasonable. The entire process felt secure and professional. Thank you so much for your help!"',
+    unlockedDevice: 'iPhone 12',
+    imageHints: ['phone', 'hand']
+  },
+  {
+    name: 'Chloe L.',
+    avatarUrl: 'https://picsum.photos/seed/chloe/40/40',
+    flag: '🇦🇺',
+    date: 'May 28, 2024',
+    images: [
+      'https://picsum.photos/seed/review7a/200/300',
+      'https://picsum.photos/seed/review7b/200/300'
+    ],
+    review: '"Unlocking my iPad Pro was a breeze with iCloud Server. The team was responsive and kept me updated. It\'s great to have my device fully functional again. I couldn\'t be happier with the outcome. Highly trustworthy and efficient service!"',
+    unlockedDevice: 'iPad Pro 11"',
+    imageHints: ['tablet', 'creative']
+  },
+  {
+    name: 'Kenji T.',
+    avatarUrl: 'https://picsum.photos/seed/kenji/40/40',
+    flag: '🇯🇵',
+    date: 'June 12, 2024',
+    images: [
+      'https://picsum.photos/seed/review8a/200/300',
+      'https://picsum.photos/seed/review8b/200/300'
+    ],
+    review: '"My Apple Watch SE had been locked for months. I found iCloud Server and decided to give them a try. Best decision ever! The unlock was quick and flawless. Their support is world-class. I highly recommend their services to everyone!"',
+    unlockedDevice: 'Apple Watch SE',
+    imageHints: ['smartwatch', 'lifestyle']
   }
 ];
 
@@ -208,26 +260,30 @@ export default function IcloudServerPage() {
             <p className="text-xl text-gray-600">Trusted by thousands of customers worldwide</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {reviews.map((review, index) => (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg flex flex-col">
-                <div className="flex items-center mb-3">
-                  <Image src={review.avatarUrl} alt={review.name} width={40} height={40} className="rounded-full mr-3" />
-                  <div>
-                    <p className="font-semibold text-gray-900 flex items-center">{review.name} <span className="ml-2">{review.flag}</span></p>
-                    <p className="text-xs text-gray-500">Reviewed on: {review.date}</p>
-                  </div>
+              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg flex flex-col md:flex-row gap-6">
+                <div className="flex-shrink-0 md:w-1/3">
+                    <div className="flex items-center mb-3">
+                      <Image src={review.avatarUrl} alt={review.name} width={40} height={40} className="rounded-full mr-3" />
+                      <div>
+                        <p className="font-semibold text-gray-900 flex items-center">{review.name} <span className="ml-2">{review.flag}</span></p>
+                        <p className="text-xs text-gray-500">Reviewed on: {review.date}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="relative aspect-[2/3] rounded-lg overflow-hidden">
+                        <Image src={review.images[0]} alt="Review image 1" layout="fill" objectFit="cover" data-ai-hint={review.imageHints.join(' ')} />
+                      </div>
+                       <div className="relative aspect-[2/3] rounded-lg overflow-hidden">
+                        <Image src={review.images[1]} alt="Review image 2" layout="fill" objectFit="cover" data-ai-hint={review.imageHints.join(' ')} />
+                      </div>
+                    </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2 mb-4">
-                  <div className="relative aspect-[2/3] rounded-lg overflow-hidden">
-                    <Image src={review.images[0]} alt="Review image 1" layout="fill" objectFit="cover" data-ai-hint={review.imageHints.join(' ')} />
-                  </div>
-                   <div className="relative aspect-[2/3] rounded-lg overflow-hidden">
-                    <Image src={review.images[1]} alt="Review image 2" layout="fill" objectFit="cover" data-ai-hint={review.imageHints.join(' ')} />
-                  </div>
+                <div className="flex flex-col">
+                    <p className="text-gray-700 text-sm mb-4 flex-grow">{review.review}</p>
+                    <p className="text-sm font-semibold text-gray-500 mt-auto">Unlocked: {review.unlockedDevice}</p>
                 </div>
-                <p className="text-gray-700 text-sm mb-4 flex-grow">{review.review}</p>
-                <p className="text-sm font-semibold text-gray-500 mt-auto">Unlocked: {review.unlockedDevice}</p>
               </div>
             ))}
           </div>
