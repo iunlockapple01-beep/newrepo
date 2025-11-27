@@ -17,7 +17,7 @@ import {
 
 export default function FaqPage() {
   const { data: user } = useUser();
-  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple@gmail.com';
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
 
   return (
@@ -27,7 +27,7 @@ export default function FaqPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                 <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                 <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -54,9 +54,9 @@ export default function FaqPage() {
           <Accordion type="single" collapsible className="w-full">
             <h2 className="text-2xl font-semibold mt-6 mb-4 text-gray-900 border-b pb-2">General Questions</h2>
             <AccordionItem value="item-1">
-              <AccordionTrigger className="text-lg text-left">What is iCloud Server?</AccordionTrigger>
+              <AccordionTrigger className="text-lg text-left">What is iCloud Unlocks?</AccordionTrigger>
               <AccordionContent className="text-base text-gray-700 space-y-2">
-                <p>iCloud Server is a trusted provider specializing in unlocking a wide range of Apple devices. We offer:</p>
+                <p>iCloud Unlocks is a trusted provider specializing in unlocking a wide range of Apple devices. We offer:</p>
                 <ul className="list-disc list-inside space-y-1 pl-4">
                   <li>FMI OFF</li>
                   <li>iCloud account removal</li>
@@ -124,7 +124,7 @@ export default function FaqPage() {
                 <p>Support available 24/7.</p>
                 <ul className="list-disc list-inside space-y-1 pl-4">
                     <li><span className="font-semibold">WhatsApp:</span> <a href="https://wa.me/message/EJ6T3XS4OWK3M1" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://wa.me/message/EJ6T3XS4OWK3M1</a></li>
-                    <li><span className="font-semibold">Telegram:</span> <a href="https://t.me/iCloudServer" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@iCloudServer</a></li>
+                    <li><span className="font-semibold">Telegram:</span> <a href="https://t.me/iCloudUnlocks" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@iCloudUnlocks</a></li>
                 </ul>
               </AccordionContent>
             </AccordionItem>
@@ -151,7 +151,7 @@ export default function FaqPage() {
             <AccordionItem value="item-12">
               <AccordionTrigger className="text-lg text-left">How can I join your community?</AccordionTrigger>
               <AccordionContent className="text-base text-gray-700">
-                Join our Telegram group: <a href="https://t.me/iCloudServerGroup" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">iCloudServerGroup</a>
+                Join our Telegram group: <a href="https://t.me/iCloudUnlocksGroup" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">iCloudUnlocksGroup</a>
               </AccordionContent>
             </AccordionItem>
 
@@ -164,7 +164,7 @@ export default function FaqPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                        <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                        <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
@@ -180,7 +180,7 @@ export default function FaqPage() {
                 </div>
                 <div>
                     <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudServerGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
+                    <a href="https://t.me/iCloudUnlocksGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
                         <Image 
                             src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram Group" 
@@ -191,7 +191,7 @@ export default function FaqPage() {
                         Telegram Channel
                     </a>
                     <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudServer" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
+                     <a href="https://t.me/iCloudUnlocks" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
                         <Image 
                              src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram" 
@@ -208,7 +208,7 @@ export default function FaqPage() {
                 </div>
             </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 iCloud Server. All rights reserved.</p>
+            <p>&copy; 2025 iCloud Unlocks. All rights reserved.</p>
           </div>
         </div>
       </footer>

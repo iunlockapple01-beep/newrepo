@@ -10,7 +10,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function TermsPage() {
   const { data: user } = useUser();
-  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple@gmail.com';
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
 
   return (
@@ -20,7 +20,7 @@ export default function TermsPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                 <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                 <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -42,17 +42,17 @@ export default function TermsPage() {
 
       <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
-          <h1 className="text-4xl font-bold text-center mb-8">Terms & Conditions – iCloud Server</h1>
+          <h1 className="text-4xl font-bold text-center mb-8">Terms & Conditions – iCloud Unlocks</h1>
           
           <div className="space-y-6 text-lg text-gray-700">
             <section>
               <h2 className="text-2xl font-semibold mb-3 text-gray-900">Introduction</h2>
-              <p>Welcome to iCloud Server. These Terms and Conditions outline the rules and guidelines for using our services. By accessing or using any part of our platform, you agree to follow these terms. If you do not accept any section of these Terms, please discontinue use of our services.</p>
+              <p>Welcome to iCloud Unlocks. These Terms and Conditions outline the rules and guidelines for using our services. By accessing or using any part of our platform, you agree to follow these terms. If you do not accept any section of these Terms, please discontinue use of our services.</p>
             </section>
 
             <section>
               <h2 className="text-2xl font-semibold mb-3 text-gray-900">Services Provided</h2>
-              <p>iCloud Server offers professional unlocking solutions for Apple devices, including iPhones, iPads, MacBooks, and Apple Watches. Our services include:</p>
+              <p>iCloud Unlocks offers professional unlocking solutions for Apple devices, including iPhones, iPads, MacBooks, and Apple Watches. Our services include:</p>
               <ul className="list-disc list-inside space-y-1 pl-4">
                 <li>Disabling Find My iPhone (FMI OFF)</li>
                 <li>Removing previous iCloud accounts</li>
@@ -97,7 +97,7 @@ export default function TermsPage() {
             <section>
               <h2 className="text-2xl font-semibold mb-3 text-gray-900">Disclaimer</h2>
               <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>You agree not to use iCloud Server for any illegal or unauthorized activity.</li>
+                <li>You agree not to use iCloud Unlocks for any illegal or unauthorized activity.</li>
                 <li>Our service does not involve phishing, hacking, or unlawful security bypass.</li>
                 <li>All unlocking is done via verified server systems without jailbreak or extraction of personal data.</li>
               </ul>
@@ -105,7 +105,7 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-2xl font-semibold mb-3 text-gray-900">Limitation of Liability</h2>
-              <p>iCloud Server is not responsible for indirect, incidental, or consequential damages. Our total liability will never exceed the amount paid for a service.</p>
+              <p>iCloud Unlocks is not responsible for indirect, incidental, or consequential damages. Our total liability will never exceed the amount paid for a service.</p>
             </section>
 
             <section>
@@ -115,12 +115,12 @@ export default function TermsPage() {
 
             <section>
               <h2 className="text-2xl font-semibold mb-3 text-gray-900">Updates to Terms</h2>
-              <p>iCloud Server may revise these Terms at any time. Changes take effect immediately once posted on our website. Continued use of our services means you accept the updated Terms.</p>
+              <p>iCloud Unlocks may revise these Terms at any time. Changes take effect immediately once posted on our website. Continued use of our services means you accept the updated Terms.</p>
             </section>
 
             <section>
               <h2 className="text-2xl font-semibold mb-3 text-gray-900">Governing Law</h2>
-              <p>These Terms are governed by the laws of the region in which iCloud Server operates. Any disputes will be handled exclusively through the courts of that jurisdiction.</p>
+              <p>These Terms are governed by the laws of the region in which iCloud Unlocks operates. Any disputes will be handled exclusively through the courts of that jurisdiction.</p>
             </section>
             
             <section>
@@ -128,7 +128,7 @@ export default function TermsPage() {
               <p>If you have questions regarding these Terms, reach out to us:</p>
               <ul className="list-disc list-inside space-y-2 pl-4">
                 <li><span className="font-semibold">WhatsApp:</span> <a href="https://wa.me/message/EJ6T3XS4OWK3M1" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://wa.me/message/EJ6T3XS4OWK3M1</a></li>
-                <li><span className="font-semibold">Telegram:</span> <a href="https://t.me/iCloudServer" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@iCloudServer</a></li>
+                <li><span className="font-semibold">Telegram:</span> <a href="https://t.me/iCloudUnlocks" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@iCloudUnlocks</a></li>
               </ul>
             </section>
             
@@ -142,7 +142,7 @@ export default function TermsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                       <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                       <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
@@ -158,7 +158,7 @@ export default function TermsPage() {
                 </div>
                 <div>
                     <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudServerGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
+                    <a href="https://t.me/iCloudUnlocksGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
                         <Image 
                             src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram Group" 
@@ -169,7 +169,7 @@ export default function TermsPage() {
                         Telegram Channel
                     </a>
                     <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudServer" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
+                     <a href="https://t.me/iCloudUnlocks" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
                         <Image 
                              src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram" 
@@ -186,7 +186,7 @@ export default function TermsPage() {
                 </div>
             </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 iCloud Server. All rights reserved.</p>
+            <p>&copy; 2025 iCloud Unlocks. All rights reserved.</p>
           </div>
         </div>
       </footer>

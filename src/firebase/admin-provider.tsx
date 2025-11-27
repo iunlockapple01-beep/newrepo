@@ -8,7 +8,7 @@ interface AdminProviderProps {
   children: ReactNode;
 }
 
-const ADMIN_EMAIL = 'iunlockapple01@gmail.com';
+const ADMIN_EMAIL = 'iunlockapple@gmail.com';
 
 export function AdminProvider({ children }: AdminProviderProps) {
   const { data: user, loading } = useUser();
@@ -42,5 +42,3 @@ export function AdminProvider({ children }: AdminProviderProps) {
   // User is the admin, render the children
   return <>{children}</>;
 }
-
-    

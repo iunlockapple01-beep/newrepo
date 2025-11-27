@@ -10,7 +10,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function PrivacyPolicyPage() {
   const { data: user } = useUser();
-  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple@gmail.com';
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
 
   return (
@@ -20,7 +20,7 @@ export default function PrivacyPolicyPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                 <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                 <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -42,12 +42,12 @@ export default function PrivacyPolicyPage() {
 
       <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
-          <h1 className="text-4xl font-bold text-center mb-8">Privacy Policy – iCloud Server</h1>
+          <h1 className="text-4xl font-bold text-center mb-8">Privacy Policy – iCloud Unlocks</h1>
           
           <div className="space-y-6 text-lg text-gray-700">
             <section>
               <h2 className="text-2xl font-semibold mb-3 text-gray-900">Introduction</h2>
-              <p>At iCloud Server, we are committed to respecting and protecting your privacy. This policy describes the type of information we collect and how we manage and safeguard it.</p>
+              <p>At iCloud Unlocks, we are committed to respecting and protecting your privacy. This policy describes the type of information we collect and how we manage and safeguard it.</p>
             </section>
 
             <section>
@@ -112,11 +112,11 @@ export default function PrivacyPolicyPage() {
               <p>For privacy-related inquiries:</p>
               <ul className="list-disc list-inside space-y-2 pl-4">
                 <li><span className="font-semibold">WhatsApp:</span> <a href="https://wa.me/message/EJ6T3XS4OWK3M1" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://wa.me/message/EJ6T3XS4OWK3M1</a></li>
-                <li><span className="font-semibold">Telegram:</span> <a href="https://t.me/iCloudServer" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@iCloudServer</a></li>
+                <li><span className="font-semibold">Telegram:</span> <a href="https://t.me/iCloudUnlocks" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@iCloudUnlocks</a></li>
               </ul>
             </section>
 
-            <p className="text-center pt-6">Thank you for trusting iCloud Server.</p>
+            <p className="text-center pt-6">Thank you for trusting iCloud Unlocks.</p>
           </div>
         </div>
       </main>
@@ -126,7 +126,7 @@ export default function PrivacyPolicyPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                        <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                        <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
@@ -142,7 +142,7 @@ export default function PrivacyPolicyPage() {
                 </div>
                 <div>
                     <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudServerGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
+                    <a href="https://t.me/iCloudUnlocksGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
                         <Image 
                             src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram Group" 
@@ -153,7 +153,7 @@ export default function PrivacyPolicyPage() {
                         Telegram Channel
                     </a>
                     <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudServer" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
+                     <a href="https://t.me/iCloudUnlocks" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
                         <Image 
                              src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram" 
@@ -170,7 +170,7 @@ export default function PrivacyPolicyPage() {
                 </div>
             </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 iCloud Server. All rights reserved.</p>
+            <p>&copy; 2025 iCloud Unlocks. All rights reserved.</p>
           </div>
         </div>
       </footer>

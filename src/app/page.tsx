@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 
-const ADMIN_EMAIL = 'iunlockapple01@gmail.com';
+const ADMIN_EMAIL = 'iunlockapple@gmail.com';
 
 const reviews = [
   {
@@ -24,7 +24,7 @@ const reviews = [
       'https://picsum.photos/seed/review1a/200/300',
       'https://picsum.photos/seed/review1b/200/300'
     ],
-    review: '"Absolutely thrilled with iCloud Server! My iPad Air 2 was unlocked incredibly fast. The process was straightforward, and their customer service was very helpful. Highly recommend for anyone needing a reliable unlock service. Thank you!"',
+    review: '"Absolutely thrilled with iCloud Unlocks! My iPad Air 2 was unlocked incredibly fast. The process was straightforward, and their customer service was very helpful. Highly recommend for anyone needing a reliable unlock service. Thank you!"',
     unlockedDevice: 'iPad Air 2',
     imageHints: ['keypad', 'security']
   },
@@ -37,7 +37,7 @@ const reviews = [
       'https://picsum.photos/seed/review2a/200/300',
       'https://picsum.photos/seed/review2b/200/300'
     ],
-    review: '"iCloud Server is truly reliable. I had an iPhone XS Max that needed unlocking, and they delivered exactly as promised. The support team was fantastic, guiding me through everything. A seamless and trustworthy experience from start to finish. Very satisfied!"',
+    review: '"iCloud Unlocks is truly reliable. I had an iPhone XS Max that needed unlocking, and they delivered exactly as promised. The support team was fantastic, guiding me through everything. A seamless and trustworthy experience from start to finish. Very satisfied!"',
     unlockedDevice: 'iPhone XS Max',
     imageHints: ['keypad', 'security']
   },
@@ -50,7 +50,7 @@ const reviews = [
       'https://picsum.photos/seed/review3a/200/300',
       'https://picsum.photos/seed/review3b/200/300'
     ],
-    review: '"My iPhone 11 Pro was unlocked in no time! I was skeptical at first, but iCloud Server proved to be super efficient and reliable. The instructions were clear, and I got my device working perfectly. Excellent service, highly recommended to everyone!"',
+    review: '"My iPhone 11 Pro was unlocked in no time! I was skeptical at first, but iCloud Unlocks proved to be super efficient and reliable. The instructions were clear, and I got my device working perfectly. Excellent service, highly recommended to everyone!"',
     unlockedDevice: 'iPhone 11 Pro',
     imageHints: ['keypad', 'security']
   },
@@ -63,7 +63,7 @@ const reviews = [
       'https://picsum.photos/seed/review4a/200/300',
       'https://picsum.photos/seed/review4b/200/300'
     ],
-    review: '"Fantastic service for my Apple Watch Series 6! iCloud Server provided a super fast and secure unlock. Their customer service was excellent, answering all my questions promptly. I am very impressed with their professionalism and highly recommend them!"',
+    review: '"Fantastic service for my Apple Watch Series 6! iCloud Unlocks provided a super fast and secure unlock. Their customer service was excellent, answering all my questions promptly. I am very impressed with their professionalism and highly recommend them!"',
     unlockedDevice: 'Apple Watch Series 6',
     imageHints: ['keypad', 'security']
   },
@@ -89,7 +89,7 @@ const reviews = [
       'https://picsum.photos/seed/review6a/200/300',
       'https://picsum.photos/seed/review6b/200/300'
     ],
-    review: '"I was about to give up on my old iPhone 12, but iCloud Server came to the rescue. The unlock was successful, and the price was very reasonable. The entire process felt secure and professional. Thank you so much for your help!"',
+    review: '"I was about to give up on my old iPhone 12, but iCloud Unlocks came to the rescue. The unlock was successful, and the price was very reasonable. The entire process felt secure and professional. Thank you so much for your help!"',
     unlockedDevice: 'iPhone 12',
     imageHints: ['phone', 'hand']
   },
@@ -102,7 +102,7 @@ const reviews = [
       'https://picsum.photos/seed/review7a/200/300',
       'https://picsum.photos/seed/review7b/200/300'
     ],
-    review: '"Unlocking my iPad Pro was a breeze with iCloud Server. The team was responsive and kept me updated. It\'s great to have my device fully functional again. I couldn\'t be happier with the outcome. Highly trustworthy and efficient service!"',
+    review: '"Unlocking my iPad Pro was a breeze with iCloud Unlocks. The team was responsive and kept me updated. It\'s great to have my device fully functional again. I couldn\'t be happier with the outcome. Highly trustworthy and efficient service!"',
     unlockedDevice: 'iPad Pro 11"',
     imageHints: ['tablet', 'creative']
   },
@@ -115,7 +115,7 @@ const reviews = [
       'https://picsum.photos/seed/review8a/200/300',
       'https://picsum.photos/seed/review8b/200/300'
     ],
-    review: '"My Apple Watch SE had been locked for months. I found iCloud Server and decided to give them a try. Best decision ever! The unlock was quick and flawless. Their support is world-class. I highly recommend their services to everyone!"',
+    review: '"My Apple Watch SE had been locked for months. I found iCloud Unlocks and decided to give them a try. Best decision ever! The unlock was quick and flawless. Their support is world-class. I highly recommend their services to everyone!"',
     unlockedDevice: 'Apple Watch SE',
     imageHints: ['smartwatch', 'lifestyle']
   }
@@ -197,7 +197,7 @@ const AnimatedCounter = ({ endValue, duration = 2000, label, icon: Icon }: { end
 };
 
 
-export default function IcloudServerPage() {
+export default function IcloudUnlocksPage() {
   const { data: user } = useUser();
   const isAdmin = user?.email === ADMIN_EMAIL;
   const { toast } = useToast();
@@ -236,7 +236,7 @@ export default function IcloudServerPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -370,7 +370,7 @@ export default function IcloudServerPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">Email</p>
-                    <p className="text-gray-600">support@icloudserver.com</p>
+                    <p className="text-gray-600">support@icloudunlocks.com</p>
                   </div>
                 </div>
                 <div className="flex items-center">
@@ -414,7 +414,7 @@ export default function IcloudServerPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                        <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                        <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
@@ -430,7 +430,7 @@ export default function IcloudServerPage() {
                 </div>
                 <div>
                     <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudServerGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
+                    <a href="https://t.me/iCloudUnlocksGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
                         <Image 
                             src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram Group" 
@@ -441,7 +441,7 @@ export default function IcloudServerPage() {
                         Telegram Channel
                     </a>
                     <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudServer" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
+                     <a href="https://t.me/iCloudUnlocks" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
                         <Image 
                              src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram" 
@@ -458,12 +458,10 @@ export default function IcloudServerPage() {
                 </div>
             </div>
             <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2025 iCloud Server. All rights reserved.</p>
+                <p>&copy; 2025 iCloud Unlocks. All rights reserved.</p>
             </div>
         </div>
       </footer>
     </div>
   );
 }
-
-    

@@ -15,7 +15,7 @@ export default function ServicesPage() {
   const router = useRouter();
 
   const getImage = (id: string) => PlaceHolderImages.find(img => img.id === id);
-  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple@gmail.com';
 
   const handleUnlockClick = (device: { name: string, price: number }) => {
     const params = new URLSearchParams({
@@ -111,7 +111,7 @@ export default function ServicesPage() {
             <div className="flex justify-between items-center h-16">
                 <div className="flex items-center">
                     <Link href="/" className="flex items-center gap-2">
-                        <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                        <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
                     </Link>
                 </div>
                 <div className="hidden md:block">
@@ -240,7 +240,7 @@ export default function ServicesPage() {
         <section className="text-center py-20 bg-white">
             <h2 className="text-3xl font-bold text-gray-900">Contact Us</h2>
             <p className="mt-4 text-lg text-gray-600">Ready to unlock your device? Get in touch with us today.</p>
-            <a href="mailto:info@icloudserver.com">
+            <a href="mailto:info@icloudunlocks.com">
                 <Button className="mt-8 btn-primary text-white px-8 py-4 rounded-lg font-semibold text-lg h-auto">
                     Email Us
                 </Button>
@@ -253,7 +253,7 @@ export default function ServicesPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                        <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                        <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
@@ -269,7 +269,7 @@ export default function ServicesPage() {
                 </div>
                 <div>
                     <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudServerGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
+                    <a href="https://t.me/iCloudUnlocksGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
                         <Image 
                             src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram Group" 
@@ -280,7 +280,7 @@ export default function ServicesPage() {
                         Telegram Channel
                     </a>
                     <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudServer" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
+                     <a href="https://t.me/iCloudUnlocks" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
                         <Image 
                              src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram" 
@@ -297,7 +297,7 @@ export default function ServicesPage() {
                 </div>
             </div>
             <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2025 iCloud Server. All rights reserved.</p>
+                <p>&copy; 2025 iCloud Unlocks. All rights reserved.</p>
             </div>
         </div>
       </footer>

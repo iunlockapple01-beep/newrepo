@@ -60,7 +60,7 @@ function AdminDashboard() {
   const [feedbackValues, setFeedbackValues] = useState<{ [key: string]: string }>({});
   const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' }>({});
 
-  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple@gmail.com';
 
   useEffect(() => {
     if (userLoading) {
@@ -155,7 +155,7 @@ function AdminDashboard() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
               </Link>
             </div>
             <div className="hidden md:block">

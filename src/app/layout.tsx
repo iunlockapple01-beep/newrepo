@@ -4,7 +4,7 @@ import './globals.css';
 import { FirebaseProvider } from '@/firebase/provider';
 
 export const metadata: Metadata = {
-  title: 'iCloud Server - Professional Apple Device Unlocking Service',
+  title: 'iCloud Unlocks - Professional Apple Device Unlocking Service',
   description: 'Unlock your Apple devices safely and professionally. We support iPhones, iPads, MacBooks, and Apple Watches.',
 };
 

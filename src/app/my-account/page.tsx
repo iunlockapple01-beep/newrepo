@@ -41,7 +41,7 @@ function MyAccountContent() {
   const usdtImage = PlaceHolderImages.find(img => img.id === 'usdt-icon');
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
   
-  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple@gmail.com';
 
   if (userLoading || !user) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
@@ -54,7 +54,7 @@ function MyAccountContent() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                 <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                 <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -165,7 +165,7 @@ function MyAccountContent() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                        <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                        <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
@@ -181,7 +181,7 @@ function MyAccountContent() {
                 </div>
                 <div>
                     <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudServerGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
+                    <a href="https://t.me/iCloudUnlocksGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
                         <Image 
                             src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram Group" 
@@ -192,7 +192,7 @@ function MyAccountContent() {
                         Telegram Channel
                     </a>
                     <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudServer" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
+                     <a href="https://t.me/iCloudUnlocks" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
                         <Image 
                              src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram" 
@@ -216,7 +216,7 @@ function MyAccountContent() {
                     <Link href="/contact">Contact Us</Link> |
                     <Link href="/faq">FAQ</Link>
                 </p>
-                <p className="mt-4">&copy; 2025 iCloud Server. All rights reserved.</p>
+                <p className="mt-4">&copy; 2025 iCloud Unlocks. All rights reserved.</p>
             </div>
         </div>
       </footer>
@@ -228,5 +228,3 @@ function MyAccountContent() {
 export default function MyAccountPage() {
     return <MyAccountContent />
 }
-
-    

@@ -10,7 +10,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function ContactPage() {
   const { data: user } = useUser();
-  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple@gmail.com';
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
 
   const contactMethods = [
@@ -24,23 +24,23 @@ export default function ContactPage() {
     { 
       icon: 'telegram',
       title: 'Telegram', 
-      value: '@iCloudServer', 
-      link: 'https://t.me/iCloudServer',
+      value: '@iCloudUnlocks', 
+      link: 'https://t.me/iCloudUnlocks',
       note: 'Direct messaging'
     },
     { 
       icon: Mail, 
       title: 'Email', 
-      value: 'support@icloudserver.com', 
-      link: 'mailto:support@icloudserver.com',
+      value: 'support@icloudunlocks.com', 
+      link: 'mailto:support@icloudunlocks.com',
       note: 'For detailed inquiries'
     },
   ];
   
   const socialChannels = [
-    { icon: 'telegram', name: 'Telegram Group', handle: 'iCloudServerGroup', link: 'https://t.me/iCloudServerGroup' },
-    { icon: 'twitter', name: 'Twitter', handle: '@iCloudServer', link: '#' },
-    { icon: 'facebook', name: 'Facebook', handle: 'iCloud Server', link: '#' },
+    { icon: 'telegram', name: 'Telegram Group', handle: 'iCloudUnlocksGroup', link: 'https://t.me/iCloudUnlocksGroup' },
+    { icon: 'twitter', name: 'Twitter', handle: '@iCloudUnlocks', link: '#' },
+    { icon: 'facebook', name: 'Facebook', handle: 'iCloud Unlocks', link: '#' },
   ];
 
   return (
@@ -50,7 +50,7 @@ export default function ContactPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -135,7 +135,7 @@ export default function ContactPage() {
                         <div>
                             <p className="font-semibold">Mailing Address</p>
                             <address className="not-italic text-gray-600">
-                                iCloud Server<br />
+                                iCloud Unlocks<br />
                                 123 Unlock Services Lane<br />
                                 Tech City, TX 75001, USA
                             </address>
@@ -158,7 +158,7 @@ export default function ContactPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                      <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                      <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
@@ -174,7 +174,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                     <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudServerGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
+                    <a href="https://t.me/iCloudUnlocksGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
                         <Image 
                             src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram Group" 
@@ -185,7 +185,7 @@ export default function ContactPage() {
                         Telegram Channel
                     </a>
                     <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudServer" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
+                     <a href="https://t.me/iCloudUnlocks" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
                         <Image 
                              src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram" 
@@ -202,7 +202,7 @@ export default function ContactPage() {
                 </div>
             </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 iCloud Server. All rights reserved.</p>
+            <p>&copy; 2025 iCloud Unlocks. All rights reserved.</p>
           </div>
         </div>
       </footer>

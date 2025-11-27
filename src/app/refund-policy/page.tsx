@@ -10,7 +10,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function RefundPolicyPage() {
   const { data: user } = useUser();
-  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple@gmail.com';
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
 
   return (
@@ -20,7 +20,7 @@ export default function RefundPolicyPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -42,10 +42,10 @@ export default function RefundPolicyPage() {
 
       <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
-          <h1 className="text-4xl font-bold text-center mb-8">Refund Policy – iCloud Server</h1>
+          <h1 className="text-4xl font-bold text-center mb-8">Refund Policy – iCloud Unlocks</h1>
           
           <div className="space-y-6 text-lg text-gray-700 prose lg:prose-xl max-w-none">
-            <p>At iCloud Server, we value transparency, fairness, and customer satisfaction. Our refund policy is designed to protect both the client and the service provider while ensuring a smooth unlocking experience.</p>
+            <p>At iCloud Unlocks, we value transparency, fairness, and customer satisfaction. Our refund policy is designed to protect both the client and the service provider while ensuring a smooth unlocking experience.</p>
             
             <section>
               <h2 className="font-semibold text-gray-900">1. Eligibility for Refund</h2>
@@ -135,7 +135,7 @@ export default function RefundPolicyPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                        <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
+                        <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
@@ -151,7 +151,7 @@ export default function RefundPolicyPage() {
                 </div>
                 <div>
                     <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudServerGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
+                    <a href="https://t.me/iCloudUnlocksGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
                         <Image 
                             src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram Group" 
@@ -162,7 +162,7 @@ export default function RefundPolicyPage() {
                         Telegram Channel
                     </a>
                     <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudServer" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
+                     <a href="https://t.me/iCloudUnlocks" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
                         <Image 
                              src={telegramIconImage?.imageUrl || ''} 
                             alt="Telegram" 
@@ -179,7 +179,7 @@ export default function RefundPolicyPage() {
                 </div>
             </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 iCloud Server. All rights reserved.</p>
+            <p>&copy; 2025 iCloud Unlocks. All rights reserved.</p>
           </div>
         </div>
       </footer>
