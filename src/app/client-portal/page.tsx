@@ -151,9 +151,9 @@ function DeviceCheckContent() {
       };
 
       addDoc(collection(firestore, 'orders'), newOrder)
-        .then(() => {
+        .then((docRef) => {
             setPaymentModalOpen(false);
-            alert('Payment submitted for confirmation. You will be redirected to your account page.');
+            alert(`Payment submitted for confirmation. Your Order ID is: ${docRef.id}. You will be redirected to your account page.`);
             router.push('/my-account');
         })
         .catch(async (serverError) => {
