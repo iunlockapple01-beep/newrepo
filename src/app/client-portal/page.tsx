@@ -307,7 +307,7 @@ function DeviceCheckContent() {
                     <ul className="space-y-2 text-gray-400">
                         <li><a href="#" className="hover:text-white">Help Center</a></li>
                         <li><a href="#" className="hover:text-white">Contact Us</a></li>
-                        <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
+                        <li><Link href="/privacy" className="hover:text-white">Privacy Policy</Link></li>
                         <li><a href="#" className="hover:text-white">Terms of Service</a></li>
                     </ul>
                 </div>
@@ -335,7 +335,7 @@ function DeviceCheckContent() {
             <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
                  <p>
                     <a href="/terms">Terms & Conditions</a> |
-                    <a href="/privacy">Privacy Policy</a> |
+                    <Link href="/privacy">Privacy Policy</Link> |
                     <a href="/reviews">Reviews</a> |
                     <a href="/contact">Contact Us</a> |
                     <a href="/faq">FAQ</a>
@@ -394,3 +394,5 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
+
+    
