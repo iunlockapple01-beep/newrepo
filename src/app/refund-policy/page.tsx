@@ -94,7 +94,7 @@ export default function RefundPolicyPage() {
                     <li>Verify registration results.</li>
                     <li>Confirm unlock attempt records.</li>
                 </ul>
-                <p>This ensures fairness and prevents misuse.</p>
+                <p>This ensures fairness and prevents misuse.</p>ja
             </section>
 
             <section>
