@@ -18,14 +18,11 @@ export default function ServicesPage() {
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   const handleUnlockClick = (device: { name: string, price: number }) => {
-    const deviceImage = getImage('post-2');
     const params = new URLSearchParams({
         model: device.name,
         price: device.price.toString(),
+        image: 'https://i.postimg.cc/mrKv0Xpk/post_1_(1).png',
     });
-    if (deviceImage) {
-        params.append('image', deviceImage.imageUrl);
-    }
 
     const portalUrl = `/client-portal?${params.toString()}`;
 
