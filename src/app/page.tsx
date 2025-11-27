@@ -8,32 +8,74 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Cloud, Apple, Tablet, Laptop, Watch, Star, Mail, Phone, Clock, Twitter, Facebook, Instagram } from 'lucide-react';
+import { Cloud, Apple, Tablet, Laptop, Watch, Mail, Phone, Clock, Twitter, Facebook, Instagram } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
 import { useUser } from '@/firebase';
-
-
-const StarRating = ({ rating }: { rating: number }) => {
-  return (
-    <div className="flex text-yellow-400">
-      {Array.from({ length: 5 }, (_, i) => (
-        <Star key={i} className={`w-5 h-5 ${i < rating ? 'fill-current' : ''}`} />
-      ))}
-    </div>
-  );
-};
+import Image from 'next/image';
 
 const ADMIN_EMAIL = 'iunlockapple01@gmail.com';
+
+const reviews = [
+  {
+    name: 'Emma R.',
+    avatarUrl: 'https://picsum.photos/seed/emma/40/40',
+    flag: '🇬🇧',
+    date: 'May 20, 2024',
+    images: [
+      'https://picsum.photos/seed/review1a/200/300',
+      'https://picsum.photos/seed/review1b/200/300'
+    ],
+    review: '"Absolutely thrilled with iCloud Server! My iPad Air 2 was unlocked incredibly fast. The process was straightforward, and their customer service was very helpful. Highly recommend for anyone needing a reliable unlock service. Thank you!"',
+    unlockedDevice: 'iPad Air 2',
+    imageHints: ['keypad', 'security']
+  },
+  {
+    name: 'Michael S.',
+    avatarUrl: 'https://picsum.photos/seed/michael/40/40',
+    flag: '🇺🇸',
+    date: 'April 15, 2024',
+    images: [
+      'https://picsum.photos/seed/review2a/200/300',
+      'https://picsum.photos/seed/review2b/200/300'
+    ],
+    review: '"iCloud Server is truly reliable. I had an iPhone XS Max that needed unlocking, and they delivered exactly as promised. The support team was fantastic, guiding me through everything. A seamless and trustworthy experience from start to finish. Very satisfied!"',
+    unlockedDevice: 'iPhone XS Max',
+    imageHints: ['keypad', 'security']
+  },
+  {
+    name: 'David K.',
+    avatarUrl: 'https://picsum.photos/seed/david/40/40',
+    flag: '🇰🇪',
+    date: 'June 01, 2024',
+    images: [
+      'https://picsum.photos/seed/review3a/200/300',
+      'https://picsum.photos/seed/review3b/200/300'
+    ],
+    review: '"My iPhone 11 Pro was unlocked in no time! I was skeptical at first, but iCloud Server proved to be super efficient and reliable. The instructions were clear, and I got my device working perfectly. Excellent service, highly recommended to everyone!"',
+    unlockedDevice: 'iPhone 11 Pro',
+    imageHints: ['keypad', 'security']
+  },
+    {
+    name: 'Sofia G.',
+    avatarUrl: 'https://picsum.photos/seed/sofia/40/40',
+    flag: '🇪🇸',
+    date: 'May 05, 2024',
+    images: [
+      'https://picsum.photos/seed/review4a/200/300',
+      'https://picsum.photos/seed/review4b/200/300'
+    ],
+    review: '"Fantastic service for my Apple Watch Series 6! iCloud Server provided a super fast and secure unlock. Their customer service was excellent, answering all my questions promptly. I am very impressed with their professionalism and highly recommend them!"',
+    unlockedDevice: 'Apple Watch Series 6',
+    imageHints: ['keypad', 'security']
+  }
+];
+
 
 export default function IcloudServerPage() {
   const [deviceCheckModalOpen, setDeviceCheckModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState('');
   const { data: user } = useUser();
   const isAdmin = user?.email === ADMIN_EMAIL;
-
-  const scrollToServices = () => {
-    document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const showDeviceCheck = (device = '') => {
     setSelectedDevice(device);
@@ -166,40 +208,28 @@ export default function IcloudServerPage() {
             <p className="text-xl text-gray-600">Trusted by thousands of customers worldwide</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <div className="flex items-center mb-4"><StarRating rating={5} /></div>
-              <p className="text-gray-700 mb-4">"Excellent service! My iPhone was unlocked within 24 hours. Highly recommended!"</p>
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
-                <div>
-                  <p className="font-semibold text-gray-900">John D.</p>
-                  <p className="text-sm text-gray-600">iPhone 13 Pro</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {reviews.map((review, index) => (
+              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg flex flex-col">
+                <div className="flex items-center mb-3">
+                  <Image src={review.avatarUrl} alt={review.name} width={40} height={40} className="rounded-full mr-3" />
+                  <div>
+                    <p className="font-semibold text-gray-900 flex items-center">{review.name} <span className="ml-2">{review.flag}</span></p>
+                    <p className="text-xs text-gray-500">Reviewed on: {review.date}</p>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <div className="flex items-center mb-4"><StarRating rating={5} /></div>
-              <p className="text-gray-700 mb-4">"Professional and fast. My iPad was unlocked successfully. Great communication!"</p>
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
-                <div>
-                  <p className="font-semibold text-gray-900">Sarah M.</p>
-                  <p className="text-sm text-gray-600">iPad Air</p>
+                <div className="grid grid-cols-2 gap-2 mb-4">
+                  <div className="relative aspect-[2/3] rounded-lg overflow-hidden">
+                    <Image src={review.images[0]} alt="Review image 1" layout="fill" objectFit="cover" data-ai-hint={review.imageHints.join(' ')} />
+                  </div>
+                   <div className="relative aspect-[2/3] rounded-lg overflow-hidden">
+                    <Image src={review.images[1]} alt="Review image 2" layout="fill" objectFit="cover" data-ai-hint={review.imageHints.join(' ')} />
+                  </div>
                 </div>
+                <p className="text-gray-700 text-sm mb-4 flex-grow">{review.review}</p>
+                <p className="text-sm font-semibold text-gray-500 mt-auto">Unlocked: {review.unlockedDevice}</p>
               </div>
-            </div>
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <div className="flex items-center mb-4"><StarRating rating={5} /></div>
-              <p className="text-gray-700 mb-4">"Reliable service with fair pricing. My MacBook is now fully functional!"</p>
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
-                <div>
-                  <p className="font-semibold text-gray-900">Mike R.</p>
-                  <p className="text-sm text-gray-600">MacBook Pro</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -332,3 +362,5 @@ export default function IcloudServerPage() {
     </div>
   );
 }
+
+    
