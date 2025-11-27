@@ -214,7 +214,7 @@ export default function IcloudServerPage() {
     }, 3000);
   };
   
-  const [counters, setCounters] = useState({ users: 9378, devices: 5676 });
+  const [counters, setCounters] = useState({ users: 5378, devices: 9378 });
 
   useEffect(() => {
       const startDate = new Date('2024-01-01');
@@ -222,8 +222,8 @@ export default function IcloudServerPage() {
       const timeDiff = today.getTime() - startDate.getTime();
       const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
       
-      const registeredUsers = 9378 + Math.floor(daysPassed * 3.5); // avg of 2-5
-      const unlockedDevices = 5676 + Math.floor(daysPassed * 9.5); // avg of 6-13
+      const registeredUsers = 5378 + Math.floor(daysPassed * 3.5); // avg of 2-5
+      const unlockedDevices = 9378 + Math.floor(daysPassed * 9.5); // avg of 6-13
 
       setCounters({ users: registeredUsers, devices: unlockedDevices });
   }, []);
