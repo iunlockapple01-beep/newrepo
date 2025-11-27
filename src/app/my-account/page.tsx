@@ -122,6 +122,7 @@ function MyAccountContent() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Order Date</TableHead>
+                    <TableHead>Order ID</TableHead>
                     <TableHead>Service</TableHead>
                     <TableHead>Device</TableHead>
                     <TableHead>IMEI</TableHead>
@@ -133,6 +134,7 @@ function MyAccountContent() {
                   {orders.map(order => (
                     <TableRow key={order.id}>
                       <TableCell>{order.createdAt.toDate().toLocaleDateString()}</TableCell>
+                      <TableCell className="font-mono text-xs">{order.id}</TableCell>
                       <TableCell>iCloud Unlock</TableCell>
                       <TableCell>{order.model}</TableCell>
                       <TableCell className="font-mono text-xs">{order.imei}</TableCell>
@@ -226,3 +228,5 @@ function MyAccountContent() {
 export default function MyAccountPage() {
     return <MyAccountContent />
 }
+
+    
