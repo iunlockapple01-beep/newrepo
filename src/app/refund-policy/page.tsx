@@ -5,10 +5,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useUser } from '@/firebase';
 import { LoginButton } from '@/components/login-button';
-import { Cloud, Twitter, Facebook, Instagram, MessageSquare } from 'lucide-react';
+import { Cloud, MessageSquare } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-export default function PrivacyPolicyPage() {
+export default function RefundPolicyPage() {
   const { data: user } = useUser();
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
@@ -20,7 +20,7 @@ export default function PrivacyPolicyPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="text-2xl font-bold text-gradient flex items-center gap-2">
-                <Cloud /> iCloud Server
+                <Cloud /> iUnlock Apple
               </Link>
             </div>
             <div className="hidden md:block">
@@ -44,81 +44,90 @@ export default function PrivacyPolicyPage() {
 
       <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
-          <h1 className="text-4xl font-bold text-center mb-8">Privacy Policy – iCloud Server</h1>
+          <h1 className="text-4xl font-bold text-center mb-8">Refund Policy – iUnlock Apple</h1>
           
-          <div className="space-y-6 text-lg text-gray-700">
+          <div className="space-y-6 text-lg text-gray-700 prose lg:prose-xl">
+            <p>At iUnlock Apple, we value transparency, fairness, and customer satisfaction. Our refund policy is designed to protect both the client and the service provider while ensuring a smooth unlocking experience.</p>
+            
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Introduction</h2>
-              <p>At iCloud Server, we are committed to respecting and protecting your privacy. This policy describes the type of information we collect and how we manage and safeguard it.</p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Information We Collect</h2>
-              <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">Personal Information</h3>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Name, email, phone number</li>
-                <li>Device identifiers such as IMEI, serial number, and model</li>
-                <li>Payment-related information (we do not store full payment details)</li>
-              </ul>
-              <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">Non-Personal Information</h3>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Website usage data</li>
-                <li>IP address, browser type, operating system</li>
+              <h2 className="font-semibold text-gray-900">1. Eligibility for Refund</h2>
+              <p>A refund is issued only if the unlock process is not completed due to reasons from our side or server-side limitations. Refunds apply in the following cases:</p>
+              <ul>
+                <li>The device fails to unlock after successful registration.</li>
+                <li>The server marks the service as Rejected, Unsupported, or Failed.</li>
+                <li>We determine that the device is not eligible for unlocking after payment was made.</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">How Your Information Is Used</h2>
-              <p>We use your information to:</p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Deliver and improve our unlocking services</li>
-                <li>Provide customer support</li>
-                <li>Process and verify payments</li>
-                <li>Communicate updates and service information</li>
-                <li>Comply with legal obligations</li>
+              <h2 className="font-semibold text-gray-900">2. Non-Refundable Situations</h2>
+              <p>A refund will not be issued in the following cases:</p>
+               <ul>
+                <li>The client provides wrong IMEI or serial number.</li>
+                <li>The device changes status (e.g., new iCloud lock, lost mode, blacklisted) after the order is placed.</li>
+                <li>The client restores, erases, or attempts third-party bypasses, causing conflicts during the unlock process.</li>
+                <li>The client cancels the order while the unlock is already in progress or registration is completed.</li>
+                <li>The client fails to follow instructions for device activation after FMI is turned off.</li>
               </ul>
             </section>
 
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Sharing of Information</h2>
-              <p>We do not sell or trade your information. We may share limited data with:</p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Trusted service partners that assist in service operations</li>
-                <li>Authorities if legally required</li>
-              </ul>
+             <section>
+                <h2 className="font-semibold text-gray-900">3. Refund Method</h2>
+                <p>Refunds are sent using the same payment method used during the transaction.</p>
+                <p>Crypto refunds (USDT, BTC, ETH) are returned exactly as received, except:</p>
+                <ul>
+                    <li>Network fees are deducted.</li>
+                    <li>Refund is based on value received, not current market price.</li>
+                </ul>
+            </section>
+
+             <section>
+                <h2 className="font-semibold text-gray-900">4. Processing Time</h2>
+                <p>Refunds are processed within 1–48 hours, depending on verification and network confirmation times for crypto payments.</p>
+            </section>
+            
+             <section>
+                <h2 className="font-semibold text-gray-900">5. Device Status Verification</h2>
+                <p>Before approving any refund, we will:</p>
+                 <ul>
+                    <li>Check server logs.</li>
+                    <li>Verify registration results.</li>
+                    <li>Confirm unlock attempt records.</li>
+                </ul>
+                <p>This ensures fairness and prevents misuse.</p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Security Measures</h2>
-              <p>We use industry-standard practices to protect your data. However, no online system is 100% secure, and we cannot guarantee absolute protection.</p>
+                <h2 className="font-semibold text-gray-900">6. Technical Issues</h2>
+                <p>If an unlock delay occurs due to:</p>
+                 <ul>
+                    <li>Server maintenance</li>
+                    <li>System congestion</li>
+                    <li>Extended registration times</li>
+                </ul>
+                <p>We may request additional time before initiating a refund. Most unlocks complete successfully, so patience is appreciated.</p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Your Rights</h2>
-              <p>You may request:</p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Copies of your personal data</li>
-                <li>Corrections to inaccurate information</li>
-                <li>Deletion of certain data (subject to legal limitations)</li>
-                <li>To object to specific types of processing</li>
-              </ul>
+                <h2 className="font-semibold text-gray-900">7. Integrity & Security</h2>
+                 <ul className="list-disc list-inside">
+                    <li>We do not store or request personal information from previous owners.</li>
+                    <li>Your device details remain confidential and are used strictly for unlocking purposes.</li>
+                </ul>
             </section>
-
+            
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Changes to Policy</h2>
-              <p>This Privacy Policy may be updated periodically. New versions will be posted with an updated date.</p>
+                <h2 className="font-semibold text-gray-900">8. Contact for Refunds</h2>
+                <p>To request a refund, contact us with:</p>
+                 <ul>
+                    <li>Order ID</li>
+                    <li>IMEI/Serial</li>
+                    <li>Payment screenshot</li>
+                    <li>A brief explanation</li>
+                </ul>
+                <p>Our team will review and respond promptly.</p>
             </section>
 
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Contact Information</h2>
-              <p>For privacy-related inquiries:</p>
-              <ul className="list-disc list-inside space-y-2 pl-4">
-                <li><span className="font-semibold">WhatsApp:</span> <a href="https://wa.me/message/EJ6T3XS4OWK3M1" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://wa.me/message/EJ6T3XS4OWK3M1</a></li>
-                <li><span className="font-semibold">Telegram:</span> <a href="https://t.me/iCloudServer" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@iCloudServer</a></li>
-              </ul>
-            </section>
-
-            <p className="text-center pt-6">Thank you for trusting iCloud Server.</p>
           </div>
         </div>
       </main>
