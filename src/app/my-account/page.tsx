@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Cloud, MessageSquare } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
 import { where } from 'firebase/firestore';
 
@@ -53,8 +53,8 @@ function MyAccountContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold text-gradient flex items-center gap-2">
-                <Cloud /> iCloud Server
+              <Link href="/" className="flex items-center gap-2">
+                 <Image src="https://i.postimg.cc/05hC7gM8/logo.png" alt="iCloud Server Logo" width={140} height={40} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -162,8 +162,8 @@ function MyAccountContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                    <div className="text-2xl font-bold text-gradient mb-4 flex items-center gap-2">
-                        <Cloud /> iCloud Server
+                    <div className="mb-4 flex items-center gap-2">
+                        <Image src="https://i.postimg.cc/05hC7gM8/logo.png" alt="iCloud Server Logo" width={140} height={40} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>

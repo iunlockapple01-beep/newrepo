@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Cloud, Apple, Tablet, Laptop, Watch, Mail, Phone, Clock, MessageSquare } from 'lucide-react';
+import { Apple, Tablet, Laptop, Watch, Mail, Phone, Clock, MessageSquare } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
 import { useUser } from '@/firebase';
 import Image from 'next/image';
@@ -183,8 +183,8 @@ export default function IcloudServerPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold text-gradient flex items-center gap-2">
-                <Cloud /> iCloud Server
+              <Link href="/" className="flex items-center gap-2">
+                <Image src="https://i.postimg.cc/05hC7gM8/logo.png" alt="iCloud Server Logo" width={140} height={40} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -360,8 +360,8 @@ export default function IcloudServerPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                    <div className="text-2xl font-bold text-gradient mb-4 flex items-center gap-2">
-                        <Cloud /> iCloud Server
+                    <div className="mb-4 flex items-center gap-2">
+                        <Image src="https://i.postimg.cc/05hC7gM8/logo.png" alt="iCloud Server Logo" width={140} height={40} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
@@ -439,5 +439,3 @@ export default function IcloudServerPage() {
     </div>
   );
 }
-
-    

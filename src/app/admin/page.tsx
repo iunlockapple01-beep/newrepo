@@ -19,13 +19,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Cloud } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import Image from 'next/image';
 
 interface Submission {
   id: string;
@@ -153,8 +153,8 @@ function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold text-gradient flex items-center gap-2">
-                <Cloud /> iCloud Server
+              <Link href="/" className="flex items-center gap-2">
+                <Image src="https://i.postimg.cc/05hC7gM8/logo.png" alt="iCloud Server Logo" width={140} height={40} />
               </Link>
             </div>
             <div className="hidden md:block">
