@@ -180,7 +180,7 @@ function MyAccountContent() {
                     <h4 className="font-semibold mb-4">Support</h4>
                     <ul className="space-y-2 text-gray-400">
                         <li><Link href="/faq" className="hover:text-white">FAQ</Link></li>
-                        <li><a href="#" className="hover:text-white">Contact Us</a></li>
+                        <li><Link href="/contact" className="hover:text-white">Contact Us</Link></li>
                         <li><Link href="/privacy" className="hover:text-white">Privacy Policy</Link></li>
                         <li><Link href="/terms" className="hover:text-white">Terms of Service</Link></li>
                     </ul>
@@ -211,8 +211,8 @@ function MyAccountContent() {
                     <Link href="/terms">Terms & Conditions</Link> |
                     <Link href="/privacy">Privacy Policy</Link> |
                     <a href="/reviews">Reviews</a> |
-                    <a href="/contact">Contact Us</a> |
-                    <a href="/faq">FAQ</a>
+                    <Link href="/contact">Contact Us</Link> |
+                    <Link href="/faq">FAQ</Link>
                 </p>
                 <p className="mt-4">&copy; 2025 iCloud Server. All rights reserved.</p>
             </div>

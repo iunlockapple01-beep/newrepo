@@ -34,7 +34,7 @@ export default function TermsPage() {
                   <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>
                 )}
                 <a href="/#about" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
-                <a href="/#contact" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
+                <Link href="/contact" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</Link>
                 <LoginButton />
               </div>
             </div>
@@ -161,7 +161,7 @@ export default function TermsPage() {
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-400">
                 <li><Link href="/faq" className="hover:text-white">FAQ</Link></li>
-                <li><Link href="/#contact" className="hover:text-white">Contact Us</Link></li>
+                <li><Link href="/contact" className="hover:text-white">Contact Us</Link></li>
                 <li><Link href="/privacy" className="hover:text-white">Privacy Policy</Link></li>
                 <li><Link href="/terms" className="hover:text-white">Terms of Service</Link></li>
               </ul>
