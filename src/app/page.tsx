@@ -4,11 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Apple, Tablet, Laptop, Watch, Mail, Phone, Clock, MessageSquare } from 'lucide-react';
+import { Mail, Phone, Clock, MessageSquare } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
 import { useUser } from '@/firebase';
 import Image from 'next/image';
@@ -153,18 +149,11 @@ const services = [
 ];
 
 export default function IcloudServerPage() {
-  const [deviceCheckModalOpen, setDeviceCheckModalOpen] = useState(false);
-  const [selectedDevice, setSelectedDevice] = useState('');
   const { data: user } = useUser();
   const isAdmin = user?.email === ADMIN_EMAIL;
   const { toast } = useToast();
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
 
-  const showDeviceCheck = (device = '') => {
-    setSelectedDevice(device);
-    setDeviceCheckModalOpen(true);
-  };
-  
   const handleAddReviewClick = () => {
     const { id, dismiss } = toast({
         title: "Unable to Add Review",
@@ -197,8 +186,6 @@ export default function IcloudServerPage() {
                 {isAdmin && (
                   <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>
                 )}
-                <a href="#about" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
-                <Link href="/contact" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</Link>
                 <LoginButton />
               </div>
             </div>
@@ -222,9 +209,6 @@ export default function IcloudServerPage() {
                     View Services
                 </Button>
             </Link>
-            <Button onClick={() => showDeviceCheck()} className="glass-effect text-white px-8 py-4 rounded-lg font-semibold text-lg hover-lift h-auto">
-              Check Device
-            </Button>
           </div>
         </div>
       </section>
@@ -238,7 +222,8 @@ export default function IcloudServerPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {services.map((service, index) => (
-                        <div key={index} className="bg-gray-100 rounded-2xl p-6 text-center hover-lift">
+                      <Link href="/services" key={index} className="block">
+                        <div className="bg-gray-100 rounded-2xl p-6 text-center hover-lift h-full flex flex-col">
                             <div className="relative h-40 w-full mb-4 rounded-lg overflow-hidden">
                                 <Image
                                     src={service.imageUrl}
@@ -248,11 +233,12 @@ export default function IcloudServerPage() {
                                 />
                             </div>
                             <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
-                            <p className="text-gray-600 mb-4">{service.description}</p>
-                            <Button onClick={() => showDeviceCheck(service.deviceName)} className="w-full btn-primary text-white py-2 rounded-lg mt-auto">
+                            <p className="text-gray-600 mb-4 flex-grow">{service.description}</p>
+                            <Button className="w-full btn-primary text-white py-2 rounded-lg mt-auto">
                                 Unlock Now
                             </Button>
                         </div>
+                      </Link>
                     ))}
                 </div>
             </div>
@@ -343,9 +329,9 @@ export default function IcloudServerPage() {
             
             <div>
               <form className="space-y-4" onSubmit={e => e.preventDefault()}>
-                <Input type="text" placeholder="Your Name" className="w-full form-input rounded-lg px-4 py-3 h-auto" />
-                <Input type="email" placeholder="Your Email" className="w-full form-input rounded-lg px-4 py-3 h-auto" />
-                <Textarea placeholder="Your Message" rows={4} className="w-full form-input rounded-lg px-4 py-3" />
+                <input type="text" placeholder="Your Name" className="w-full form-input rounded-lg px-4 py-3 h-auto" />
+                <input type="email" placeholder="Your Email" className="w-full form-input rounded-lg px-4 py-3 h-auto" />
+                <textarea placeholder="Your Message" rows={4} className="w-full form-input rounded-lg px-4 py-3" />
                 <Button type="submit" className="w-full btn-primary text-white py-3 rounded-lg font-semibold h-auto">
                   Send Message
                 </Button>
@@ -361,7 +347,7 @@ export default function IcloudServerPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                        <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={120} height={32} />
+                        <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
@@ -409,35 +395,6 @@ export default function IcloudServerPage() {
             </div>
         </div>
       </footer>
-      
-      {/* Device Check Modal */}
-      <Dialog open={deviceCheckModalOpen} onOpenChange={setDeviceCheckModalOpen}>
-        <DialogContent className="bg-white rounded-2xl p-8 max-w-md w-full">
-          <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold text-gray-900">Check Your Device</DialogTitle>
-            <DialogDescription className="text-center text-gray-600 mt-2">Enter your device IMEI or Serial Number</DialogDescription>
-          </DialogHeader>
-           <form className="space-y-4" onSubmit={e => e.preventDefault()}>
-            <Select value={selectedDevice} onValueChange={setSelectedDevice}>
-              <SelectTrigger className="w-full form-input rounded-lg px-4 py-3 h-auto">
-                <SelectValue placeholder="Select Device Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="iPhone">iPhone</SelectItem>
-                <SelectItem value="iPad">iPad</SelectItem>
-                <SelectItem value="MacBook">MacBook</SelectItem>
-                <SelectItem value="Apple Watch">Apple Watch</SelectItem>
-              </SelectContent>
-            </Select>
-            <Input type="text" placeholder="IMEI or Serial Number" className="w-full form-input rounded-lg px-4 py-3 h-auto" />
-            <Button type="submit" className="w-full btn-primary text-white py-3 rounded-lg font-semibold h-auto">
-              Check Device
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
-
-    

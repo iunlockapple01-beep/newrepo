@@ -198,8 +198,6 @@ function DeviceCheckContent() {
                         {isAdmin && (
                             <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>
                         )}
-                        <a href="/#about" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
-                        <Link href="/contact" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</Link>
                         <LoginButton />
                     </div>
                 </div>
@@ -290,7 +288,7 @@ function DeviceCheckContent() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                      <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={120} height={32} />
+                      <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
@@ -395,5 +393,3 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
-
-    
