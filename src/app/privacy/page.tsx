@@ -144,7 +144,7 @@ export default function PrivacyPolicyPage() {
             <div>
               <h4 className="font-semibold mb-4">Support</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Help Center</a></li>
+                <li><Link href="/faq" className="hover:text-white">FAQ</Link></li>
                 <li><Link href="/#contact" className="hover:text-white">Contact Us</Link></li>
                 <li><Link href="/privacy" className="hover:text-white">Privacy Policy</Link></li>
                 <li><Link href="/terms" className="hover:text-white">Terms of Service</Link></li>
@@ -179,5 +179,3 @@ export default function PrivacyPolicyPage() {
     </div>
   );
 }
-
-    
