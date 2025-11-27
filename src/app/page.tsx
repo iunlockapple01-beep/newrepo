@@ -217,7 +217,7 @@ export default function IcloudServerPage() {
   const [counters, setCounters] = useState({ users: 5378, devices: 9378 });
 
   useEffect(() => {
-      const startDate = new Date('2024-01-01');
+      const startDate = new Date('2024-07-28'); // Setting a fixed date to calculate from
       const today = new Date();
       const timeDiff = today.getTime() - startDate.getTime();
       const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
@@ -465,3 +465,5 @@ export default function IcloudServerPage() {
     </div>
   );
 }
+
+    
