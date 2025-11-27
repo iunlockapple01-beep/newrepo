@@ -20,7 +20,7 @@ export default function RefundPolicyPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                <Image src="https://i.postimg.cc/05hC7gM8/logo.png" alt="iCloud Server Logo" width={140} height={40} />
+                <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={150} height={40} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -137,7 +137,7 @@ export default function RefundPolicyPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                        <Image src="https://i.postimg.cc/05hC7gM8/logo.png" alt="iCloud Server Logo" width={140} height={40} />
+                        <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={150} height={40} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
