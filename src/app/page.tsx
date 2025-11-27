@@ -125,6 +125,32 @@ const reviews = [
   }
 ];
 
+const services = [
+    {
+      title: 'iPhone iCloud Unlock',
+      description: 'We provide reliable solutions to remove iCloud locks from all iPhone models.',
+      imageUrl: 'https://i.postimg.cc/8Cx2qKXT/iphone.jpg',
+      deviceName: 'iPhone',
+    },
+    {
+      title: 'iPad Unlock',
+      description: 'Unlock your iPad easily and regain full access to your Apple ecosystem.',
+      imageUrl: 'https://i.postimg.cc/XvZM1SLq/ipades.jpg',
+      deviceName: 'iPad',
+    },
+    {
+      title: 'MacBook Unlock',
+      description: 'Get professional iCloud lock removal for MacBooks and access your data again.',
+      imageUrl: 'https://i.postimg.cc/wBtK482t/mac2.png',
+      deviceName: 'MacBook',
+    },
+    {
+      title: 'Apple Watch Unlock',
+      description: 'We also handle iCloud unlocks for all Apple Watch series quickly and securely.',
+      imageUrl: 'https://i.postimg.cc/wBnCSf4v/watch.png',
+      deviceName: 'Apple Watch',
+    },
+];
 
 export default function IcloudServerPage() {
   const [deviceCheckModalOpen, setDeviceCheckModalOpen] = useState(false);
@@ -204,69 +230,33 @@ export default function IcloudServerPage() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
-            <p className="text-xl text-gray-600">Professional unlocking for all Apple devices</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="device-card rounded-2xl p-6 hover-lift">
-              <div className="text-center">
-                <div className="w-16 h-16 apple-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Apple className="text-white text-2xl" />
+        <section id="services" className="py-20 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center mb-16">
+                    <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
+                    <p className="text-xl text-gray-600">Professional unlocking for all Apple devices</p>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">iPhone</h3>
-                <p className="text-gray-600 mb-4">All models supported</p>
-                <div className="text-2xl font-bold text-gradient mb-4">$49</div>
-                <Button onClick={() => showDeviceCheck('iPhone')} className="w-full btn-primary text-white py-2 rounded-lg">
-                  Unlock Now
-                </Button>
-              </div>
-            </div>
-            <div className="device-card rounded-2xl p-6 hover-lift">
-              <div className="text-center">
-                <div className="w-16 h-16 apple-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Tablet className="text-white text-2xl" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {services.map((service, index) => (
+                        <div key={index} className="bg-gray-100 rounded-2xl p-6 text-center hover-lift">
+                            <div className="relative h-40 w-full mb-4 rounded-lg overflow-hidden">
+                                <Image
+                                    src={service.imageUrl}
+                                    alt={service.title}
+                                    layout="fill"
+                                    objectFit="contain"
+                                />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
+                            <p className="text-gray-600 mb-4">{service.description}</p>
+                            <Button onClick={() => showDeviceCheck(service.deviceName)} className="w-full btn-primary text-white py-2 rounded-lg mt-auto">
+                                Unlock Now
+                            </Button>
+                        </div>
+                    ))}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">iPad</h3>
-                <p className="text-gray-600 mb-4">All models supported</p>
-                <div className="text-2xl font-bold text-gradient mb-4">$39</div>
-                <Button onClick={() => showDeviceCheck('iPad')} className="w-full btn-primary text-white py-2 rounded-lg">
-                  Unlock Now
-                </Button>
-              </div>
             </div>
-            <div className="device-card rounded-2xl p-6 hover-lift">
-              <div className="text-center">
-                <div className="w-16 h-16 apple-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Laptop className="text-white text-2xl" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">MacBook</h3>
-                <p className="text-gray-600 mb-4">All models supported</p>
-                <div className="text-2xl font-bold text-gradient mb-4">$69</div>
-                <Button onClick={() => showDeviceCheck('MacBook')} className="w-full btn-primary text-white py-2 rounded-lg">
-                  Unlock Now
-                </Button>
-              </div>
-            </div>
-            <div className="device-card rounded-2xl p-6 hover-lift">
-              <div className="text-center">
-                <div className="w-16 h-16 apple-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Watch className="text-white text-2xl" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Apple Watch</h3>
-                <p className="text-gray-600 mb-4">All models supported</p>
-                <div className="text-2xl font-bold text-gradient mb-4">$29</div>
-                <Button onClick={() => showDeviceCheck('Apple Watch')} className="w-full btn-primary text-white py-2 rounded-lg">
-                  Unlock Now
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
 
       {/* Reviews Section */}
       <section id="about" className="py-20 bg-gray-50">
