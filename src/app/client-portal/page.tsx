@@ -16,7 +16,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { LoginButton } from '@/components/login-button';
-import { Cloud, Twitter, Facebook, Instagram, MessageSquare } from 'lucide-react';
+import { Cloud, MessageSquare } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirebase, useDoc } from '@/firebase';
 import { addDoc, collection, doc, serverTimestamp } from 'firebase/firestore';
@@ -394,5 +394,3 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
-
-    

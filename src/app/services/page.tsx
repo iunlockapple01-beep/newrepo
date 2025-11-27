@@ -8,7 +8,7 @@ import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { LoginButton } from '@/components/login-button';
-import { Cloud, MessageSquare, Twitter, Facebook, Instagram } from 'lucide-react';
+import { Cloud, MessageSquare } from 'lucide-react';
 
 export default function ServicesPage() {
   const { data: user } = useUser();
@@ -309,5 +309,3 @@ export default function ServicesPage() {
     </div>
   );
 }
-
-    

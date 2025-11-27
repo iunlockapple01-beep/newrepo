@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Cloud, Apple, Tablet, Laptop, Watch, Mail, Phone, Clock, Twitter, Facebook, Instagram, MessageSquare } from 'lucide-react';
+import { Cloud, Apple, Tablet, Laptop, Watch, Mail, Phone, Clock, MessageSquare } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
 import { useUser } from '@/firebase';
 import Image from 'next/image';
@@ -415,7 +415,7 @@ export default function IcloudServerPage() {
                 </div>
             </div>
             <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2024 iCloud Server. All rights reserved.</p>
+                <p>&copy; 2025 iCloud Server. All rights reserved.</p>
             </div>
         </div>
       </footer>
@@ -449,5 +449,3 @@ export default function IcloudServerPage() {
     </div>
   );
 }
-
-    

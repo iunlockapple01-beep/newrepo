@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useUser } from '@/firebase';
 import { LoginButton } from '@/components/login-button';
-import { Cloud, Twitter, Facebook, Instagram, MessageSquare } from 'lucide-react';
+import { Cloud, MessageSquare } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function PrivacyPolicyPage() {
@@ -179,5 +179,3 @@ export default function PrivacyPolicyPage() {
     </div>
   );
 }
-
-    

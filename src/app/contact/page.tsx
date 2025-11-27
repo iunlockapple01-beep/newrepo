@@ -5,9 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useUser } from '@/firebase';
 import { LoginButton } from '@/components/login-button';
-import { Cloud, Twitter, Facebook, Instagram, Mail, Phone, Clock, MessageSquare, Building } from 'lucide-react';
+import { Cloud, Mail, Clock, MessageSquare, Building } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function ContactPage() {
   const { data: user } = useUser();
@@ -40,8 +39,8 @@ export default function ContactPage() {
   
   const socialChannels = [
     { icon: 'telegram', name: 'Telegram Group', handle: 'iCloudServerGroup', link: 'https://t.me/iCloudServerGroup' },
-    { icon: Twitter, name: 'Twitter', handle: '@iCloudServer', link: '#' },
-    { icon: Facebook, name: 'Facebook', handle: 'iCloud Server', link: '#' },
+    { icon: 'twitter', name: 'Twitter', handle: '@iCloudServer', link: '#' },
+    { icon: 'facebook', name: 'Facebook', handle: 'iCloud Server', link: '#' },
   ];
 
   return (
@@ -90,7 +89,7 @@ export default function ContactPage() {
                       {method.icon === 'telegram' && telegramIconImage ? (
                         <Image src={telegramIconImage.imageUrl} alt="Telegram" width={24} height={24} />
                       ) : (
-                        <method.icon className="w-6 h-6 text-primary" />
+                        method.icon !== 'telegram' && <method.icon className="w-6 h-6 text-primary" />
                       )}
                       <div>
                         <p className="font-semibold text-gray-800">{method.title}</p>
@@ -110,8 +109,8 @@ export default function ContactPage() {
                   {socialChannels.map(channel => (
                      <li key={channel.name}>
                       <a href={channel.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-primary">
-                        {channel.icon === 'telegram' && telegramIconImage ? <Image src={telegramIconImage.imageUrl} alt="Telegram" width={20} height={20} /> : <channel.icon className="w-5 h-5" />}
-                        <span>{channel.name}: <span className="font-semibold">{channel.handle}</span></span>
+                        {channel.icon === 'telegram' && telegramIconImage ? <Image src={telegramIconImage.imageUrl} alt="Telegram" width={20} height={20} /> : <span className="font-bold">@{channel.handle}</span>}
+                        <span>{channel.name}</span>
                       </a>
                      </li>
                   ))}
@@ -211,5 +210,3 @@ export default function ContactPage() {
     </div>
   );
 }
-
-    

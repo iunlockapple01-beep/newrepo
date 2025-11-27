@@ -1,18 +1,18 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
-import { useUser, useFirebase, useCollection } from '@/firebase';
+import { useUser, useCollection } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Cloud, Twitter, Facebook, Instagram, MessageSquare } from 'lucide-react';
+import { Cloud, MessageSquare } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
-import { query, where } from 'firebase/firestore';
+import { where } from 'firebase/firestore';
 
 interface Order {
   id: string;
@@ -226,5 +226,3 @@ function MyAccountContent() {
 export default function MyAccountPage() {
     return <MyAccountContent />
 }
-
-    

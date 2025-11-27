@@ -20,7 +20,7 @@ export default function RefundPolicyPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="text-2xl font-bold text-gradient flex items-center gap-2">
-                <Cloud /> iUnlock Apple
+                <Cloud /> iCloud Server
               </Link>
             </div>
             <div className="hidden md:block">
@@ -44,10 +44,10 @@ export default function RefundPolicyPage() {
 
       <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
-          <h1 className="text-4xl font-bold text-center mb-8">Refund Policy – iUnlock Apple</h1>
+          <h1 className="text-4xl font-bold text-center mb-8">Refund Policy – iCloud Server</h1>
           
-          <div className="space-y-6 text-lg text-gray-700 prose lg:prose-xl">
-            <p>At iUnlock Apple, we value transparency, fairness, and customer satisfaction. Our refund policy is designed to protect both the client and the service provider while ensuring a smooth unlocking experience.</p>
+          <div className="space-y-6 text-lg text-gray-700 prose lg:prose-xl max-w-none">
+            <p>At iCloud Server, we value transparency, fairness, and customer satisfaction. Our refund policy is designed to protect both the client and the service provider while ensuring a smooth unlocking experience.</p>
             
             <section>
               <h2 className="font-semibold text-gray-900">1. Eligibility for Refund</h2>
@@ -188,5 +188,3 @@ export default function RefundPolicyPage() {
     </div>
   );
 }
-
-    
