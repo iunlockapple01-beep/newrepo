@@ -169,6 +169,7 @@ function DeviceCheckContent() {
   };
 
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
+  const usdtImage = PlaceHolderImages.find(img => img.id === 'usdt-icon');
   
   if (userLoading || !user) {
     return (
@@ -349,7 +350,19 @@ function DeviceCheckContent() {
             <DialogHeader>
                 <DialogTitle>Pay with Crypto</DialogTitle>
             </DialogHeader>
-                <div className="space-y-3 animate-fade-in">
+                <div className="space-y-4 animate-fade-in">
+                    <div className="flex justify-center">
+                        {usdtImage && (
+                          <Image 
+                            src={usdtImage.imageUrl} 
+                            alt="USDT"
+                            width={80} 
+                            height={80}
+                            className="rounded-full" 
+                            data-ai-hint="usdt logo"
+                          />
+                        )}
+                    </div>
                     <div className="text-sm">
                         <div className="text-gray-500">Service</div>
                         <div>iCloud Unlock</div>
