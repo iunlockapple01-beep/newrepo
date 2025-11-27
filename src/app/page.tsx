@@ -12,6 +12,7 @@ import { Cloud, Apple, Tablet, Laptop, Watch, Mail, Phone, Clock, Twitter, Faceb
 import { LoginButton } from '@/components/login-button';
 import { useUser } from '@/firebase';
 import Image from 'next/image';
+import { useToast } from '@/hooks/use-toast';
 
 const ADMIN_EMAIL = 'iunlockapple01@gmail.com';
 
@@ -128,10 +129,22 @@ export default function IcloudServerPage() {
   const [selectedDevice, setSelectedDevice] = useState('');
   const { data: user } = useUser();
   const isAdmin = user?.email === ADMIN_EMAIL;
+  const { toast } = useToast();
 
   const showDeviceCheck = (device = '') => {
     setSelectedDevice(device);
     setDeviceCheckModalOpen(true);
+  };
+  
+  const handleAddReviewClick = () => {
+    const { id, dismiss } = toast({
+        title: "Unable to Add Review",
+        description: "You must have a completed unlock order with us to leave a review.",
+    });
+
+    setTimeout(() => {
+        dismiss();
+    }, 3000);
   };
 
   return (
@@ -255,9 +268,12 @@ export default function IcloudServerPage() {
       {/* Reviews Section */}
       <section id="about" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Customer Reviews</h2>
             <p className="text-xl text-gray-600">Trusted by thousands of customers worldwide</p>
+          </div>
+          <div className="text-center mb-16">
+            <Button onClick={handleAddReviewClick} className="btn-primary text-white">Add review</Button>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -418,5 +434,3 @@ export default function IcloudServerPage() {
     </div>
   );
 }
-
-    
