@@ -27,7 +27,7 @@ export default function FaqPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                 <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={120} height={32} />
+                 <Image src="https://i.postimg.cc/tCm66wrX/no-background.png" alt="iCloud Server Logo" width={90} height={24} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -217,3 +217,5 @@ export default function FaqPage() {
     </div>
   );
 }
+
+    
