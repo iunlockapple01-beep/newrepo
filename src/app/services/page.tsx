@@ -277,7 +277,7 @@ export default function ServicesPage() {
                         <li><a href="#" className="hover:text-white">Help Center</a></li>
                         <li><a href="#" className="hover:text-white">Contact Us</a></li>
                         <li><Link href="/privacy" className="hover:text-white">Privacy Policy</Link></li>
-                        <li><a href="#" className="hover:text-white">Terms of Service</a></li>
+                        <li><Link href="/terms" className="hover:text-white">Terms of Service</Link></li>
                     </ul>
                 </div>
                 <div>
@@ -303,7 +303,7 @@ export default function ServicesPage() {
             </div>
             <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
                  <p>
-                    <a href="/terms">Terms & Conditions</a> |
+                    <Link href="/terms">Terms & Conditions</Link> |
                     <Link href="/privacy">Privacy Policy</Link> |
                     <a href="/reviews">Reviews</a> |
                     <a href="/contact">Contact Us</a> |

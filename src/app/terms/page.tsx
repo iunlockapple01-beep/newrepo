@@ -8,7 +8,7 @@ import { LoginButton } from '@/components/login-button';
 import { Cloud, Twitter, Facebook, Instagram } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-export default function PrivacyPolicyPage() {
+export default function TermsPage() {
   const { data: user } = useUser();
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
@@ -44,81 +44,97 @@ export default function PrivacyPolicyPage() {
 
       <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
-          <h1 className="text-4xl font-bold text-center mb-8">Privacy Policy – iCloud Server</h1>
+          <h1 className="text-4xl font-bold text-center mb-8">Terms & Conditions – iCloud Server</h1>
           
           <div className="space-y-6 text-lg text-gray-700">
             <section>
               <h2 className="text-2xl font-semibold mb-3 text-gray-900">Introduction</h2>
-              <p>At iCloud Server, we are committed to respecting and protecting your privacy. This policy describes the type of information we collect and how we manage and safeguard it.</p>
+              <p>Welcome to iCloud Server. These Terms and Conditions outline the rules and guidelines for using our services. By accessing or using any part of our platform, you agree to follow these terms. If you do not accept any section of these Terms, please discontinue use of our services.</p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Information We Collect</h2>
-              <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">Personal Information</h3>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Services Provided</h2>
+              <p>iCloud Server offers professional unlocking solutions for Apple devices, including iPhones, iPads, MacBooks, and Apple Watches. Our services include:</p>
               <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Name, email, phone number</li>
-                <li>Device identifiers such as IMEI, serial number, and model</li>
-                <li>Payment-related information (we do not store full payment details)</li>
+                <li>Disabling Find My iPhone (FMI OFF)</li>
+                <li>Removing previous iCloud accounts</li>
+                <li>Restoring device access when activation is blocked</li>
               </ul>
-              <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">Non-Personal Information</h3>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Website usage data</li>
-                <li>IP address, browser type, operating system</li>
-              </ul>
+              <p className="mt-2">All processes are performed securely through server-side methods.</p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">How Your Information Is Used</h2>
-              <p>We use your information to:</p>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Eligibility</h2>
+              <p>To use our services, you must:</p>
               <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Deliver and improve our unlocking services</li>
-                <li>Provide customer support</li>
-                <li>Process and verify payments</li>
-                <li>Communicate updates and service information</li>
-                <li>Comply with legal obligations</li>
+                <li>Be at least 18 years old (or have guardian approval)</li>
+                <li>Own the device or have verifiable permission from the owner</li>
+                <li>Provide accurate and complete device information</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Sharing of Information</h2>
-              <p>We do not sell or trade your information. We may share limited data with:</p>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Payments</h2>
+              <p>We accept secure payments through:</p>
               <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Trusted service partners that assist in service operations</li>
-                <li>Authorities if legally required</li>
+                <li>Binance Pay</li>
+                <li>Bitcoin</li>
+                <li>PayPal</li>
+                <li>USDT (TRC20)</li>
+              </ul>
+              <p className="mt-2">Full payment is required before work on your order begins.</p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Refund Policy</h2>
+              <p>Refunds are available ONLY for orders that are rejected or cannot be completed. Refunds are issued via the same payment method used.</p>
+              <p className="mt-2">Please allow up to 7 business days for processing.</p>
+              <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">No Refund Provided For:</h3>
+              <ul className="list-disc list-inside space-y-1 pl-4">
+                <li>Devices already unlocked before purchase</li>
+                <li>Wrong device details submitted by the customer</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Security Measures</h2>
-              <p>We use industry-standard practices to protect your data. However, no online system is 100% secure, and we cannot guarantee absolute protection.</p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Your Rights</h2>
-              <p>You may request:</p>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Disclaimer</h2>
               <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Copies of your personal data</li>
-                <li>Corrections to inaccurate information</li>
-                <li>Deletion of certain data (subject to legal limitations)</li>
-                <li>To object to specific types of processing</li>
+                <li>You agree not to use iCloud Server for any illegal or unauthorized activity.</li>
+                <li>Our service does not involve phishing, hacking, or unlawful security bypass.</li>
+                <li>All unlocking is done via verified server systems without jailbreak or extraction of personal data.</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Changes to Policy</h2>
-              <p>This Privacy Policy may be updated periodically. New versions will be posted with an updated date.</p>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Limitation of Liability</h2>
+              <p>iCloud Server is not responsible for indirect, incidental, or consequential damages. Our total liability will never exceed the amount paid for a service.</p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Contact Information</h2>
-              <p>For privacy-related inquiries:</p>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Privacy</h2>
+              <p>Your privacy is important to us. Personal information is used solely for completing your unlock request. We do not share your information unless required by law.</p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Updates to Terms</h2>
+              <p>iCloud Server may revise these Terms at any time. Changes take effect immediately once posted on our website. Continued use of our services means you accept the updated Terms.</p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Governing Law</h2>
+              <p>These Terms are governed by the laws of the region in which iCloud Server operates. Any disputes will be handled exclusively through the courts of that jurisdiction.</p>
+            </section>
+            
+            <section>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Contact Us</h2>
+              <p>If you have questions regarding these Terms, reach out to us:</p>
               <ul className="list-disc list-inside space-y-2 pl-4">
                 <li><span className="font-semibold">WhatsApp:</span> <a href="https://wa.me/message/EJ6T3XS4OWK3M1" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://wa.me/message/EJ6T3XS4OWK3M1</a></li>
                 <li><span className="font-semibold">Telegram:</span> <a href="https://t.me/iCloudServer" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@iCloudServer</a></li>
               </ul>
             </section>
-
-            <p className="text-center pt-6">Thank you for trusting iCloud Server.</p>
+            
+             <p className="text-center pt-6">By using our platform, you confirm that you have read, understood, and agree to these Terms.</p>
           </div>
         </div>
       </main>
