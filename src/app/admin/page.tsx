@@ -60,7 +60,7 @@ function AdminDashboard() {
   const [feedbackValues, setFeedbackValues] = useState<{ [key: string]: string }>({});
   const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' }>({});
 
-  const isAdmin = user?.email === 'iunlockapple@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   useEffect(() => {
     if (userLoading) {

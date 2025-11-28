@@ -17,7 +17,7 @@ import {
 
 export default function FaqPage() {
   const { data: user } = useUser();
-  const isAdmin = user?.email === 'iunlockapple@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
 
   return (

@@ -41,7 +41,7 @@ function MyAccountContent() {
   const usdtImage = PlaceHolderImages.find(img => img.id === 'usdt-icon');
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
   
-  const isAdmin = user?.email === 'iunlockapple@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   if (userLoading || !user) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;

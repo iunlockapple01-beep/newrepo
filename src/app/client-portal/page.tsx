@@ -90,7 +90,7 @@ function DeviceCheckContent() {
     }
   }, [submission, submissionId]);
 
-  const isAdmin = user?.email === 'iunlockapple@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   const handleSubmitImei = async () => {
     if (!imei.trim() || !user) {

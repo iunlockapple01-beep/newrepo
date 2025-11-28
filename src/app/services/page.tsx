@@ -15,7 +15,7 @@ export default function ServicesPage() {
   const router = useRouter();
 
   const getImage = (id: string) => PlaceHolderImages.find(img => img.id === id);
-  const isAdmin = user?.email === 'iunlockapple@gmail.com';
+  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   const handleUnlockClick = (device: { name: string, price: number }) => {
     const params = new URLSearchParams({

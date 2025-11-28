@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 
-const ADMIN_EMAIL = 'iunlockapple@gmail.com';
+const ADMIN_EMAIL = 'iunlockapple01@gmail.com';
 
 const reviews = [
   {
