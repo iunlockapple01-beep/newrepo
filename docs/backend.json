@@ -113,6 +113,22 @@
         }
       },
       "required": ["userId", "submissionId", "imei", "model", "price", "status", "createdAt"]
+    },
+    "counters": {
+      "title": "Counters",
+      "description": "Site-wide counters for display",
+      "type": "object",
+      "properties": {
+        "registeredUsers": {
+          "type": "number",
+          "description": "Total number of registered users"
+        },
+        "unlockedDevices": {
+          "type": "number",
+          "description": "Total number of unlocked devices"
+        }
+      },
+      "required": ["registeredUsers", "unlockedDevices"]
     }
   },
   "auth": {
@@ -136,6 +152,12 @@
         "$ref": "#/backend/entities/order"
       },
       "description": "Confirmed unlock orders from users"
+    },
+    "/counters/metrics": {
+      "schema": {
+        "$ref": "#/backend/entities/counters"
+      },
+      "description": "Holds site-wide metrics like user and device counts"
     }
   }
 }

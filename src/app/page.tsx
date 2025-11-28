@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Mail, Phone, Clock, MessageSquare, Users, LockOpen } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
-import { useUser } from '@/firebase';
+import { useUser, useDoc } from '@/firebase';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -148,6 +148,11 @@ const services = [
     },
 ];
 
+interface Counters {
+    registeredUsers: number;
+    unlockedDevices: number;
+}
+
 const AnimatedCounter = ({ endValue, duration = 2000, label, icon: Icon }: { endValue: number, duration?: number, label: string, icon: React.ElementType }) => {
     const [count, setCount] = useState(0);
     const ref = useRef<HTMLDivElement>(null);
@@ -161,8 +166,7 @@ const AnimatedCounter = ({ endValue, duration = 2000, label, icon: Icon }: { end
                     if (start === end) return;
 
                     const totalMiliseconds = duration;
-                    const
-                        incrementTime = (totalMiliseconds / end) * 0.1;
+                    const incrementTime = (totalMiliseconds / end) * 0.1;
                     
                     const timer = setInterval(() => {
                         start += Math.ceil(end / (totalMiliseconds / incrementTime) * 0.1);
@@ -203,6 +207,8 @@ export default function IcloudUnlocksPage() {
   const { toast } = useToast();
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
 
+  const { data: counters, loading: countersLoading } = useDoc<Counters>('counters', 'metrics');
+
   const handleAddReviewClick = () => {
     const { id, dismiss } = toast({
         title: "Unable to Add Review",
@@ -214,20 +220,6 @@ export default function IcloudUnlocksPage() {
     }, 3000);
   };
   
-  const [counters, setCounters] = useState({ users: 5378, devices: 9378 });
-
-  useEffect(() => {
-      const startDate = new Date('2024-07-28'); // Setting a fixed date to calculate from
-      const today = new Date();
-      const timeDiff = today.getTime() - startDate.getTime();
-      const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
-      
-      const registeredUsers = 5378 + Math.floor(daysPassed * 3.5); // avg of 2-5
-      const unlockedDevices = 9378 + Math.floor(daysPassed * 9.5); // avg of 6-13
-
-      setCounters({ users: registeredUsers, devices: unlockedDevices });
-  }, []);
-
   return (
     <div className="bg-gray-50">
       {/* Navigation */}
@@ -236,7 +228,7 @@ export default function IcloudUnlocksPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
+                <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={110} height={30} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -274,8 +266,25 @@ export default function IcloudUnlocksPage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-md mx-auto animate-fade-in">
-             <AnimatedCounter endValue={counters.users} label="Registered Users" icon={Users} />
-             <AnimatedCounter endValue={counters.devices} label="Unlocked Devices" icon={LockOpen} />
+             {!countersLoading && counters ? (
+                <>
+                    <AnimatedCounter endValue={counters.registeredUsers} label="Registered Users" icon={Users} />
+                    <AnimatedCounter endValue={counters.unlockedDevices} label="Unlocked Devices" icon={LockOpen} />
+                </>
+             ) : (
+                <>
+                    <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-center border border-white/20">
+                        <Users className="h-8 w-8 mx-auto mb-2 text-white" />
+                        <p className="text-3xl font-bold">...+</p>
+                        <p className="text-sm uppercase tracking-wider">Registered Users</p>
+                    </div>
+                    <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-center border border-white/20">
+                        <LockOpen className="h-8 w-8 mx-auto mb-2 text-white" />
+                        <p className="text-3xl font-bold">...+</p>
+                        <p className="text-sm uppercase tracking-wider">Unlocked Devices</p>
+                    </div>
+                </>
+             )}
           </div>
         </div>
       </section>
@@ -414,7 +423,7 @@ export default function IcloudUnlocksPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                        <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
+                        <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={110} height={30} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>

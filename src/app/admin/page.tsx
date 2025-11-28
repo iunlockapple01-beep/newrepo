@@ -6,6 +6,7 @@ import {
   useUser,
   useFirebase,
   useCollection,
+  useDoc
 } from '@/firebase';
 import {
   collection,
@@ -13,10 +14,12 @@ import {
   updateDoc,
   deleteDoc,
   serverTimestamp,
+  setDoc,
 } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -27,6 +30,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
+import { Label } from '@/components/ui/label';
 
 interface Submission {
   id: string;
@@ -48,6 +52,11 @@ interface Order {
   createdAt: { toDate: () => Date };
 }
 
+interface Counters {
+    registeredUsers: number;
+    unlockedDevices: number;
+}
+
 function AdminDashboard() {
   const { data: user, loading: userLoading } = useUser();
   const { firestore } = useFirebase();
@@ -56,9 +65,13 @@ function AdminDashboard() {
   const { data: submissions, loading: submissionsLoading } =
     useCollection<Submission>('submissions');
   const { data: orders, loading: ordersLoading } = useCollection<Order>('orders');
+  const { data: counters, loading: countersLoading } = useDoc<Counters>('counters', 'metrics');
+
 
   const [feedbackValues, setFeedbackValues] = useState<{ [key: string]: string }>({});
   const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' }>({});
+  const [registeredUsers, setRegisteredUsers] = useState<number>(0);
+  const [unlockedDevices, setUnlockedDevices] = useState<number>(0);
 
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
@@ -72,6 +85,13 @@ function AdminDashboard() {
       router.push('/');
     }
   }, [user, userLoading, isAdmin, router]);
+
+  useEffect(() => {
+    if (counters) {
+      setRegisteredUsers(counters.registeredUsers || 0);
+      setUnlockedDevices(counters.unlockedDevices || 0);
+    }
+  }, [counters]);
 
   const handleFeedbackChange = (id: string, value: string) => {
     setFeedbackValues(prev => ({ ...prev, [id]: value }));
@@ -144,6 +164,28 @@ function AdminDashboard() {
     });
   };
 
+  const handleUpdateMetrics = async () => {
+    const metricsRef = doc(firestore, 'counters', 'metrics');
+    const metricsData = {
+      registeredUsers: Number(registeredUsers),
+      unlockedDevices: Number(unlockedDevices),
+    };
+    
+    setDoc(metricsRef, metricsData, { merge: true })
+      .then(() => {
+        alert('Site metrics updated successfully!');
+      })
+      .catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: metricsRef.path,
+          operation: 'write',
+          requestResourceData: metricsData,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        alert('Failed to update site metrics.');
+      });
+  };
+
   if (userLoading || !user || !isAdmin) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
@@ -155,7 +197,7 @@ function AdminDashboard() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
+                <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={110} height={30} />
               </Link>
             </div>
             <div className="hidden md:block">
@@ -177,6 +219,39 @@ function AdminDashboard() {
 
       <main className="max-w-7xl mx-auto py-32 px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
         <div>
+            <div className="mb-12">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Site Metrics</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {countersLoading ? <p>Loading metrics...</p> : (
+                            <>
+                                <div className='grid gap-2'>
+                                    <Label htmlFor="registeredUsers">Registered Users</Label>
+                                    <Input 
+                                        id="registeredUsers" 
+                                        type="number" 
+                                        value={registeredUsers} 
+                                        onChange={(e) => setRegisteredUsers(Number(e.target.value))} />
+                                </div>
+                                <div className='grid gap-2'>
+                                    <Label htmlFor="unlockedDevices">Unlocked Devices</Label>
+                                    <Input 
+                                        id="unlockedDevices" 
+                                        type="number" 
+                                        value={unlockedDevices} 
+                                        onChange={(e) => setUnlockedDevices(Number(e.target.value))} />
+                                </div>
+                            </>
+                        )}
+                    </CardContent>
+                    <CardFooter>
+                        <Button onClick={handleUpdateMetrics} className="btn-primary text-white">Update Metrics</Button>
+                    </CardFooter>
+                </Card>
+            </div>
+
             <h1 className="text-4xl font-bold text-center mb-10">IMEI Submissions</h1>
             {submissionsLoading && <p>Loading submissions...</p>}
             {!submissionsLoading && (!submissions || submissions.length === 0) && (
@@ -240,6 +315,7 @@ function AdminDashboard() {
                         <TableHeader>
                         <TableRow>
                             <TableHead>Order Date</TableHead>
+                            <TableHead>Order ID</TableHead>
                             <TableHead>Model</TableHead>
                             <TableHead>IMEI</TableHead>
                             <TableHead>Status</TableHead>
@@ -250,6 +326,7 @@ function AdminDashboard() {
                         {orders.map(order => (
                             <TableRow key={order.id}>
                                 <TableCell>{order.createdAt.toDate().toLocaleDateString()}</TableCell>
+                                <TableCell className="font-mono text-xs">{order.id}</TableCell>
                                 <TableCell>{order.model}</TableCell>
                                 <TableCell className="font-mono text-xs">{order.imei}</TableCell>
                                 <TableCell>
