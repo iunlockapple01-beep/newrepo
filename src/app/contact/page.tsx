@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useUser } from '@/firebase';
 import { LoginButton } from '@/components/login-button';
-import { Mail, Clock, MessageSquare, Building } from 'lucide-react';
+import { Mail, Clock, Building } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function ContactPage() {
@@ -15,17 +15,10 @@ export default function ContactPage() {
 
   const contactMethods = [
     { 
-      icon: MessageSquare, 
-      title: 'WhatsApp', 
-      value: 'Start a Chat', 
-      link: 'https://wa.me/message/EJ6T3XS4OWK3M1',
-      note: 'For immediate support'
-    },
-    { 
       icon: 'telegram',
       title: 'Telegram', 
-      value: '@iCloudUnlocks', 
-      link: 'https://t.me/iCloudUnlocks',
+      value: '@iCloudUnlocks_2023', 
+      link: 'https://t.me/iCloudUnlocks_2023',
       note: 'Direct messaging'
     },
     { 
@@ -38,7 +31,7 @@ export default function ContactPage() {
   ];
   
   const socialChannels = [
-    { icon: 'telegram', name: 'Telegram Group', handle: 'iCloudUnlocksGroup', link: 'https://t.me/iCloudUnlocksGroup' },
+    { icon: 'telegram', name: 'Telegram Group', handle: 'iCloudUnlocks2023', link: 'https://t.me/iCloudUnlocks2023' },
     { icon: 'twitter', name: 'Twitter', handle: '@iCloudUnlocks', link: '#' },
     { icon: 'facebook', name: 'Facebook', handle: 'iCloud Unlocks', link: '#' },
   ];
@@ -174,30 +167,26 @@ export default function ContactPage() {
                 </div>
                 <div>
                     <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudUnlocksGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
-                        <Image 
-                            src={telegramIconImage?.imageUrl || ''} 
+                    <a href="https://t.me/iCloudUnlocks2023" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
+                        {telegramIconImage && <Image 
+                            src={telegramIconImage.imageUrl} 
                             alt="Telegram Group" 
                             width={18} 
                             height={18}
                             className="mr-2"
-                        />
+                        />}
                         Telegram Channel
                     </a>
                     <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudUnlocks" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
-                        <Image 
-                             src={telegramIconImage?.imageUrl || ''} 
+                     <a href="https://t.me/iCloudUnlocks_2023" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
+                        {telegramIconImage && <Image 
+                             src={telegramIconImage.imageUrl} 
                             alt="Telegram" 
                             width={18} 
                             height={18}
                             className="mr-2"
-                        />
+                        />}
                         Contact us on Telegram
-                    </a>
-                     <a href="https://wa.me/message/EJ6T3XS4OWK3M1" className="text-gray-400 hover:text-white inline-flex items-center">
-                        <MessageSquare className="mr-2" />
-                        Contact us on WhatsApp
                     </a>
                 </div>
             </div>

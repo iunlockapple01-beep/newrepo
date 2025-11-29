@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Mail, Phone, Clock, MessageSquare, Users, LockOpen } from 'lucide-react';
+import { Clock, Users, LockOpen } from 'lucide-react';
 import { LoginButton } from '@/components/login-button';
 import { useUser, useDoc } from '@/firebase';
 import Image from 'next/image';
@@ -369,29 +369,19 @@ export default function IcloudUnlocksPage() {
             <p className="text-xl text-gray-600">We're here to help you</p>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-6">Get in Touch</h3>
-              <div className="space-y-4">
-                <div className="flex items-center">
+          <div className="max-w-md mx-auto">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">Get in Touch</h3>
+              <div className="space-y-6">
+                 <a href="https://t.me/iCloudUnlocks_2023" target="_blank" rel="noopener noreferrer" className="flex items-center p-4 rounded-lg border hover:bg-gray-100 transition-colors">
                   <div className="w-12 h-12 apple-gradient rounded-lg flex items-center justify-center mr-4">
-                    <Mail className="text-white" />
+                     {telegramIconImage && <Image src={telegramIconImage.imageUrl} alt="Telegram" width={28} height={28} />}
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">Email</p>
-                    <p className="text-gray-600">support@icloudunlocks.com</p>
+                    <p className="font-semibold text-gray-900">Telegram</p>
+                    <p className="text-blue-600">@iCloudUnlocks_2023</p>
                   </div>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 apple-gradient rounded-lg flex items-center justify-center mr-4">
-                    <Phone className="text-white" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Phone</p>
-                    <p className="text-gray-600">+1 (555) 123-4567</p>
-                  </div>
-                </div>
-                <div className="flex items-center">
+                </a>
+                <div className="flex items-center p-4 rounded-lg border">
                   <div className="w-12 h-12 apple-gradient rounded-lg flex items-center justify-center mr-4">
                     <Clock className="text-white" />
                   </div>
@@ -401,18 +391,6 @@ export default function IcloudUnlocksPage() {
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <div>
-              <form className="space-y-4" onSubmit={e => e.preventDefault()}>
-                <input type="text" placeholder="Your Name" className="w-full form-input rounded-lg px-4 py-3 h-auto" />
-                <input type="email" placeholder="Your Email" className="w-full form-input rounded-lg px-4 py-3 h-auto" />
-                <textarea placeholder="Your Message" rows={4} className="w-full form-input rounded-lg px-4 py-3" />
-                <Button type="submit" className="w-full btn-primary text-white py-3 rounded-lg font-semibold h-auto">
-                  Send Message
-                </Button>
-              </form>
-            </div>
           </div>
         </div>
       </section>
@@ -423,7 +401,7 @@ export default function IcloudUnlocksPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
-                        <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={110} height={30} />
+                        <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
                     </div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
@@ -439,30 +417,26 @@ export default function IcloudUnlocksPage() {
                 </div>
                 <div>
                     <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudUnlocksGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
-                        <Image 
-                            src={telegramIconImage?.imageUrl || ''} 
+                    <a href="https://t.me/iCloudUnlocks2023" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
+                        {telegramIconImage && <Image 
+                            src={telegramIconImage.imageUrl} 
                             alt="Telegram Group" 
                             width={18} 
                             height={18}
                             className="mr-2"
-                        />
+                        />}
                         Telegram Channel
                     </a>
                     <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudUnlocks" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
-                        <Image 
-                             src={telegramIconImage?.imageUrl || ''} 
+                     <a href="https://t.me/iCloudUnlocks_2023" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
+                         {telegramIconImage && <Image 
+                             src={telegramIconImage.imageUrl} 
                             alt="Telegram" 
                             width={18} 
                             height={18}
                             className="mr-2"
-                        />
+                        />}
                         Contact us on Telegram
-                    </a>
-                     <a href="https://wa.me/message/EJ6T3XS4OWK3M1" className="text-gray-400 hover:text-white inline-flex items-center">
-                        <MessageSquare className="mr-2" />
-                        Contact us on WhatsApp
                     </a>
                 </div>
             </div>

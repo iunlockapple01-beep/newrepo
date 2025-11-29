@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useUser } from '@/firebase';
 import { LoginButton } from '@/components/login-button';
-import { MessageSquare } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function PrivacyPolicyPage() {
@@ -111,8 +110,7 @@ export default function PrivacyPolicyPage() {
               <h2 className="text-2xl font-semibold mb-3 text-gray-900">Contact Information</h2>
               <p>For privacy-related inquiries:</p>
               <ul className="list-disc list-inside space-y-2 pl-4">
-                <li><span className="font-semibold">WhatsApp:</span> <a href="https://wa.me/message/EJ6T3XS4OWK3M1" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://wa.me/message/EJ6T3XS4OWK3M1</a></li>
-                <li><span className="font-semibold">Telegram:</span> <a href="https://t.me/iCloudUnlocks" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@iCloudUnlocks</a></li>
+                <li><span className="font-semibold">Telegram:</span> <a href="https://t.me/iCloudUnlocks_2023" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@iCloudUnlocks_2023</a></li>
               </ul>
             </section>
 
@@ -142,30 +140,26 @@ export default function PrivacyPolicyPage() {
                 </div>
                 <div>
                     <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudUnlocksGroup" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
-                        <Image 
-                            src={telegramIconImage?.imageUrl || ''} 
+                    <a href="https://t.me/iCloudUnlocks2023" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
+                        {telegramIconImage && <Image 
+                            src={telegramIconImage.imageUrl} 
                             alt="Telegram Group" 
                             width={18} 
                             height={18}
                             className="mr-2"
-                        />
+                        />}
                         Telegram Channel
                     </a>
                     <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudUnlocks" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
-                        <Image 
-                             src={telegramIconImage?.imageUrl || ''} 
+                     <a href="https://t.me/iCloudUnlocks_2023" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
+                        {telegramIconImage && <Image 
+                             src={telegramIconImage.imageUrl} 
                             alt="Telegram" 
                             width={18} 
                             height={18}
                             className="mr-2"
-                        />
+                        />}
                         Contact us on Telegram
-                    </a>
-                     <a href="https://wa.me/message/EJ6T3XS4OWK3M1" className="text-gray-400 hover:text-white inline-flex items-center">
-                        <MessageSquare className="mr-2" />
-                        Contact us on WhatsApp
                     </a>
                 </div>
             </div>
