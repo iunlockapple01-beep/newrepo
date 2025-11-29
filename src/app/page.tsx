@@ -19,26 +19,26 @@ const reviews = [
     name: 'Emma R.',
     avatarUrl: 'https://picsum.photos/seed/emma/40/40',
     flag: '🇬🇧',
-    date: 'May 20, 2024',
+    date: 'May 22, 2024',
     images: [
-      'https://picsum.photos/seed/review1a/200/300',
-      'https://picsum.photos/seed/review1b/200/300'
+      'https://i.postimg.cc/ZRBCxsg3/836BE891_A72F_4E30_8924_4FF33AF7BB0E.jpg',
+      'https://i.postimg.cc/Y9GhzDVY/5B87174E_4704_40BB_9A95_809B4B19FC93.jpg'
     ],
-    review: '"Absolutely thrilled with iCloud Unlocks! My iPad Air 2 was unlocked incredibly fast. The process was straightforward, and their customer service was very helpful. Highly recommend for anyone needing a reliable unlock service. Thank you!"',
-    unlockedDevice: 'iPad Air 2',
+    review: '"Absolutely thrilled with iCloud Unlocks! My iPhone was unlocked incredibly fast. The process was straightforward, and their customer service was very helpful. Highly recommend for anyone needing a reliable unlock service. Thank you!"',
+    unlockedDevice: 'iPhone 14 Pro Max',
     imageHints: ['keypad', 'security']
   },
   {
     name: 'Michael S.',
     avatarUrl: 'https://picsum.photos/seed/michael/40/40',
     flag: '🇺🇸',
-    date: 'April 15, 2024',
+    date: 'April 15, 2023',
     images: [
-      'https://picsum.photos/seed/review2a/200/300',
-      'https://picsum.photos/seed/review2b/200/300'
+      'https://i.postimg.cc/6qZtyDPS/IMG_5343.jpg',
+      'https://i.postimg.cc/Y9Zt2pXK/IMG_5344.jpg'
     ],
-    review: '"iCloud Unlocks is truly reliable. I had an iPhone XS Max that needed unlocking, and they delivered exactly as promised. The support team was fantastic, guiding me through everything. A seamless and trustworthy experience from start to finish. Very satisfied!"',
-    unlockedDevice: 'iPhone XS Max',
+    review: '"iCloud Unlocks is truly reliable. I had an iPhone 11 that needed unlocking, and they delivered exactly as promised. The support team was fantastic, guiding me through everything. A seamless and trustworthy experience from start to finish. Very satisfied!"',
+    unlockedDevice: 'iPhone 11',
     imageHints: ['keypad', 'security']
   },
   {
@@ -47,37 +47,37 @@ const reviews = [
     flag: '🇰🇪',
     date: 'June 01, 2024',
     images: [
-      'https://picsum.photos/seed/review3a/200/300',
-      'https://picsum.photos/seed/review3b/200/300'
+      'https://i.postimg.cc/gjq9CZtC/IMG_3876.jpg',
+      'https://i.postimg.cc/4ybCD9Fs/IMG_3877.jpg'
     ],
-    review: '"My iPhone 11 Pro was unlocked in no time! I was skeptical at first, but iCloud Unlocks proved to be super efficient and reliable. The instructions were clear, and I got my device working perfectly. Excellent service, highly recommended to everyone!"',
-    unlockedDevice: 'iPhone 11 Pro',
+    review: '"My iPhone 14 was unlocked in no time! I was skeptical at first, but iCloud Unlocks proved to be super efficient and reliable. The instructions were clear, and I got my device working perfectly. Excellent service, highly recommended to everyone!"',
+    unlockedDevice: 'iPhone 14',
     imageHints: ['keypad', 'security']
   },
     {
     name: 'Sofia G.',
     avatarUrl: 'https://picsum.photos/seed/sofia/40/40',
     flag: '🇪🇸',
-    date: 'May 05, 2024',
+    date: 'August 31, 2025',
     images: [
-      'https://picsum.photos/seed/review4a/200/300',
-      'https://picsum.photos/seed/review4b/200/300'
+      'https://i.postimg.cc/jqzrwpqc/IMG_3977.jpg',
+      'https://i.postimg.cc/bYQjD7YR/IMG_3978.jpg'
     ],
-    review: '"Fantastic service for my Apple Watch Series 6! iCloud Unlocks provided a super fast and secure unlock. Their customer service was excellent, answering all my questions promptly. I am very impressed with their professionalism and highly recommend them!"',
-    unlockedDevice: 'Apple Watch Series 6',
+    review: '"Fantastic service for my 14 Pro Max! iCloud Unlocks provided a super fast and secure unlock. Their customer service was excellent, answering all my questions promptly. I am very impressed with their professionalism and highly recommend them!"',
+    unlockedDevice: 'iPhone 14 Pro Max',
     imageHints: ['keypad', 'security']
   },
   {
     name: 'Liam B.',
     avatarUrl: 'https://picsum.photos/seed/liam/40/40',
     flag: '🇨🇦',
-    date: 'June 10, 2024',
+    date: 'August 7, 2025',
     images: [
-      'https://picsum.photos/seed/review5a/200/300',
-      'https://picsum.photos/seed/review5b/200/300'
+      'https://i.postimg.cc/D0Kkpg6H/IMG_1843.jpg',
+      'https://i.postimg.cc/NF7h3HPv/IMG_1846.jpg'
     ],
     review: '"Top-notch service! My MacBook Pro was stuck on the iCloud activation screen, and they unlocked it within a day. Communication was excellent throughout. I\'m amazed at how simple they made it. Will definitely use again if needed."',
-    unlockedDevice: 'MacBook Pro 14"',
+    unlockedDevice: 'MacBook Pro"',
     imageHints: ['laptop', 'desk']
   },
   {
@@ -86,11 +86,11 @@ const reviews = [
     flag: '🇳🇬',
     date: 'June 08, 2024',
     images: [
-      'https://picsum.photos/seed/review6a/200/300',
-      'https://picsum.photos/seed/review6b/200/300'
+      'https://i.postimg.cc/pVDthwVS/IMG_4073.jpg',
+      'https://i.postimg.cc/L4zMYc6F/IMG_4075.jpg'
     ],
-    review: '"I was about to give up on my old iPhone 12, but iCloud Unlocks came to the rescue. The unlock was successful, and the price was very reasonable. The entire process felt secure and professional. Thank you so much for your help!"',
-    unlockedDevice: 'iPhone 12',
+    review: '"I was about to give up on my old iPhone 13, but iCloud Unlocks came to the rescue. The unlock was successful, and the price was very reasonable. The entire process felt secure and professional. Thank you so much for your help!"',
+    unlockedDevice: 'iPhone 13',
     imageHints: ['phone', 'hand']
   },
   {
@@ -99,11 +99,11 @@ const reviews = [
     flag: '🇦🇺',
     date: 'May 28, 2024',
     images: [
-      'https://picsum.photos/seed/review7a/200/300',
-      'https://picsum.photos/seed/review7b/200/300'
+      'https://i.postimg.cc/SR70BMts/IMG_3937.jpg',
+      'https://i.postimg.cc/hvbFkd34/IMG_3938.jpg'
     ],
-    review: '"Unlocking my iPad Pro was a breeze with iCloud Unlocks. The team was responsive and kept me updated. It\'s great to have my device fully functional again. I couldn\'t be happier with the outcome. Highly trustworthy and efficient service!"',
-    unlockedDevice: 'iPad Pro 11"',
+    review: '"Unlocking my iPad was a breeze with iCloud Unlocks. The team was responsive and kept me updated. It\'s great to have my device fully functional again. I couldn\'t be happier with the outcome. Highly trustworthy and efficient service!"',
+    unlockedDevice: 'iPad"',
     imageHints: ['tablet', 'creative']
   },
   {
@@ -112,8 +112,8 @@ const reviews = [
     flag: '🇯🇵',
     date: 'June 12, 2024',
     images: [
-      'https://picsum.photos/seed/review8a/200/300',
-      'https://picsum.photos/seed/review8b/200/300'
+      'https://i.postimg.cc/7PgyGFYy/IMG_4148.jpg',
+      'https://i.postimg.cc/J7bWDf48/IMG_4149.jpg'
     ],
     review: '"My Apple Watch SE had been locked for months. I found iCloud Unlocks and decided to give them a try. Best decision ever! The unlock was quick and flawless. Their support is world-class. I highly recommend their services to everyone!"',
     unlockedDevice: 'Apple Watch SE',
@@ -228,7 +228,7 @@ export default function IcloudUnlocksPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={110} height={30} />
+                <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
               </Link>
             </div>
             <div className="hidden md:block">
