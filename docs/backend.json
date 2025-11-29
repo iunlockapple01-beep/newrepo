@@ -78,6 +78,10 @@
       "description": "A confirmed and paid unlock order",
       "type": "object",
       "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "The user-facing sequential order ID"
+        },
         "userId": {
           "type": "string",
           "description": "The ID of the user who placed the order"
@@ -112,7 +116,7 @@
           "format": "date-time"
         }
       },
-      "required": ["userId", "submissionId", "imei", "model", "price", "status", "createdAt"]
+      "required": ["orderId", "userId", "submissionId", "imei", "model", "price", "status", "createdAt"]
     },
     "counters": {
       "title": "Counters",
@@ -126,9 +130,13 @@
         "unlockedDevices": {
           "type": "number",
           "description": "Total number of unlocked devices"
+        },
+        "orderCounter": {
+            "type": "number",
+            "description": "The last used sequential order ID number"
         }
       },
-      "required": ["registeredUsers", "unlockedDevices"]
+      "required": ["registeredUsers", "unlockedDevices", "orderCounter"]
     }
   },
   "auth": {

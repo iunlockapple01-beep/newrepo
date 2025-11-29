@@ -16,6 +16,7 @@ import { where } from 'firebase/firestore';
 
 interface Order {
   id: string;
+  orderId: string;
   createdAt: { toDate: () => Date };
   model: string;
   imei: string;
@@ -134,7 +135,7 @@ function MyAccountContent() {
                   {orders.map(order => (
                     <TableRow key={order.id}>
                       <TableCell>{order.createdAt.toDate().toLocaleDateString()}</TableCell>
-                      <TableCell className="font-mono text-xs">{order.id}</TableCell>
+                      <TableCell className="font-mono text-sm">{order.orderId}</TableCell>
                       <TableCell>iCloud Unlock</TableCell>
                       <TableCell>{order.model}</TableCell>
                       <TableCell className="font-mono text-xs">{order.imei}</TableCell>

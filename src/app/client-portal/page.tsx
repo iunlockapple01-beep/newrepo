@@ -20,7 +20,7 @@ import { LoginButton } from '@/components/login-button';
 import { MessageSquare } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirebase, useDoc } from '@/firebase';
-import { addDoc, collection, doc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, serverTimestamp, runTransaction } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
@@ -137,35 +137,56 @@ function DeviceCheckContent() {
   };
   
   const handlePaid = async () => {
-      if (!submissionId || !submission || !user) return alert('No submission selected.');
-      
-      const newOrder = {
-          userId: user.uid,
-          submissionId: submissionId,
-          imei: submission.imei,
-          model: submission.model,
-          price: submission.price,
-          status: 'confirming_payment' as const,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-      };
+    if (!submissionId || !submission || !user) return alert('No submission selected.');
 
-      addDoc(collection(firestore, 'orders'), newOrder)
-        .then((docRef) => {
-            setPaymentModalOpen(false);
-            alert(`Payment submitted for confirmation. Your Order ID is: ${docRef.id}. You will be redirected to your account page.`);
-            router.push('/my-account');
-        })
-        .catch(async (serverError) => {
-            const permissionError = new FirestorePermissionError({
-              path: `orders/unknown`,
-              operation: 'create',
-              requestResourceData: newOrder,
-            });
-            errorEmitter.emit('permission-error', permissionError);
-            console.error("Error creating order: ", serverError);
-            alert('Failed to create order.');
-      });
+    try {
+        const newOrderId = await runTransaction(firestore, async (transaction) => {
+            const counterRef = doc(firestore, 'counters', 'metrics');
+            const counterDoc = await transaction.get(counterRef);
+
+            if (!counterDoc.exists()) {
+                throw "Counter document does not exist!";
+            }
+
+            const newOrderCount = (counterDoc.data().orderCounter || 0) + 1;
+            const formattedOrderId = `#${7892 + newOrderCount}`;
+
+            const newOrderRef = doc(collection(firestore, 'orders'));
+            
+            const newOrderData = {
+                orderId: formattedOrderId,
+                userId: user.uid,
+                submissionId: submissionId,
+                imei: submission.imei,
+                model: submission.model,
+                price: submission.price,
+                status: 'confirming_payment' as const,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
+            };
+
+            transaction.set(newOrderRef, newOrderData);
+            transaction.update(counterRef, { orderCounter: newOrderCount });
+            
+            return formattedOrderId;
+        });
+
+        setPaymentModalOpen(false);
+        alert(`Payment submitted for confirmation. Your Order ID is: ${newOrderId}. You will be redirected to your account page.`);
+        router.push('/my-account');
+
+    } catch (e: any) {
+        console.error("Transaction failed: ", e);
+        
+        // Emit a generic error because we don't have fine-grained context inside a transaction
+        const permissionError = new FirestorePermissionError({
+          path: `orders/unknown or counters/metrics`,
+          operation: 'write',
+          requestResourceData: { note: 'Transaction failed', error: e.message },
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        alert('Failed to create order. Please try again.');
+    }
   };
 
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
