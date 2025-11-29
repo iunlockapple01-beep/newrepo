@@ -191,7 +191,7 @@ export default function ContactPage() {
                 </div>
             </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 iCloud Unlocks. All rights reserved.</p>
+            <p>&copy; 2023 iCloud Unlocks. All rights reserved.</p>
           </div>
         </div>
       </footer>

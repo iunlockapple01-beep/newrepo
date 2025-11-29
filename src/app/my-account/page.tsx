@@ -212,7 +212,7 @@ function MyAccountContent() {
                     <Link href="/contact">Contact Us</Link> |
                     <Link href="/faq">FAQ</Link>
                 </p>
-                <p className="mt-4">&copy; 2025 iCloud Unlocks. All rights reserved.</p>
+                <p className="mt-4">&copy; 2023 iCloud Unlocks. All rights reserved.</p>
             </div>
         </div>
       </footer>
