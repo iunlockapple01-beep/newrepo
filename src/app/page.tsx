@@ -394,9 +394,9 @@ export default function IcloudUnlocksPage() {
             <p className="text-xl text-gray-600">We're here to help you</p>
           </div>
           
-          <div className="max-w-md mx-auto">
+          <div className="max-w-lg mx-auto">
               <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">Get in Touch</h3>
-              <div className="space-y-6">
+              <div className="grid sm:grid-cols-2 gap-6">
                  <a href="https://t.me/iCloudUnlocks_2023" target="_blank" rel="noopener noreferrer" className="flex items-center p-4 rounded-lg border hover:bg-gray-100 transition-colors">
                   <div className="w-12 h-12 apple-gradient rounded-lg flex items-center justify-center mr-4">
                      {telegramIconImage && <Image src={telegramIconImage.imageUrl} alt="Telegram" width={28} height={28} />}
@@ -473,5 +473,3 @@ export default function IcloudUnlocksPage() {
     </div>
   );
 }
-
-    
