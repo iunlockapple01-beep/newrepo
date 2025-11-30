@@ -20,7 +20,7 @@ export default function ServicesPage() {
     const params = new URLSearchParams({
         model: device.name,
         price: device.price.toString(),
-        image: 'https://i.postimg.cc/mrKv0Xpk/post_1_(1).png',
+        image: 'https://i.postimg.cc/9M6QghRY/icloud-unlocks.png',
     });
 
     const portalUrl = `/client-portal?${params.toString()}`;
