@@ -320,6 +320,31 @@ export default function IcloudUnlocksPage() {
             </div>
         </section>
 
+      {/* About Us Section */}
+      <section id="about-us" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div className="relative h-96">
+                    <Image 
+                      src="https://i.postimg.cc/90t0hcvy/no-back.png" 
+                      alt="About iCloud Unlocks" 
+                      layout="fill" 
+                      objectFit="contain"
+                      className="rounded-lg" 
+                    />
+                </div>
+                <div>
+                    <h2 className="text-4xl font-bold text-gray-900 mb-4">About Us</h2>
+                    <div className="space-y-4 text-gray-600">
+                        <p>iCloud Unlocks was founded in 2023 with a mission to deliver fast, secure, and reliable iCloud and device unlock services for iPhones, iPads, Apple Watches, and MacBooks. We specialize in permanent, server-based unlocks—no bypass tricks, no jailbreaks, and no access to your personal data.</p>
+                        <p>Our process is straightforward: clients submit their device IMEI or serial number, which the server checks to provide full device details and determine unlock eligibility. Once confirmed, the device can then be registered on the server, and after processing, activation is completed when “Find My” is successfully turned off.</p>
+                        <p>Since our launch, we’ve helped thousands of users regain full access to their devices with transparency, professionalism, and dedicated customer support.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </section>
+
       {/* Reviews Section */}
       <section id="about" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -448,3 +473,5 @@ export default function IcloudUnlocksPage() {
     </div>
   );
 }
+
+    
