@@ -195,26 +195,45 @@ function MyAccountContent() {
       
       <Dialog open={isBulkPayModalOpen} onOpenChange={setIsBulkPayModalOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Bulk Payment (20% Off)</DialogTitle>
-            <DialogDescription>
-              Pay for multiple orders at once and receive a discount.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-             <div className="text-sm">
-                <div className="text-gray-500">Original Total</div>
-                <div className="line-through">${bulkTotal.toFixed(2)}</div>
+            <DialogHeader>
+                <DialogTitle>Bulk Payment (20% Off)</DialogTitle>
+                <DialogDescription>
+                    Pay for multiple orders at once and receive a discount.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+                <div className="flex justify-center">
+                    {usdtImage && (
+                        <Image 
+                        src={usdtImage.imageUrl} 
+                        alt="USDT"
+                        width={60} 
+                        height={60}
+                        className="rounded-full" 
+                        data-ai-hint="usdt logo"
+                        />
+                    )}
+                </div>
+                <div className="text-sm">
+                    <div className="text-gray-500">Original Total</div>
+                    <div className="line-through">${bulkTotal.toFixed(2)}</div>
+                </div>
+                <div className="text-lg font-bold">
+                    <div className="text-gray-500 text-sm">Discounted Total</div>
+                    <div>${bulkFinalTotal.toFixed(2)}</div>
+                </div>
+                 <div className="text-sm">
+                    <div className="text-gray-500">Pay to (USDT BEP20)</div>
+                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all">0x69dfEded84C7E5baAB723FF65e1C587f2E50b3f4</div>
+                </div>
+                <div className="text-xs text-center text-gray-500 bg-gray-100 p-2 rounded-md">
+                    Contact admin (@iCloudUnlocks_2023) with payment details in case of any delays with the status changing to "payment confirmed".
+                </div>
             </div>
-            <div className="text-lg font-bold">
-                <div className="text-gray-500 text-sm">Discounted Total</div>
-                <div>${bulkFinalTotal.toFixed(2)}</div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsBulkPayModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleBulkPaid} className="btn-primary text-white">Paid</Button>
-          </DialogFooter>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setIsBulkPayModalOpen(false)}>Cancel</Button>
+                <Button onClick={handleBulkPaid} className="btn-primary text-white">Paid</Button>
+            </DialogFooter>
         </DialogContent>
       </Dialog>
 
