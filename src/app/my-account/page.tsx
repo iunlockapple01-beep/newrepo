@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useUser, useCollection } from '@/firebase';
 import { useRouter } from 'next/navigation';
@@ -12,6 +12,15 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { LoginButton } from '@/components/login-button';
 import { where } from 'firebase/firestore';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 interface Order {
   id: string;
@@ -31,12 +40,29 @@ function MyAccountContent() {
     'orders',
     user ? { constraints: [where('userId', '==', user.uid)] } : undefined
   );
+  
+  const [isBulkPayModalOpen, setIsBulkPayModalOpen] = useState(false);
+  const [bulkPaid, setBulkPaid] = useState(false);
 
   useEffect(() => {
     if (!userLoading && !user) {
       router.push('/login?redirect=/my-account');
     }
   }, [user, userLoading, router]);
+  
+  const ordersForBulkPay = orders?.filter(order => order.status === 'confirming_payment') || [];
+  const canPayBulk = ordersForBulkPay.length > 1 && !bulkPaid;
+  const bulkTotal = ordersForBulkPay.reduce((acc, order) => acc + order.price, 0);
+  const bulkDiscount = bulkTotal * 0.2;
+  const bulkFinalTotal = bulkTotal - bulkDiscount;
+
+
+  const handleBulkPaid = () => {
+    // In a real scenario, you would update the orders' status here.
+    // For now, we'll just close the modal and hide the button.
+    setIsBulkPayModalOpen(false);
+    setBulkPaid(true); // This will hide the button until the page is reloaded or orders change
+  }
 
   const usdtImage = PlaceHolderImages.find(img => img.id === 'usdt-icon');
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
@@ -111,7 +137,14 @@ function MyAccountContent() {
         </Card>
 
         <section>
-          <h2 className="text-3xl font-bold mb-6">Order History</h2>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-3xl font-bold">Order History</h2>
+             {canPayBulk && (
+                <Button onClick={() => setIsBulkPayModalOpen(true)} className="btn-primary text-white">
+                    Pay Bulk ({ordersForBulkPay.length} items)
+                </Button>
+            )}
+          </div>
           {ordersLoading ? (
             <div className="text-center py-16 px-6 bg-white rounded-2xl shadow-lg">
                 <p className="text-gray-600">Loading orders...</p>
@@ -159,6 +192,32 @@ function MyAccountContent() {
           )}
         </section>
       </main>
+      
+      <Dialog open={isBulkPayModalOpen} onOpenChange={setIsBulkPayModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Bulk Payment (20% Off)</DialogTitle>
+            <DialogDescription>
+              Pay for multiple orders at once and receive a discount.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+             <div className="text-sm">
+                <div className="text-gray-500">Original Total</div>
+                <div className="line-through">${bulkTotal.toFixed(2)}</div>
+            </div>
+            <div className="text-lg font-bold">
+                <div className="text-gray-500 text-sm">Discounted Total</div>
+                <div>${bulkFinalTotal.toFixed(2)}</div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsBulkPayModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleBulkPaid} className="btn-primary text-white">Paid</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
 
       <footer className="bg-gray-900 text-white py-12 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -224,3 +283,5 @@ function MyAccountContent() {
 export default function MyAccountPage() {
     return <MyAccountContent />
 }
+
+    
