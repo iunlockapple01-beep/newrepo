@@ -227,7 +227,7 @@ function MyAccountContent() {
                     <div className="font-mono bg-gray-100 p-2 rounded-md break-all">0x69dfEded84C7E5baAB723FF65e1C587f2E50b3f4</div>
                 </div>
                 <div className="text-xs text-center text-gray-500 bg-gray-100 p-2 rounded-md">
-                    Contact admin (@iCloudUnlocks_2023) with payment details in case of any delays with the status changing to "payment confirmed".
+                If your payment status does not update to “Payment Confirmed” within 10 minutes after completing your payment, please contact the administrator with your payment details.
                 </div>
             </div>
             <DialogFooter>
