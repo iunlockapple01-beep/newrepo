@@ -22,6 +22,7 @@ import { useUser, useFirebase, useDoc } from '@/firebase';
 import { addDoc, collection, doc, serverTimestamp, runTransaction } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import { useToast } from '@/hooks/use-toast';
 
 // Define the structure for a submission
 interface Submission {
@@ -43,6 +44,7 @@ function DeviceCheckContent() {
   const model = searchParams.get('model') || 'Unknown Model';
   const price = Number(searchParams.get('price')) || 0;
   const image = searchParams.get('image') || '/placeholder.svg';
+  const { toast } = useToast();
 
   const [imei, setImei] = useState('');
   const [submissionId, setSubmissionId] = useState<string | null>(null);
@@ -51,6 +53,25 @@ function DeviceCheckContent() {
 
   const [isPaymentModalOpen, setPaymentModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(20 * 60);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isPaymentModalOpen && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prevTime => prevTime - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      setPaymentModalOpen(false);
+      toast({
+        title: "Payment window expired",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    }
+
+    return () => clearInterval(timer);
+  }, [isPaymentModalOpen, timeLeft, toast]);
   
   const handleClear = () => {
     setImei('');
@@ -128,6 +149,7 @@ function DeviceCheckContent() {
   };
 
   const openPaymentModal = () => {
+    setTimeLeft(20 * 60); // Reset timer
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -186,6 +208,12 @@ function DeviceCheckContent() {
         errorEmitter.emit('permission-error', permissionError);
         alert('Failed to create order. Please try again.');
     }
+  };
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
@@ -364,38 +392,49 @@ function DeviceCheckContent() {
       <Dialog open={isPaymentModalOpen} onOpenChange={setPaymentModalOpen}>
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Pay with Crypto</DialogTitle>
+                <DialogTitle className='flex justify-between items-center'>
+                    <span>Pay with Crypto</span>
+                    {timeLeft > 0 && (
+                        <span className="text-lg font-mono bg-blue-100 text-blue-800 rounded-md px-2 py-1">
+                            {formatTime(timeLeft)}
+                        </span>
+                    )}
+                </DialogTitle>
             </DialogHeader>
-                <div className="space-y-4 animate-fade-in">
-                    <div className="flex justify-center">
-                        {usdtImage && (
-                          <Image 
-                            src={usdtImage.imageUrl} 
-                            alt="USDT"
-                            width={80} 
-                            height={80}
-                            className="rounded-full" 
-                            data-ai-hint="usdt logo"
-                          />
-                        )}
-                    </div>
-                    <div className="text-sm">
-                        <div className="text-gray-500">Service</div>
-                        <div>iCloud Unlock</div>
-                    </div>
-                    <div className="text-sm">
-                        <div className="text-gray-500">Device</div>
-                        <div>{model}</div>
-                    </div>
-                     <div className="text-sm">
-                        <div className="text-gray-500">Amount (USD)</div>
-                        <div>${price}</div>
-                    </div>
-                    <div className="text-sm">
-                        <div className="text-gray-500">Pay to (USDT BEP20)</div>
-                        <div className="font-mono bg-gray-100 p-2 rounded-md break-all">0x69dfEded84C7E5baAB723FF65e1C587f2E50b3f4</div>
-                    </div>
+            <div className="space-y-4 animate-fade-in">
+                <div className="flex justify-center">
+                    {usdtImage && (
+                        <Image 
+                        src={usdtImage.imageUrl} 
+                        alt="USDT"
+                        width={80} 
+                        height={80}
+                        className="rounded-full" 
+                        data-ai-hint="usdt logo"
+                        />
+                    )}
                 </div>
+                <div className="text-sm">
+                    <div className="text-gray-500">Service</div>
+                    <div>iCloud Unlock</div>
+                </div>
+                <div className="text-sm">
+                    <div className="text-gray-500">Device</div>
+                    <div>{model}</div>
+                </div>
+                    <div className="text-sm">
+                    <div className="text-gray-500">Amount (USD)</div>
+                    <div>${price}</div>
+                </div>
+                <div className="text-sm">
+                    <div className="text-gray-500">Pay to (USDT BEP20)</div>
+                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all">0x69dfEded84C7E5baAB723FF65e1C587f2E50b3f4</div>
+                </div>
+
+                <div className="text-xs text-center text-gray-500 bg-gray-100 p-2 rounded-md">
+                    Payments made within this timeframe will be automatically applied to your order. For any issues, please contact the admin.
+                </div>
+            </div>
             <DialogFooter className="mt-4">
                 <Button variant="outline" onClick={() => setPaymentModalOpen(false)}>Cancel</Button>
                 <Button onClick={handlePaid} className="btn-primary text-white">I Paid</Button>
