@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
   User,
   Auth,
   UserCredential,
@@ -21,6 +19,7 @@ import {
 import { useAuth } from '../provider';
 import { errorEmitter } from '../error-emitter';
 import { FirestorePermissionError } from '../errors';
+import { FirebaseError } from 'firebase/app';
 
 interface CustomUser extends User {
     customClaims?: {
@@ -62,50 +61,14 @@ export function useUser() {
   return { data: user, loading, error };
 }
 
-export async function signInWithGoogle(auth: Auth, firestore: Firestore): Promise<UserCredential | null> {
-  const provider = new GoogleAuthProvider();
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-
-    // Create or update user in Firestore
-    const userRef = doc(firestore, 'users', user.uid);
-    const userData = {
-      displayName: user.displayName,
-      email: user.email,
-      photoURL: user.photoURL,
-      lastLogin: serverTimestamp(),
-    };
-
-    setDoc(userRef, userData, { merge: true }).catch(async (serverError) => {
-      const permissionError = new FirestorePermissionError({
-        path: userRef.path,
-        operation: 'write',
-        requestResourceData: userData,
-      });
-      errorEmitter.emit('permission-error', permissionError);
-    });
-    return result;
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      'code' in error &&
-      error.code === 'auth/popup-closed-by-user'
-    ) {
-      // Don't treat this as an application error.
-      return null;
-    }
-    console.error('Error signing in with Google', error);
-    throw error;
-  }
-}
-
 export async function signInWithEmail(auth: Auth, email:string, password:string): Promise<UserCredential | null> {
     try {
         const result = await signInWithEmailAndPassword(auth, email, password);
         return result;
     } catch(error) {
-        console.error('Error signing in with email', error);
+        if (error instanceof FirebaseError && error.code === 'auth/invalid-credential') {
+            throw error;
+        }
         throw error;
     }
 }

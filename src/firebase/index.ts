@@ -12,7 +12,7 @@ import {
   useAuth,
 } from './provider';
 
-import { useUser, signInWithGoogle, signOut, signInWithEmail, signUpWithEmail } from './auth/use-user';
+import { useUser, signOut, signInWithEmail, signUpWithEmail } from './auth/use-user';
 import { useCollection } from './firestore/use-collection';
 import { useDoc } from './firestore/use-doc';
 import firebaseConfig from './config';
@@ -41,7 +41,6 @@ export {
   useUser,
   useCollection,
   useDoc,
-  signInWithGoogle,
   signOut,
   signInWithEmail,
   signUpWithEmail,

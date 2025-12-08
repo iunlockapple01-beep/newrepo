@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useFirebase, signInWithGoogle, signInWithEmail } from '@/firebase';
+import { useFirebase, signInWithEmail } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,39 +14,18 @@ import Link from 'next/link';
 const ADMIN_EMAIL = 'iunlockapple01@gmail.com';
 
 export default function LoginPage() {
-  const { auth, firestore } = useFirebase();
+  const { auth } = useFirebase();
   const router = useRouter();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    try {
-      const userCredential = await signInWithGoogle(auth, firestore);
-      if (userCredential) {
-        if (userCredential.user.email === ADMIN_EMAIL) {
-          router.push('/admin');
-        } else {
-          router.push('/');
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error signing in',
-        description: 'An unexpected error occurred. Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [error, setError] = useState<string | null>(null);
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
     try {
       const userCredential = await signInWithEmail(auth, email, password);
        if (userCredential) {
@@ -55,14 +34,12 @@ export default function LoginPage() {
         } else {
           router.push('/');
         }
+      } else {
+        // This case might not be hit if signInWithEmail throws on failure
+        setError('Incorrect details');
       }
     } catch (error: any) {
-      console.error(error);
-      toast({
-        title: 'Error signing in',
-        description: error.message || 'Invalid email or password.',
-        variant: 'destructive',
-      });
+      setError('Incorrect details');
     } finally {
       setIsLoading(false);
     }
@@ -101,12 +78,10 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+               {error && <p className="text-sm font-medium text-destructive">{error}</p>}
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? 'Logging in...' : 'Login'}
-            </Button>
-            <Button variant="outline" type="button" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
-              Login with Google
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
