@@ -438,6 +438,7 @@ export default function IcloudUnlocksPage() {
                         <li><Link href="/privacy" className="hover:text-white">Privacy Policy</Link></li>
                         <li><Link href="/terms" className="hover:text-white">Terms of Service</Link></li>
                         <li><Link href="/refund-policy" className="hover:text-white">Refund Policy</Link></li>
+                        <li><Link href="/unlocking-guide" className="hover:text-white">Unlocking Guide</Link></li>
                     </ul>
                 </div>
                 <div>

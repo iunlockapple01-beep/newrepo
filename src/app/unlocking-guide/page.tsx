@@ -7,7 +7,7 @@ import { useUser } from '@/firebase';
 import { LoginButton } from '@/components/login-button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-export default function PrivacyPolicyPage() {
+export default function UnlockingGuidePage() {
   const { data: user } = useUser();
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
@@ -41,80 +41,88 @@ export default function PrivacyPolicyPage() {
 
       <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
-          <h1 className="text-4xl font-bold text-center mb-8">Privacy Policy – iCloud Unlocks</h1>
+          <h1 className="text-4xl font-bold text-center mb-8">Detailed Explanation of Our Unlocking Process</h1>
           
-          <div className="space-y-6 text-lg text-gray-700">
+          <div className="space-y-6 text-lg text-gray-700 prose lg:prose-xl max-w-none">
+            <p>Dear Valued Clients,</p>
+            <p>Here’s a clear and comprehensive guide to our unlocking process:</p>
+
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Introduction</h2>
-              <p>At iCloud Unlocks, we are committed to respecting and protecting your privacy. This policy describes the type of information we collect and how we manage and safeguard it.</p>
+                <h2 className="font-semibold text-gray-900">1. IMEI or Serial Number Submission</h2>
+                <p>On the services page, you will find a list of supported device models. Select the model you wish to unlock, enter the IMEI or Serial Number, and click the Check button. Our server will verify the details and provide full information about your device, including whether it is eligible for unlock.</p>
+            </section>
+            
+            <section>
+                <h2 className="font-semibold text-gray-900">2. Payment</h2>
+                <p>Once device support is confirmed, you can proceed with the unlock and make the required payment. We support several secure payment methods, including:</p>
+                <ul>
+                    <li><strong>USDT (BEP20)</strong> – Highly recommended. Payment is made directly to the server’s address with no additional fees.</li>
+                    <li>Binance Bitcoin</li>
+                    <li>Other crypto payments</li>
+                    <li>Skrill</li>
+                </ul>
+                <p>Please note: For payment methods other than USDT BEP20, additional fees may apply.</p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Information We Collect</h2>
-              <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">Personal Information</h3>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Name, email, phone number</li>
-                <li>Device identifiers such as IMEI, serial number, and model</li>
-                <li>Payment-related information (we do not store full payment details)</li>
-              </ul>
-              <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">Non-Personal Information</h3>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Website usage data</li>
-                <li>IP address, browser type, operating system</li>
-              </ul>
+                <h2 className="font-semibold text-gray-900">3. Registration</h2>
+                <p>After your payment is confirmed, we register your device’s IMEI or Serial Number with our official unlock service provider. This is a crucial step that initiates the unlocking process. Registration may take some time—up to 24 hours—as it depends on server queues and processing times.</p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">How Your Information Is Used</h2>
-              <p>We use your information to:</p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Deliver and improve our unlocking services</li>
-                <li>Provide customer support</li>
-                <li>Process and verify payments</li>
-                <li>Communicate updates and service information</li>
-                <li>Comply with legal obligations</li>
-              </ul>
+                <h2 className="font-semibold text-gray-900">4. Unlock and Activation</h2>
+                <p>Once registration is complete, we activate your device. During this stage:</p>
+                <ul>
+                    <li>Find My iPhone (FMI) is turned off</li>
+                    <li>Activation Lock is permanently removed</li>
+                </ul>
+                <p>This ensures the device is ready for setup.</p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Sharing of Information</h2>
-              <p>We do not sell or trade your information. We may share limited data with:</p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Trusted service partners that assist in service operations</li>
-                <li>Authorities if legally required</li>
-              </ul>
+                <h2 className="font-semibold text-gray-900">5. Firmware Restoration (If Required)</h2>
+                <p>If your device is passcode-locked, disabled, unavailable, or in lost mode, it may require a full firmware restoration. This process uses fresh IPSW firmware and a Windows or macOS PC with tools such as 3uTools or iTunes.</p>
+                <p>If you're unfamiliar with this procedure, we will guide you step-by-step through downloading and installing the correct firmware from official sources to ensure a smooth restoration.</p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Security Measures</h2>
-              <p>We use industry-standard practices to protect your data. However, no online system is 100% secure, and we cannot guarantee absolute protection.</p>
+                <h2 className="font-semibold text-gray-900">6. Devices on Activation Lock / Hello Screen</h2>
+                <p>If your device is already on the Activation Lock or Hello screen, a full restore may not be necessary. Simply:</p>
+                <ul>
+                    <li>Go to Connect to Wi-Fi,</li>
+                    <li>Connect to your network,</li>
+                    <li>Allow the device to refresh its iCloud status.</li>
+                </ul>
+                <p>Once FMI has been turned off on our side, you will be able to skip the Activation Lock, as the previous owner’s account will be completely removed.</p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Your Rights</h2>
-              <p>You may request:</p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Copies of your personal data</li>
-                <li>Corrections to inaccurate information</li>
-                <li>Deletion of certain data (subject to legal limitations)</li>
-                <li>To object to specific types of processing</li>
-              </ul>
+                <h2 className="font-semibold text-gray-900">7. Final Setup</h2>
+                <p>After the unlock is completed, you can set up your device normally and sign in with a new iCloud account. The device will no longer be linked to the previous owner, giving you full access and control.</p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Changes to Policy</h2>
-              <p>This Privacy Policy may be updated periodically. New versions will be posted with an updated date.</p>
+                <h2 className="font-semibold text-gray-900">8. Technical Support</h2>
+                <p>Our dedicated support team is available throughout the process to assist you with any questions or technical issues. We ensure that your unlocking experience is smooth, transparent, and stress-free.</p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Contact Information</h2>
-              <p>For privacy-related inquiries:</p>
-              <ul className="list-disc list-inside space-y-2 pl-4">
-                <li><span className="font-semibold">Telegram:</span> <a href="https://t.me/iCloudUnlocks_2023" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@iCloudUnlocks_2023</a></li>
-              </ul>
+                <h2 className="font-semibold text-gray-900">A Safe, Permanent Unlock</h2>
+                <p>Our unlock solution is:</p>
+                <ul>
+                    <li>Permanent</li>
+                    <li>Safe</li>
+                    <li>Reliable</li>
+                    <li>Free from phishing, jailbreaking, or bypass methods</li>
+                </ul>
+                <p>We pride ourselves on offering professional and legitimate services.</p>
             </section>
 
-            <p className="text-center pt-6">Thank you for trusting iCloud Unlocks.</p>
+            <p>If you have any questions or need further assistance, please feel free to contact us.</p>
+            <p>Your satisfaction and peace of mind are our priorities. Thank you for choosing icloud unlocks!</p>
+
+            <p>Best regards,<br/>The icloud unlocks Team</p>
+
           </div>
         </div>
       </main>
