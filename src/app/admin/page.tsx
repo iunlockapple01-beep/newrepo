@@ -119,11 +119,10 @@ function AdminDashboard() {
       status: status,
       updatedAt: serverTimestamp(),
     };
-    updateDoc(submissionRef, updatedData)
-      .then(() => {
-          alert('Feedback sent to client successfully!');
-      })
-      .catch(async (serverError) => {
+    try {
+        await updateDoc(submissionRef, updatedData);
+        alert('Feedback sent to client successfully!');
+    } catch (serverError) {
         const permissionError = new FirestorePermissionError({
             path: submissionRef.path,
             operation: 'update',
@@ -131,7 +130,7 @@ function AdminDashboard() {
         });
         errorEmitter.emit('permission-error', permissionError);
         alert('Failed to send feedback.');
-    });
+    }
   };
 
   const handleDelete = async (submissionId: string) => {
@@ -378,3 +377,5 @@ function AdminDashboard() {
 export default function AdminPage() {
     return <AdminDashboard />
 }
+
+    
