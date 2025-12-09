@@ -194,7 +194,9 @@ function DeviceCheckContent() {
 
         setPaymentModalOpen(false);
         alert(`Payment submitted for confirmation. Your Order ID is: ${newOrderId}. You will be redirected to your account page.`);
-        router.push('/my-account');
+        if (typeof window !== 'undefined') {
+          window.location.assign('/my-account');
+        }
 
     } catch (e: any) {
         console.error("Transaction failed: ", e);
@@ -365,7 +367,7 @@ function DeviceCheckContent() {
                         Telegram Channel
                     </a>
                     <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudUnlocks_2023" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
+                     <a href="https.t.me/iCloudUnlocks_2023" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
                         {telegramIconImage && <Image 
                              src={telegramIconImage.imageUrl} 
                             alt="Telegram" 
@@ -462,3 +464,5 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
+
+    
