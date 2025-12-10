@@ -251,40 +251,54 @@ export default function IcloudUnlocksPage() {
       {/* Hero Section */}
       <section id="home" className="min-h-screen flex items-center justify-center apple-gradient relative overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
-            Professional iCloud Unlocking Service
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 opacity-90 animate-fade-in">
-            Unlock your Apple devices safely and professionally. We support iPhones, iPads, MacBooks, and Apple Watches.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in mb-8">
-            <Link href="/services">
-                <Button className="btn-primary text-white px-8 py-4 rounded-lg font-semibold text-lg h-auto">
-                    View Services
-                </Button>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-md mx-auto animate-fade-in">
-             {!countersLoading && counters ? (
-                <>
-                    <AnimatedCounter endValue={counters.registeredUsers} label="Registered Users" icon={Users} />
-                    <AnimatedCounter endValue={counters.unlockedDevices} label="Unlocked Devices" icon={LockOpen} />
-                </>
-             ) : (
-                <>
-                    <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-center border border-white/20">
-                        <Users className="h-8 w-8 mx-auto mb-2 text-white" />
-                        <p className="text-3xl font-bold">...+</p>
-                        <p className="text-sm uppercase tracking-wider">Registered Users</p>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-center border border-white/20">
-                        <LockOpen className="h-8 w-8 mx-auto mb-2 text-white" />
-                        <p className="text-3xl font-bold">...+</p>
-                        <p className="text-sm uppercase tracking-wider">Unlocked Devices</p>
-                    </div>
-                </>
-             )}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="text-center md:text-left text-white">
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
+                Professional iCloud Unlocking Service
+              </h1>
+              <p className="text-xl md:text-2xl mb-8 opacity-90 animate-fade-in">
+                Unlock your Apple devices safely and professionally. We support iPhones, iPads, MacBooks, and Apple Watches.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fade-in mb-8">
+                <Link href="/services">
+                    <Button className="btn-primary text-white px-8 py-4 rounded-lg font-semibold text-lg h-auto">
+                        View Services
+                    </Button>
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-md mx-auto md:mx-0 animate-fade-in">
+                 {!countersLoading && counters ? (
+                    <>
+                        <AnimatedCounter endValue={counters.registeredUsers} label="Registered Users" icon={Users} />
+                        <AnimatedCounter endValue={counters.unlockedDevices} label="Unlocked Devices" icon={LockOpen} />
+                    </>
+                 ) : (
+                    <>
+                        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-center border border-white/20">
+                            <Users className="h-8 w-8 mx-auto mb-2 text-white" />
+                            <p className="text-3xl font-bold">...+</p>
+                            <p className="text-sm uppercase tracking-wider">Registered Users</p>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg text-center border border-white/20">
+                            <LockOpen className="h-8 w-8 mx-auto mb-2 text-white" />
+                            <p className="text-3xl font-bold">...+</p>
+                            <p className="text-sm uppercase tracking-wider">Unlocked Devices</p>
+                        </div>
+                    </>
+                 )}
+              </div>
+            </div>
+            <div className="relative hidden md:flex justify-center items-center">
+              <div className="hero-image-glow"></div>
+              <Image 
+                src="https://i.postimg.cc/3J2BCVhN/iphone-2-(1).png" 
+                alt="iPhone Unlock"
+                width={450}
+                height={450}
+                className="floating-animation"
+              />
+            </div>
           </div>
         </div>
       </section>

@@ -140,6 +140,25 @@
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    .floating-animation {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+        100% { transform: translateY(0px); }
+    }
+
+    .hero-image-glow {
+        position: absolute;
+        width: 60%;
+        height: 60%;
+        background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+        filter: blur(30px);
+        z-index: -1;
+    }
     
     .modal-backdrop {
         background: rgba(0, 0, 0, 0.5);
@@ -179,5 +198,3 @@
         transform: translateY(-1px);
     }
 }
-
-    
