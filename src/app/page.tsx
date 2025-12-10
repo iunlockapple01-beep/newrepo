@@ -351,7 +351,7 @@ export default function IcloudUnlocksPage() {
                     <h2 className="text-4xl font-bold text-gray-900 mb-4">About Us</h2>
                     <div className="space-y-4 text-gray-600">
                         <p>iCloud Unlocks was founded in 2023 with a mission to deliver fast, secure, and reliable iCloud and device unlock services for iPhones, iPads, Apple Watches, and MacBooks. We specialize in permanent, server-based unlocks—no bypass tricks, no jailbreaks, and no access to your personal data.</p>
-                        <p>Our process is straightforward: clients submit their device IMEI or serial number, which the server checks to provide full device details and determine unlock eligibility. Once confirmed, the device can then be registered on the server, and after processing, activation is completed when “Find My” is successfully turned off.</p>
+                        <p>Our process is straightforward: clients submit their device IMEI or serial number, which the server checks to provide full device details and determine unlock eligibility. Once confirmed, the device can then be registered for unlock on the server, and after processing, activation is completed which turns OFF the “Find My”.</p>
                         <p>Since our launch, we’ve helped thousands of users regain full access to their devices with transparency, professionalism, and dedicated customer support.</p>
                     </div>
                 </div>

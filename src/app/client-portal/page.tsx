@@ -301,8 +301,8 @@ function DeviceCheckContent() {
           {submission && submission.status === 'waiting' && (
             <div className="flex flex-col items-center">
               <div className="spinner w-14 h-14 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
-              <p className="font-semibold">Waiting for results...</p>
-              <p className="text-sm text-gray-500">Admin will run checks and send feedback here.</p>
+              <p className="font-semibold">Wait for results...</p>
+              <p className="text-sm text-gray-500">Server is processing your request and will send the feedback here once the checks are complete.</p>
             </div>
           )}
           {submission && (submission.status === 'eligible' || submission.status === 'not_supported') && (
