@@ -21,6 +21,8 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import { Copy } from 'lucide-react';
 
 interface Order {
   id: string;
@@ -31,6 +33,24 @@ interface Order {
   status: 'confirming_payment' | 'approved' | 'declined';
   price: number;
 }
+
+const CopyToClipboard = ({ text, children }: { text: string; children: React.ReactNode }) => {
+  const { toast } = useToast();
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied to clipboard!",
+      description: "Address has been copied.",
+      duration: 2000,
+    });
+  };
+
+  return (
+    <div onClick={handleCopy} className="cursor-pointer">
+      {children}
+    </div>
+  );
+};
 
 function MyAccountContent() {
   const { data: user, loading: userLoading } = useUser();
@@ -66,6 +86,8 @@ function MyAccountContent() {
 
   const usdtImage = PlaceHolderImages.find(img => img.id === 'usdt-icon');
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
+  const usdtTrc20Image = PlaceHolderImages.find(img => img.id === 'usdt-trc20-icon');
+  const bitcoinImage = PlaceHolderImages.find(img => img.id === 'bitcoin-icon');
   
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
@@ -128,7 +150,7 @@ function MyAccountContent() {
                            )}
                            <div>
                              <p className="text-sm">USDT BEP20 Address:</p>
-                             <p className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all">0x69dfEded84C7E5baAB723FF65e1C587f2E50b3f4</p>
+                             <p className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all">0x13283c0fb8F25845Dc2745E99C42D224e44103d9</p>
                            </div>
                         </div>
                     </div>
@@ -194,40 +216,74 @@ function MyAccountContent() {
       </main>
       
       <Dialog open={isBulkPayModalOpen} onOpenChange={setIsBulkPayModalOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
             <DialogHeader>
                 <DialogTitle>Bulk Payment (20% Off)</DialogTitle>
                 <DialogDescription>
-                    Pay for multiple orders at once and receive a discount.
+                    Pay for multiple orders at once and receive a discount. Send the exact amount to one of the addresses below.
                 </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4">
-                <div className="flex justify-center">
-                    {usdtImage && (
-                        <Image 
-                        src={usdtImage.imageUrl} 
-                        alt="USDT"
-                        width={60} 
-                        height={60}
-                        className="rounded-full" 
-                        data-ai-hint="usdt logo"
-                        />
-                    )}
+            <div className="space-y-4 py-4">
+                <div className="text-center">
+                    <p className="text-gray-500">Original Total</p>
+                    <p className="line-through text-lg">${bulkTotal.toFixed(2)}</p>
+                    <p className="text-gray-500">Discounted Total</p>
+                    <p className="text-3xl font-bold">${bulkFinalTotal.toFixed(2)}</p>
                 </div>
-                <div className="text-sm">
-                    <div className="text-gray-500">Original Total</div>
-                    <div className="line-through">${bulkTotal.toFixed(2)}</div>
+                 
+                {/* USDT BEP20 */}
+                <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
+                    <div className="flex items-center gap-3">
+                        {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT BEP20" width={40} height={40} className="rounded-full" data-ai-hint="usdt logo" />}
+                        <div>
+                            <p className="font-semibold">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p>
+                            <p className="text-xs text-gray-500">Use Binance Smart Chain for low fees.</p>
+                        </div>
+                    </div>
+                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                       <span>0x13283c0fb8F25845Dc2745E99C42D224e44103d9</span>
+                        <CopyToClipboard text="0x13283c0fb8F25845Dc2745E99C42D224e44103d9">
+                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                        </CopyToClipboard>
+                    </div>
                 </div>
-                <div className="text-lg font-bold">
-                    <div className="text-gray-500 text-sm">Discounted Total</div>
-                    <div>${bulkFinalTotal.toFixed(2)}</div>
+
+                {/* USDT TRC20 */}
+                 <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
+                    <div className="flex items-center gap-3">
+                        {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={40} height={40} className="rounded-full" />}
+                        <div>
+                            <p className="font-semibold">USDT (TRC20 Network)</p>
+                             <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                        </div>
+                    </div>
+                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                        <span>TLFA2iXceSQqTpPqTt7i2SYqkZzodLNvHe</span>
+                        <CopyToClipboard text="TLFA2iXceSQqTpPqTt7i2SYqkZzodLNvHe">
+                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                        </CopyToClipboard>
+                    </div>
                 </div>
-                 <div className="text-sm">
-                    <div className="text-gray-500">Pay to (USDT BEP20)</div>
-                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all">0x69dfEded84C7E5baAB723FF65e1C587f2E50b3f4</div>
+
+                {/* Bitcoin */}
+                 <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
+                    <div className="flex items-center gap-3">
+                        {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={40} height={40} className="rounded-full" />}
+                         <div>
+                            <p className="font-semibold">Bitcoin</p>
+                            <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                        </div>
+                    </div>
+                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                        <span>bc1qse2rp9jssde2e6e94szltjvd2ucav6e0lv7z3g</span>
+                        <CopyToClipboard text="bc1qse2rp9jssde2e6e94szltjvd2ucav6e0lv7z3g">
+                             <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                        </CopyToClipboard>
+                    </div>
                 </div>
-                <div className="text-xs text-center text-gray-500 bg-gray-100 p-2 rounded-md">
-                If your payment status does not update to “Payment Confirmed” within 10 minutes after completing your payment, please contact the administrator with your payment details.
+
+                <div className="text-xs text-center text-gray-500 bg-yellow-100 text-yellow-800 p-2 rounded-md">
+                    If your payment status does not update within 10 minutes, please contact the admin with your payment details.
                 </div>
             </div>
             <DialogFooter>
