@@ -72,6 +72,8 @@ function DeviceCheckContent() {
 
   const [isPaymentModalOpen, setPaymentModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(20 * 60);
 
   useEffect(() => {
@@ -95,6 +97,7 @@ function DeviceCheckContent() {
   const handleClear = () => {
     setImei('');
     setSubmissionId(null);
+    setValidationError(null);
     if(typeof window !== 'undefined') {
       sessionStorage.removeItem('current_submission_id');
     }
@@ -132,16 +135,32 @@ function DeviceCheckContent() {
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   const handleSubmitImei = async () => {
-    if (!imei.trim() || !user) {
-      alert('Please enter an IMEI or Serial number.');
+    if (!user) {
+      alert('Please log in to submit an IMEI.');
       return;
     }
+    setValidationError(null);
+
+    const trimmedImei = imei.trim();
+    const isImeiValid = /^\d{15}$/.test(trimmedImei);
+    const isSerialValid = /^[a-zA-Z0-9]{10,13}$/.test(trimmedImei);
+
+    if (!isImeiValid && !isSerialValid) {
+        setIsChecking(true);
+        setTimeout(() => {
+            setIsChecking(false);
+            setValidationError('Enter Valid IMEI or Serial');
+            setImei('');
+        }, 2000);
+        return;
+    }
+
     const newSubmission = {
       userId: user.uid,
       model,
       price,
       image,
-      imei: imei.trim(),
+      imei: trimmedImei,
       status: 'waiting' as 'waiting',
       feedback: null,
       createdAt: serverTimestamp(),
@@ -293,10 +312,10 @@ function DeviceCheckContent() {
                 value={submission ? submission.imei : imei}
                 onChange={(e) => setImei(e.target.value)}
                 className="w-full sm:w-80"
-                disabled={!!submission}
+                disabled={!!submission || isChecking}
               />
               <div className="flex gap-3">
-                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={!!submission}>Check IMEI</Button>
+                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={!!submission || isChecking}>Check IMEI</Button>
                 <Button onClick={handleClear} variant="outline">Clear</Button>
               </div>
             </div>
@@ -307,26 +326,39 @@ function DeviceCheckContent() {
         </div>
 
         <div className="mt-5 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[120px] flex items-center justify-center flex-col text-center">
-          {!submissionId && !submissionLoading && (
+          {isChecking && (
+             <div className="flex flex-col items-center">
+              <div className="spinner w-14 h-14 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
+              <p className="font-semibold">Wait for results...</p>
+            </div>
+          )}
+          {!isChecking && validationError && (
+              <div className="w-full text-left">
+                  <div className="p-2 px-3 rounded-md bg-red-100 border border-red-200 text-sm whitespace-pre-wrap font-mono text-red-800">
+                    {validationError}
+                  </div>
+              </div>
+          )}
+          {!isChecking && !validationError && !submissionId && !submissionLoading && (
             <div>
               <p className="font-semibold text-gray-700">No IMEI submitted yet.</p>
               <p className="text-sm text-gray-500">Submit your IMEI or serial number to check if unlock is supported.</p>
             </div>
           )}
-          {submissionLoading && (
+          {!isChecking && !validationError && submissionLoading && (
              <div className="flex flex-col items-center">
               <div className="spinner w-14 h-14 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
               <p className="font-semibold">Loading submission...</p>
             </div>
           )}
-          {submission && submission.status === 'waiting' && (
+          {!isChecking && !validationError && submission && submission.status === 'waiting' && (
             <div className="flex flex-col items-center">
               <div className="spinner w-14 h-14 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
               <p className="font-semibold">Wait for results...</p>
               <p className="text-sm text-gray-500">Server is processing your request and will send the feedback here once the checks are complete.</p>
             </div>
           )}
-          {submission && (submission.status === 'eligible' || submission.status === 'not_supported') && (
+          {!isChecking && !validationError && submission && (submission.status === 'eligible' || submission.status === 'not_supported') && (
             <div className="w-full text-left">
               <div className="space-y-2">
                 {submission.feedback?.map((line, index) => (
@@ -346,7 +378,7 @@ function DeviceCheckContent() {
                )}
             </div>
           )}
-           {!submission && !submissionLoading && submissionId && (
+           {!isChecking && !validationError && !submission && !submissionLoading && submissionId && (
             <div>
               <p className="font-semibold text-destructive">This submission was not found.</p>
               <p className="text-sm text-gray-500">It may have been deleted by an administrator. Please clear and try again.</p>
