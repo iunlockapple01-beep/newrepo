@@ -7,7 +7,7 @@ import { useUser } from '@/firebase';
 import { LoginButton } from '@/components/login-button';
 import { Mail, Clock, Building, Menu } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 
 export default function ContactPage() {
@@ -68,6 +68,9 @@ export default function ContactPage() {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right">
+                  <SheetHeader>
+                    <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                  </SheetHeader>
                   <div className="flex flex-col gap-4 p-4">
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
@@ -224,3 +227,5 @@ export default function ContactPage() {
     </div>
   );
 }
+
+    

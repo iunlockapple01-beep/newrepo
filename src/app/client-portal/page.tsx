@@ -24,7 +24,7 @@ import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
 import { Copy, Menu } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 // Define the structure for a submission
 interface Submission {
@@ -299,6 +299,9 @@ function DeviceCheckContent() {
                       </Button>
                     </SheetTrigger>
                     <SheetContent side="right">
+                      <SheetHeader>
+                        <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                      </SheetHeader>
                       <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
@@ -570,3 +573,5 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
+
+    

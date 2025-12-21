@@ -8,7 +8,7 @@ import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { LoginButton } from '@/components/login-button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
 
 export default function ServicesPage() {
@@ -134,6 +134,9 @@ export default function ServicesPage() {
                       </Button>
                     </SheetTrigger>
                     <SheetContent side="right">
+                      <SheetHeader>
+                        <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                      </SheetHeader>
                       <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Services</Link>
@@ -324,3 +327,5 @@ export default function ServicesPage() {
     </div>
   );
 }
+
+    
