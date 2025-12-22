@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useUser, useCollection, useDoc } from '@/firebase';
 import { useRouter } from 'next/navigation';
@@ -63,9 +63,14 @@ function MyAccountContent() {
   const { data: user, loading: userLoading } = useUser();
   const router = useRouter();
   
+  const orderConstraints = useMemo(() => {
+    if (!user) return undefined;
+    return [where('userId', '==', user.uid)];
+  }, [user]);
+
   const { data: orders, loading: ordersLoading } = useCollection<Order>(
     'orders',
-    user ? { constraints: [where('userId', '==', user.uid)] } : undefined
+    { constraints: orderConstraints }
   );
   
   const { data: userProfile, loading: profileLoading } = useDoc<UserProfile>('users', user?.uid || ' ');
@@ -407,5 +412,3 @@ function MyAccountContent() {
 export default function MyAccountPage() {
     return <MyAccountContent />
 }
-
-    
