@@ -21,6 +21,10 @@
           "type": "string",
           "format": "date-time",
           "description": "The last time the user logged in"
+        },
+        "balance": {
+          "type": "number",
+          "description": "The user's account balance"
         }
       },
       "required": ["displayName", "email"]

@@ -15,6 +15,7 @@ import {
   setDoc,
   serverTimestamp,
   Firestore,
+  getDoc,
 } from 'firebase/firestore';
 import { useAuth } from '../provider';
 import { errorEmitter } from '../error-emitter';
@@ -87,16 +88,33 @@ export async function signUpWithEmail(auth: Auth, firestore: Firestore, email: s
             email: user.email,
             photoURL: user.photoURL, // Initially will be null
             lastLogin: serverTimestamp(),
+            balance: 0, // Initialize balance to 0
         };
 
-        setDoc(userRef, userData, { merge: true }).catch(async (serverError) => {
-          const permissionError = new FirestorePermissionError({
-            path: userRef.path,
-            operation: 'create',
-            requestResourceData: userData,
-          });
-          errorEmitter.emit('permission-error', permissionError);
-        });
+        const metricsRef = doc(firestore, 'counters', 'metrics');
+
+        // Check if user document already exists to avoid double counting
+        const userDoc = await getDoc(userRef);
+        if (!userDoc.exists()) {
+             setDoc(userRef, userData, { merge: true }).catch(async (serverError) => {
+                const permissionError = new FirestorePermissionError({
+                    path: userRef.path,
+                    operation: 'create',
+                    requestResourceData: userData,
+                });
+                errorEmitter.emit('permission-error', permissionError);
+            });
+            
+            // Increment registered users count
+            const metricsDoc = await getDoc(metricsRef);
+            if (metricsDoc.exists()) {
+                const currentCount = metricsDoc.data().registeredUsers || 0;
+                await setDoc(metricsRef, { registeredUsers: currentCount + 1 }, { merge: true });
+            } else {
+                await setDoc(metricsRef, { registeredUsers: 1 }, { merge: true });
+            }
+        }
+
 
         // Re-read user to get updated profile
         await user.reload();

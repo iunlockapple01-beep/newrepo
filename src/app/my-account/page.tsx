@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useUser, useCollection } from '@/firebase';
+import { useUser, useCollection, useDoc } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -35,6 +35,11 @@ interface Order {
   price: number;
 }
 
+interface UserProfile {
+    id: string;
+    balance?: number;
+}
+
 const CopyToClipboard = ({ text, children }: { text: string; children: React.ReactNode }) => {
   const { toast } = useToast();
   const handleCopy = () => {
@@ -61,6 +66,8 @@ function MyAccountContent() {
     'orders',
     user ? { constraints: [where('userId', '==', user.uid)] } : undefined
   );
+  
+  const { data: userProfile, loading: profileLoading } = useDoc<UserProfile>('users', user?.uid || ' ');
   
   const [isBulkPayModalOpen, setIsBulkPayModalOpen] = useState(false);
   const [bulkPaid, setBulkPaid] = useState(false);
@@ -92,7 +99,7 @@ function MyAccountContent() {
   
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
-  if (userLoading || !user) {
+  if (userLoading || !user || profileLoading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
@@ -158,7 +165,7 @@ function MyAccountContent() {
             <CardContent>
                 <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                        <p><strong>Current Balance:</strong> $0.00</p>
+                        <p><strong>Current Balance:</strong> ${userProfile?.balance?.toFixed(2) || '0.00'}</p>
                         <p><strong>Total Orders:</strong> {orders ? orders.length : 0}</p>
                     </div>
                     <div>
@@ -385,5 +392,3 @@ function MyAccountContent() {
 export default function MyAccountPage() {
     return <MyAccountContent />
 }
-
-    

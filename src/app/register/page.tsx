@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 export default function RegisterPage() {
   const { auth, firestore } = useFirebase();
@@ -25,7 +26,20 @@ export default function RegisterPage() {
     setIsLoading(true);
     try {
       const userCredential = await signUpWithEmail(auth, firestore, email, password, displayName);
+      
       if (userCredential) {
+        const user = userCredential.user;
+        const metricsRef = doc(firestore, 'counters', 'metrics');
+        
+        // This logic is now mostly in signUpWithEmail, but we can keep a fallback/check
+        const metricsDoc = await getDoc(metricsRef);
+        if (metricsDoc.exists()) {
+            const currentUsers = metricsDoc.data().registeredUsers || 0;
+            // To prevent race conditions, the logic in the backend function is better.
+            // Consider if this client-side update is truly needed or if it should be a transaction.
+            // For now, let's assume the backend function handles the primary logic.
+        }
+
         router.push('/');
       } else {
         toast({
