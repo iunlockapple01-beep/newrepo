@@ -70,6 +70,16 @@ export default function BulkUnlockDiscountPage() {
       <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
           <h1 className="text-4xl font-bold text-center mb-8">Save 20% with our Bulk Unlock Service</h1>
+
+          <div className="relative w-full h-64 rounded-lg overflow-hidden mb-8">
+            <Image 
+                src="https://i.postimg.cc/pdRy2sxL/bulk.png" 
+                alt="Bulk Unlock Discount"
+                layout="fill"
+                objectFit="cover"
+                data-ai-hint="multiple phones"
+            />
+          </div>
           
           <div className="space-y-6 text-lg text-gray-700 prose lg:prose-xl max-w-none">
             <p>We offer a 20% discount on the total cost when you unlock two or more devices at the same time. Whether you are a business or just have multiple devices, follow these steps to claim your discount:</p>
@@ -149,5 +159,3 @@ export default function BulkUnlockDiscountPage() {
     </div>
   );
 }
-
-    
