@@ -90,6 +90,13 @@ export default function LoginPage() {
               Sign up
             </Link>
           </div>
+          <div className="mt-4 text-center text-xs text-muted-foreground px-4">
+            Can't log in or Forgot Password? Please contact the site{' '}
+            <a href="https://t.me/iCloudUnlocks_2023" target="_blank" rel="noopener noreferrer" className="underline font-semibold text-primary">
+              administrator
+            </a>
+            {' '}to request a password reset.
+          </div>
         </CardContent>
       </Card>
     </div>
