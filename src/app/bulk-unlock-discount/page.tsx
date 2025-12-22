@@ -75,8 +75,8 @@ export default function BulkUnlockDiscountPage() {
             <Image 
                 src="https://i.postimg.cc/pdRy2sxL/bulk.png" 
                 alt="Bulk Unlock Discount"
-                layout="fill"
-                objectFit="cover"
+                fill
+                style={{objectFit: "contain"}}
                 data-ai-hint="multiple phones"
             />
           </div>
