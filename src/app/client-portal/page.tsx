@@ -73,6 +73,7 @@ function DeviceCheckContent() {
 
   const [isPaymentModalOpen, setPaymentModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('Processing payment...');
   const [isChecking, setIsChecking] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(20 * 60);
@@ -190,10 +191,18 @@ function DeviceCheckContent() {
   const openPaymentModal = () => {
     setTimeLeft(20 * 60); // Reset timer
     setIsLoading(true);
+    setLoadingMessage('Processing payment...');
+
     setTimeout(() => {
-      setIsLoading(false);
-      setPaymentModalOpen(true);
-    }, 1200);
+      setLoadingMessage('Checking account balance...');
+      setTimeout(() => {
+        setLoadingMessage('No balance found. Proceeding with payment details...');
+        setTimeout(() => {
+          setIsLoading(false);
+          setPaymentModalOpen(true);
+        }, 3000);
+      }, 2000);
+    }, 2000);
   };
   
   const handlePaid = async () => {
@@ -557,7 +566,7 @@ function DeviceCheckContent() {
       {isLoading && (
         <div className="fixed inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center z-50">
            <div className="spinner w-16 h-16 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-           <p className="font-semibold text-gray-600">Processing payment...</p>
+           <p className="font-semibold text-gray-600">{loadingMessage}</p>
         </div>
       )}
 
