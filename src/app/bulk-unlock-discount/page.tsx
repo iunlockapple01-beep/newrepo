@@ -71,36 +71,38 @@ export default function BulkUnlockDiscountPage() {
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
           <h1 className="text-4xl font-bold text-center mb-8">Save 20% with our Bulk Unlock Service</h1>
 
-          <div className="relative w-full h-64 rounded-lg overflow-hidden mb-8">
-            <Image 
-                src="https://i.postimg.cc/pdRy2sxL/bulk.png" 
-                alt="Bulk Unlock Discount"
-                fill
-                style={{objectFit: "contain"}}
-                data-ai-hint="multiple phones"
-            />
-          </div>
-          
-          <div className="space-y-6 text-lg text-gray-700 prose lg:prose-xl max-w-none">
-            <p>We offer a 20% discount on the total cost when you unlock two or more devices at the same time. Whether you are a business or just have multiple devices, follow these steps to claim your discount:</p>
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="relative w-full h-80 rounded-lg overflow-hidden">
+                <Image 
+                    src="https://i.postimg.cc/pdRy2sxL/bulk.png" 
+                    alt="Bulk Unlock Discount"
+                    fill
+                    style={{objectFit: "contain"}}
+                    data-ai-hint="multiple phones"
+                />
+            </div>
+            
+            <div className="space-y-6 text-lg text-gray-700 prose lg:prose-xl max-w-none">
+              <p>We offer a 20% discount on the total cost when you unlock two or more devices at the same time. Whether you are a business or just have multiple devices, follow these steps to claim your discount:</p>
 
-            <ol className="list-decimal list-inside space-y-4">
-                <li>
-                    <strong>Submit Your Devices:</strong> Follow the standard unlock procedure for your first device.
-                </li>
-                <li>
-                    <strong>Commit to the Order:</strong> After seeing the payment details, click the "I Paid" button. This will move the order to your "Order History" in the My Account section.
-                </li>
-<li>
-                    <strong>Add More Devices:</strong> Repeat this process for every additional device you wish to unlock.
-                </li>
-                <li>
-                    <strong>Activate the Discount:</strong> Once you have two or more pending orders in your account, our system will automatically detect the bulk request.
-                </li>
-                <li>
-                    <strong>Finalize Payment:</strong> A "Pay Bulk Order" button will appear on your account page with the 20% discount already applied. Simply click the button to complete the transaction for all devices at once.
-                </li>
-            </ol>
+              <ol className="list-decimal list-inside space-y-4">
+                  <li>
+                      <strong>Submit Your Devices:</strong> Follow the standard unlock procedure for your first device.
+                  </li>
+                  <li>
+                      <strong>Commit to the Order:</strong> After seeing the payment details, click the "I Paid" button. This will move the order to your "Order History" in the My Account section.
+                  </li>
+                  <li>
+                      <strong>Add More Devices:</strong> Repeat this process for every additional device you wish to unlock.
+                  </li>
+                  <li>
+                      <strong>Activate the Discount:</strong> Once you have two or more pending orders in your account, our system will automatically detect the bulk request.
+                  </li>
+                  <li>
+                      <strong>Finalize Payment:</strong> A "Pay Bulk Order" button will appear on your account page with the 20% discount already applied. Simply click the button to complete the transaction for all devices at once.
+                  </li>
+              </ol>
+            </div>
           </div>
         </div>
       </main>
