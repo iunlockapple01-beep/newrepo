@@ -10,7 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 
-export default function PrivacyPolicyPage() {
+export default function BulkUnlockDiscountPage() {
   const { data: user } = useUser();
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
   const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
@@ -69,80 +69,28 @@ export default function PrivacyPolicyPage() {
 
       <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
-          <h1 className="text-4xl font-bold text-center mb-8">Privacy Policy – iCloud Unlocks</h1>
+          <h1 className="text-4xl font-bold text-center mb-8">Save 20% with our Bulk Unlock Service</h1>
           
-          <div className="space-y-6 text-lg text-gray-700">
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Introduction</h2>
-              <p>At iCloud Unlocks, we are committed to respecting and protecting your privacy. This policy describes the type of information we collect and how we manage and safeguard it.</p>
-            </section>
+          <div className="space-y-6 text-lg text-gray-700 prose lg:prose-xl max-w-none">
+            <p>We offer a 20% discount on the total cost when you unlock two or more devices at the same time. Whether you are a business or just have multiple devices, follow these steps to claim your discount:</p>
 
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Information We Collect</h2>
-              <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">Personal Information</h3>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Name, email, phone number</li>
-                <li>Device identifiers such as IMEI, serial number, and model</li>
-                <li>Payment-related information (we do not store full payment details)</li>
-              </ul>
-              <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">Non-Personal Information</h3>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Website usage data</li>
-                <li>IP address, browser type, operating system</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">How Your Information Is Used</h2>
-              <p>We use your information to:</p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Deliver and improve our unlocking services</li>
-                <li>Provide customer support</li>
-                <li>Process and verify payments</li>
-                <li>Communicate updates and service information</li>
-                <li>Comply with legal obligations</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Sharing of Information</h2>
-              <p>We do not sell or trade your information. We may share limited data with:</p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Trusted service partners that assist in service operations</li>
-                <li>Authorities if legally required</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Security Measures</h2>
-              <p>We use industry-standard practices to protect your data. However, no online system is 100% secure, and we cannot guarantee absolute protection.</p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Your Rights</h2>
-              <p>You may request:</p>
-              <ul className="list-disc list-inside space-y-1 pl-4">
-                <li>Copies of your personal data</li>
-                <li>Corrections to inaccurate information</li>
-                <li>Deletion of certain data (subject to legal limitations)</li>
-                <li>To object to specific types of processing</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Changes to Policy</h2>
-              <p>This Privacy Policy may be updated periodically. New versions will be posted with an updated date.</p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900">Contact Information</h2>
-              <p>For privacy-related inquiries:</p>
-              <ul className="list-disc list-inside space-y-2 pl-4">
-                <li><span className="font-semibold">Telegram:</span> <a href="https://t.me/iCloudUnlocks_2023" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@iCloudUnlocks_2023</a></li>
-              </ul>
-            </section>
-
-            <p className="text-center pt-6">Thank you for trusting iCloud Unlocks.</p>
+            <ol className="list-decimal list-inside space-y-4">
+                <li>
+                    <strong>Submit Your Devices:</strong> Follow the standard unlock procedure for your first device.
+                </li>
+                <li>
+                    <strong>Commit to the Order:</strong> After seeing the payment details, click the "I Paid" button. This will move the order to your "Order History" in the My Account section.
+                </li>
+<li>
+                    <strong>Add More Devices:</strong> Repeat this process for every additional device you wish to unlock.
+                </li>
+                <li>
+                    <strong>Activate the Discount:</strong> Once you have two or more pending orders in your account, our system will automatically detect the bulk request.
+                </li>
+                <li>
+                    <strong>Finalize Payment:</strong> A "Pay Bulk Order" button will appear on your account page with the 20% discount already applied. Simply click the button to complete the transaction for all devices at once.
+                </li>
+            </ol>
           </div>
         </div>
       </main>
@@ -201,7 +149,5 @@ export default function PrivacyPolicyPage() {
     </div>
   );
 }
-
-    
 
     

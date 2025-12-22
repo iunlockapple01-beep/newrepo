@@ -450,6 +450,7 @@ function DeviceCheckContent() {
                         <li><Link href="/terms" className="hover:text-white">Terms of Service</Link></li>
                         <li><Link href="/refund-policy" className="hover:text-white">Refund Policy</Link></li>
                         <li><Link href="/unlocking-guide" className="hover:text-white">Unlocking Guide</Link></li>
+                        <li><Link href="/bulk-unlock-discount" className="hover:text-white">Bulk Unlock Discont: Get 20% Off!</Link></li>
                     </ul>
                 </div>
                 <div>
@@ -592,3 +593,5 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
+
+    
