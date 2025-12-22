@@ -208,16 +208,19 @@ function MyAccountContent() {
         <section>
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">Order History</h2>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
                  {canPayBulk && (
                     <Button onClick={() => setIsBulkPayModalOpen(true)} className="btn-primary text-white">
                         Pay Bulk ({ordersForBulkPay.length} items)
                     </Button>
                 )}
-                 <Button variant="outline" onClick={() => router.refresh()}>
-                    <RefreshCw className="mr-2 h-4 w-4" />
-                    Refresh
-                </Button>
+                 <div className="flex items-center gap-2">
+                    <p className="text-sm text-gray-500 hidden md:block">Click the refresh button to update your order status.</p>
+                    <Button variant="outline" onClick={() => router.refresh()}>
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                        Refresh
+                    </Button>
+                </div>
             </div>
           </div>
           {ordersLoading ? (
@@ -412,3 +415,5 @@ function MyAccountContent() {
 export default function MyAccountPage() {
     return <MyAccountContent />
 }
+
+    
