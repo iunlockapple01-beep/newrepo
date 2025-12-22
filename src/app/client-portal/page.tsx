@@ -396,11 +396,21 @@ function DeviceCheckContent() {
           {!isChecking && !validationError && submission && (submission.status === 'eligible' || submission.status === 'not_supported') && (
             <div className="w-full text-left">
               <div className="space-y-2">
-                {submission.feedback?.map((line, index) => (
-                  <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm whitespace-pre-wrap font-mono">
-                    {line}
-                  </div>
-                ))}
+                {submission.feedback?.map((line, index) => {
+                  if (line === 'FIND_MY_ON_STATUS') {
+                    return (
+                      <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
+                        <span>Find My:</span>
+                        <span className="bg-red-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">ON</span>
+                      </div>
+                    )
+                  }
+                  return (
+                    <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm whitespace-pre-wrap font-mono">
+                      {line}
+                    </div>
+                  )
+                })}
               </div>
               {submission.status === 'eligible' && (
                 <div className="mt-4 text-right flex items-center justify-end gap-4 animate-fade-in">
@@ -582,5 +592,3 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
-
-    

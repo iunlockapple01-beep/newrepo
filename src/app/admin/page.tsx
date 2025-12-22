@@ -108,12 +108,21 @@ function AdminDashboard() {
   };
 
   const handleSendFeedback = async (submissionId: string) => {
-    const feedbackText = feedbackValues[submissionId];
+    const feedbackText = feedbackValues[submissionId] || '';
     const status = feedbackStatus[submissionId];
-    if (!feedbackText || !feedbackText.trim() || !status) {
-      return alert('Please enter feedback and select a status.');
+    if (!status) {
+      return alert('Please select an outcome.');
     }
+    // Allow empty feedback text, but trim it.
+    if (feedbackText.trim() === '' && status !== 'eligible') {
+        return alert('Please enter feedback.');
+    }
+
     const lines = feedbackText.split('\n').filter(l => l.trim());
+
+    if (status === 'eligible') {
+      lines.push('FIND_MY_ON_STATUS');
+    }
 
     const submissionRef = doc(firestore, 'submissions', submissionId);
     const updatedData = {
@@ -322,7 +331,7 @@ function AdminDashboard() {
                         Enter Feedback (paste full details):
                       </label>
                       <Textarea
-                        value={feedbackValues[sub.id] || sub.feedback?.join('\n') || ''}
+                        value={feedbackValues[sub.id] || sub.feedback?.filter(l => l !== 'FIND_MY_ON_STATUS').join('\n') || ''}
                         onChange={(e) => handleFeedbackChange(sub.id, e.target.value)}
                         className="font-mono"
                       />
@@ -410,7 +419,3 @@ function AdminDashboard() {
 export default function AdminPage() {
     return <AdminDashboard />
 }
-
-    
-
-    
