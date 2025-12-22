@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useUser, useCollection, useDoc } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
@@ -22,8 +22,9 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu } from 'lucide-react';
+import { Copy, Menu, RefreshCw, AlertCircle } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface Order {
   id: string;
@@ -158,7 +159,7 @@ function MyAccountContent() {
       <main className="max-w-7xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-bold text-center mb-10">Your Account</h1>
         
-        <Card className="mb-12">
+        <Card className="mb-8">
             <CardHeader>
                 <CardTitle className="text-2xl text-blue-600">Account Summary</CardTitle>
             </CardHeader>
@@ -191,14 +192,28 @@ function MyAccountContent() {
             </CardContent>
         </Card>
 
+        <Alert className="mb-12">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Important Notice</AlertTitle>
+            <AlertDescription>
+                After depositing, please refresh the page to confirm that your current balance has been updated and your unlock order has been approved for processing. If you experience any issues, please contact Support.
+            </AlertDescription>
+        </Alert>
+
         <section>
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">Order History</h2>
-             {canPayBulk && (
-                <Button onClick={() => setIsBulkPayModalOpen(true)} className="btn-primary text-white">
-                    Pay Bulk ({ordersForBulkPay.length} items)
+            <div className="flex items-center gap-2">
+                 {canPayBulk && (
+                    <Button onClick={() => setIsBulkPayModalOpen(true)} className="btn-primary text-white">
+                        Pay Bulk ({ordersForBulkPay.length} items)
+                    </Button>
+                )}
+                 <Button variant="outline" onClick={() => router.refresh()}>
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Refresh
                 </Button>
-            )}
+            </div>
           </div>
           {ordersLoading ? (
             <div className="text-center py-16 px-6 bg-white rounded-2xl shadow-lg">
@@ -392,3 +407,5 @@ function MyAccountContent() {
 export default function MyAccountPage() {
     return <MyAccountContent />
 }
+
+    
