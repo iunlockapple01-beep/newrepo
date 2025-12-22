@@ -26,7 +26,7 @@ export function useCollection<T>(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const memoizedConstraints = useMemo(() => options?.constraints, [JSON.stringify(options?.constraints)]);
+  const memoizedConstraints = options?.constraints;
 
   useEffect(() => {
     // If constraints are defined but some dependency is not ready (e.g. user is not loaded),
@@ -67,7 +67,7 @@ export function useCollection<T>(
     );
 
     return () => unsubscribe();
-  }, [firestore, collectionName, memoizedConstraints, options?.constraints]);
+  }, [firestore, collectionName, memoizedConstraints]);
 
   return { data, loading, error };
 }
