@@ -196,7 +196,7 @@ function DeviceCheckContent() {
     setTimeout(() => {
       setLoadingMessage('Checking account balance...');
       setTimeout(() => {
-        setLoadingMessage('No balance found. Proceeding with payment details...');
+        setLoadingMessage('No enough balance. Proceeding with payment details...');
         setTimeout(() => {
           setIsLoading(false);
           setPaymentModalOpen(true);
