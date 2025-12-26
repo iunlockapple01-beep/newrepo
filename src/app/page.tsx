@@ -276,12 +276,12 @@ export default function IcloudUnlocksPage() {
       </nav>
 
       {/* Hero Section */}
-      <section id="home" className="flex items-center justify-center apple-gradient relative overflow-hidden pt-24 pb-12 md:pt-32 md:pb-20">
+      <section id="home" className="flex items-center justify-center apple-gradient relative overflow-hidden pt-24 pb-12 md:pt-28 md:pb-16">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="text-center md:text-left text-white">
-              <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-fade-in">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
                 Professional iCloud Unlocking Service
               </h1>
               <p className="text-lg md:text-xl mb-6 opacity-90 animate-fade-in">
@@ -520,4 +520,5 @@ export default function IcloudUnlocksPage() {
     
 
     
+
 
