@@ -25,6 +25,8 @@ import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
 import { Copy, Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 
 // Define the structure for a submission
 interface Submission {
@@ -37,6 +39,12 @@ interface Submission {
   feedback: string[] | null;
   createdAt: any;
 }
+
+interface UserProfile {
+    id: string;
+    balance?: number;
+}
+
 
 const CopyToClipboard = ({ text, children }: { text: string; children: React.ReactNode }) => {
   const { toast } = useToast();
@@ -70,6 +78,7 @@ function DeviceCheckContent() {
   const [submissionId, setSubmissionId] = useState<string | null>(null);
 
   const { data: submission, loading: submissionLoading } = useDoc<Submission>('submissions', submissionId || ' ');
+  const { data: userProfile, loading: profileLoading } = useDoc<UserProfile>('users', user?.uid || ' ');
 
   const [isPaymentModalOpen, setPaymentModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -271,7 +280,10 @@ function DeviceCheckContent() {
   const usdtTrc20Image = PlaceHolderImages.find(img => img.id === 'usdt-trc20-icon');
   const bitcoinImage = PlaceHolderImages.find(img => img.id === 'bitcoin-icon');
   
-  if (userLoading || !user) {
+  const currentBalance = userProfile?.balance || 0;
+  const amountToPay = Math.max(0, price - currentBalance);
+
+  if (userLoading || !user || profileLoading) {
     return (
         <div className="flex justify-center items-center h-screen">
             <div>Loading...</div>
@@ -506,70 +518,89 @@ function DeviceCheckContent() {
                     Send the exact amount to one of the addresses below.
                 </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 animate-fade-in py-4">
-                <div className="text-center">
-                    <p className="text-gray-500">Amount (USD)</p>
-                    <p className="text-3xl font-bold">${price}</p>
-                </div>
+             <ScrollArea className="max-h-[70vh]">
+                <div className="space-y-4 animate-fade-in py-4 pr-6">
+                    <div className="text-center">
+                        <p className="text-gray-500">Service Cost</p>
+                        <p className="text-lg font-semibold">${price.toFixed(2)}</p>
+                        <p className="text-gray-500 mt-1">Your Balance</p>
+                        <p className="text-lg font-semibold text-green-600">-${currentBalance.toFixed(2)}</p>
+                        <Separator className="my-2" />
+                        <p className="text-gray-500">Amount to Pay</p>
+                        <p className="text-3xl font-bold">${amountToPay.toFixed(2)}</p>
+                    </div>
 
-                {/* USDT BEP20 */}
-                <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
-                    <div className="flex items-center gap-3">
-                        {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT BEP20" width={40} height={40} className="rounded-full" data-ai-hint="usdt logo" />}
-                        <div>
-                            <p className="font-semibold">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p>
-                            <p className="text-xs text-gray-500">Use Binance Smart Chain for low fees.</p>
+                    {amountToPay > 0 && (
+                        <>
+                            {/* USDT BEP20 */}
+                            <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
+                                <div className="flex items-center gap-3">
+                                    {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT BEP20" width={40} height={40} className="rounded-full" data-ai-hint="usdt logo" />}
+                                    <div>
+                                        <p className="font-semibold">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p>
+                                        <p className="text-xs text-gray-500">Use Binance Smart Chain for low fees.</p>
+                                    </div>
+                                </div>
+                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                <span>0x13283c0fb8F25845Dc2745E99C42D224e44103d9</span>
+                                    <CopyToClipboard text="0x13283c0fb8F25845Dc2745E99C42D224e44103d9">
+                                        <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                    </CopyToClipboard>
+                                </div>
+                            </div>
+
+                            {/* USDT TRC20 */}
+                            <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
+                                <div className="flex items-center gap-3">
+                                    {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={40} height={40} className="rounded-full" />}
+                                    <div>
+                                        <p className="font-semibold">USDT (TRC20 Network)</p>
+                                        <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                                    </div>
+                                </div>
+                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                    <span>TLFA2iXceSQqTpPqTt7i2SYqkZzodLNvHe</span>
+                                    <CopyToClipboard text="TLFA2iXceSQqTpPqTt7i2SYqkZzodLNvHe">
+                                        <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                    </CopyToClipboard>
+                                </div>
+                            </div>
+
+                            {/* Bitcoin */}
+                            <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
+                                <div className="flex items-center gap-3">
+                                    {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={40} height={40} className="rounded-full" />}
+                                    <div>
+                                        <p className="font-semibold">Bitcoin</p>
+                                        <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                                    </div>
+                                </div>
+                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                    <span>bc1qse2rp9jssde2e6e94szltjvd2ucav6e0lv7z3g</span>
+                                    <CopyToClipboard text="bc1qse2rp9jssde2e6e94szltjvd2ucav6e0lv7z3g">
+                                        <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                    </CopyToClipboard>
+                                </div>
+                            </div>
+
+                            <div className="text-xs text-center text-gray-500 bg-yellow-100 text-yellow-800 p-2 rounded-md">
+                                Payments made within the timer will be automatically applied. For any issues or for payments via other methods, please contact the admin.
+                            </div>
+                        </>
+                    )}
+                     {amountToPay <= 0 && (
+                        <div className="text-center p-4 bg-green-100 text-green-800 rounded-lg">
+                            <p className="font-semibold">Your balance covers the full amount!</p>
+                            <p>Click "Confirm" to use your balance for this unlock.</p>
                         </div>
-                    </div>
-                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                       <span>0x13283c0fb8F25845Dc2745E99C42D224e44103d9</span>
-                        <CopyToClipboard text="0x13283c0fb8F25845Dc2745E99C42D224e44103d9">
-                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                        </CopyToClipboard>
-                    </div>
+                    )}
                 </div>
-
-                {/* USDT TRC20 */}
-                 <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
-                    <div className="flex items-center gap-3">
-                        {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={40} height={40} className="rounded-full" />}
-                        <div>
-                            <p className="font-semibold">USDT (TRC20 Network)</p>
-                             <p className="text-xs text-gray-500">Contact admin before sending.</p>
-                        </div>
-                    </div>
-                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                        <span>TLFA2iXceSQqTpPqTt7i2SYqkZzodLNvHe</span>
-                        <CopyToClipboard text="TLFA2iXceSQqTpPqTt7i2SYqkZzodLNvHe">
-                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                        </CopyToClipboard>
-                    </div>
-                </div>
-
-                {/* Bitcoin */}
-                 <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
-                    <div className="flex items-center gap-3">
-                        {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={40} height={40} className="rounded-full" />}
-                         <div>
-                            <p className="font-semibold">Bitcoin</p>
-                            <p className="text-xs text-gray-500">Contact admin before sending.</p>
-                        </div>
-                    </div>
-                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                        <span>bc1qse2rp9jssde2e6e94szltjvd2ucav6e0lv7z3g</span>
-                        <CopyToClipboard text="bc1qse2rp9jssde2e6e94szltjvd2ucav6e0lv7z3g">
-                             <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                        </CopyToClipboard>
-                    </div>
-                </div>
-
-                <div className="text-xs text-center text-gray-500 bg-yellow-100 text-yellow-800 p-2 rounded-md">
-                    Payments made within the timer will be automatically applied. For any issues or for payments via other methods, please contact the admin.
-                </div>
-            </div>
+            </ScrollArea>
             <DialogFooter className="mt-4">
                 <Button variant="outline" onClick={() => setPaymentModalOpen(false)}>Cancel</Button>
-                <Button onClick={handlePaid} className="btn-primary text-white">I Paid</Button>
+                <Button onClick={handlePaid} className="btn-primary text-white">
+                    {amountToPay > 0 ? 'I Paid' : 'Confirm'}
+                </Button>
             </DialogFooter>
         </DialogContent>
       </Dialog>
