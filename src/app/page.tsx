@@ -276,25 +276,25 @@ export default function IcloudUnlocksPage() {
       </nav>
 
       {/* Hero Section */}
-      <section id="home" className="min-h-screen flex items-center justify-center apple-gradient relative overflow-hidden pt-16">
+      <section id="home" className="flex items-center justify-center apple-gradient relative overflow-hidden pt-24 pb-12 md:pt-32 md:pb-20">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="text-center md:text-left text-white">
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
+              <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-fade-in">
                 Professional iCloud Unlocking Service
               </h1>
-              <p className="text-xl md:text-2xl mb-8 opacity-90 animate-fade-in">
+              <p className="text-lg md:text-xl mb-6 opacity-90 animate-fade-in">
                 Unlock your Apple devices safely and professionally. We support iPhones, iPads, MacBooks, and Apple Watches.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fade-in mb-8">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fade-in mb-6">
                 <Link href="/services">
-                    <Button className="btn-primary text-white px-8 py-4 rounded-lg font-semibold text-lg h-auto">
+                    <Button className="btn-primary text-white px-8 py-3 rounded-lg font-semibold text-base h-auto">
                         View Services
                     </Button>
                 </Link>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-md mx-auto md:mx-0 animate-fade-in">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto md:mx-0 animate-fade-in">
                  {!countersLoading && counters ? (
                     <>
                         <AnimatedCounter endValue={counters.registeredUsers} label="Registered Users" icon={Users} />
@@ -321,8 +321,8 @@ export default function IcloudUnlocksPage() {
               <Image 
                 src="https://i.postimg.cc/3J2BCVhN/iphone-2-(1).png" 
                 alt="iPhone Unlock"
-                width={450}
-                height={450}
+                width={400}
+                height={400}
                 className="floating-animation"
               />
             </div>
@@ -520,3 +520,4 @@ export default function IcloudUnlocksPage() {
     
 
     
+
