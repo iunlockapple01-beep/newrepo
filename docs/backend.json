@@ -108,7 +108,7 @@
         },
         "status": {
           "type": "string",
-          "enum": ["confirming_payment", "approved", "declined"],
+          "enum": ["confirming_payment", "approved", "declined", "unlocked"],
           "description": "The current status of the order"
         },
         "createdAt": {
