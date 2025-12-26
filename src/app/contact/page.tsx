@@ -92,7 +92,7 @@ export default function ContactPage() {
         </div>
       </nav>
 
-      <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-4xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold">Contact Us</h1>

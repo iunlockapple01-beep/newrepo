@@ -276,7 +276,7 @@ export default function IcloudUnlocksPage() {
       </nav>
 
       {/* Hero Section */}
-      <section id="home" className="min-h-screen flex items-center justify-center apple-gradient relative overflow-hidden">
+      <section id="home" className="min-h-screen flex items-center justify-center apple-gradient relative overflow-hidden pt-16">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">

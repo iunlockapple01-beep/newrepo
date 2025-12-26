@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
@@ -166,7 +167,7 @@ function MyAccountContent() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-bold text-center mb-10">Your Account</h1>
         
         <Card className="mb-8">

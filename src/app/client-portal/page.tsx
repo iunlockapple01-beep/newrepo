@@ -343,7 +343,7 @@ function DeviceCheckContent() {
         </div>
       </nav>
 
-      <main className="max-w-4xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-4xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="bg-white p-6 rounded-2xl shadow-lg md:flex md:gap-6 md:items-center">
           <div className="relative w-full md:w-56 h-36 flex-shrink-0 rounded-lg bg-gray-100 overflow-hidden mb-4 md:mb-0">
              <Image src={image} alt={model} layout="fill" objectFit="cover" />

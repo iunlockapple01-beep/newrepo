@@ -157,7 +157,7 @@ export default function ServicesPage() {
         </div>
       </nav>
 
-      <main className="pt-24">
+      <main className="pt-16">
         <section className="text-center py-12 px-4">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Permanent iCloud Unlock (FMI OFF)</h1>
           <p className="mt-4 text-lg text-gray-600">Works for <strong>Clean</strong>, <strong>Lost with Info</strong>, and <strong>Lost without Info</strong> devices.</p>

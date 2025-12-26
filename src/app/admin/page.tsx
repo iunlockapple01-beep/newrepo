@@ -257,7 +257,7 @@ function AdminDashboard() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-32 px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <main className="max-w-7xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
         <div>
             <div className="mb-12">
                 <Card>

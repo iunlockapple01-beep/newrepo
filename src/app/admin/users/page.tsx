@@ -140,7 +140,7 @@ function UserManagementDashboard() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-32 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-4 mb-10">
             <Link href="/admin">
                 <Button variant="outline" size="icon">
