@@ -367,7 +367,7 @@ function DeviceCheckContent() {
               </div>
             </div>
             <p className="text-sm text-gray-500 mt-2">
-              By submitting, we will check if your device is supported. We will respond with a short 7-line check result.
+              The server will run checks on the submitted IMEI or serial number and return the results on this page. Please do not close the page until the feedback loads. You may minimize the page while waiting.
             </p>
           </div>
         </div>
