@@ -19,7 +19,7 @@ import { FirestorePermissionError } from '@/firebase/errors';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Image from 'next/image';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { ArrowLeft, Menu, Trash2 } from 'lucide-react';
+import { ArrowLeft, Menu } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 
 interface BannedUser {
@@ -200,8 +200,8 @@ function BannedUsersDashboard() {
                             <TableCell className="font-mono text-xs">{b.userId}</TableCell>
                             <TableCell>{b.createdAt?.toDate().toLocaleDateString() || 'N/A'}</TableCell>
                             <TableCell className='text-right'>
-                                <Button size="icon" variant="destructive" onClick={() => handleRemoveBannedUser(b.id)}>
-                                    <Trash2 className='h-4 w-4' />
+                                <Button variant="destructive" onClick={() => handleRemoveBannedUser(b.id)}>
+                                    Remove
                                 </Button>
                             </TableCell>
                         </TableRow>
@@ -218,5 +218,7 @@ function BannedUsersDashboard() {
 export default function BannedUsersPage() {
     return <BannedUsersDashboard />
 }
+
+    
 
     
