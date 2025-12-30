@@ -218,3 +218,5 @@ function BannedUsersDashboard() {
 export default function BannedUsersPage() {
     return <BannedUsersDashboard />
 }
+
+    
