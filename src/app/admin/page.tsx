@@ -99,6 +99,12 @@ function AdminDashboard() {
     }
   }, [counters]);
 
+  const sortedSubmissions = submissions?.sort((a, b) => {
+    if (a.status === 'waiting' && b.status !== 'waiting') return -1;
+    if (a.status !== 'waiting' && b.status === 'waiting') return 1;
+    return 0;
+  });
+
   const handleFeedbackChange = (id: string, value: string) => {
     setFeedbackValues(prev => ({ ...prev, [id]: value }));
   };
@@ -126,7 +132,7 @@ function AdminDashboard() {
     }
 
     if (status === 'feedback') {
-        lines.push('Choose correct device model and Check again');
+        lines.push('You Have Selected Wrong Device Model');
     }
 
     const submissionRef = doc(firestore, 'submissions', submissionId);
@@ -319,20 +325,20 @@ function AdminDashboard() {
                 </Card>
             </div>
 
-            <h1 className="text-4xl font-bold text-center mb-10">IMEI Submissions</h1>
+            <h1 className="text-4xl font-bold text-center mb-10">IMEI/SERIAL Submissions</h1>
             {submissionsLoading && <p>Loading submissions...</p>}
-            {!submissionsLoading && (!submissions || submissions.length === 0) && (
+            {!submissionsLoading && (!sortedSubmissions || sortedSubmissions.length === 0) && (
                 <p className='text-center text-gray-500'>No pending IMEI submissions found.</p>
             )}
             <div className="space-y-6">
-              {submissions && submissions.map(sub => (
-                <Card key={sub.id} className="bg-white">
+              {sortedSubmissions && sortedSubmissions.map(sub => (
+                <Card key={sub.id} className={`bg-white ${sub.status === 'waiting' ? 'border-2 border-primary' : ''}`}>
                   <CardHeader>
                     <CardTitle className='flex justify-between items-center'>
                         <span>{sub.model}</span>
-                        <span className="text-sm font-medium text-blue-600">
-                            Status: {sub.status}
-                        </span>
+                        <Badge variant={sub.status === 'waiting' ? 'default' : 'secondary'} className={sub.status === 'waiting' ? 'animate-pulse' : ''}>
+                          {sub.status}
+                        </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -344,7 +350,7 @@ function AdminDashboard() {
                         Enter Feedback (paste full details):
                       </label>
                       <Textarea
-                        value={feedbackValues[sub.id] || sub.feedback?.filter(l => l !== 'FIND_MY_ON_STATUS' && l !== 'Choose correct device model and Check again').join('\n') || ''}
+                        value={feedbackValues[sub.id] || sub.feedback?.filter(l => l !== 'FIND_MY_ON_STATUS' && l !== 'You Have Selected Wrong Device Model').join('\n') || ''}
                         onChange={(e) => handleFeedbackChange(sub.id, e.target.value)}
                         className="font-mono"
                       />

@@ -181,7 +181,7 @@ export default function ServicesPage() {
                                 <tr key={device.name} className="border-b">
                                 <td>{device.name}</td>
                                 <td>${device.price}</td>
-                                <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock iCloud</Button></td>
+                                <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock</Button></td>
                                 </tr>
                             ))}
                             </tbody>
@@ -205,7 +205,7 @@ export default function ServicesPage() {
                                 <tr key={device.name} className="border-b">
                                 <td>{device.name}</td>
                                 <td>${device.price}</td>
-                                <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock iCloud</Button></td>
+                                <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock</Button></td>
                                 </tr>
                             ))}
                             </tbody>
@@ -229,7 +229,7 @@ export default function ServicesPage() {
                                 <tr key={device.name} className="border-b">
                                 <td>{device.note ? `${device.name} (${device.note})` : device.name}</td>
                                 <td>${device.price}</td>
-                                <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock iCloud</Button></td>
+                                <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock</Button></td>
                                 </tr>
                             ))}
                             </tbody>
@@ -253,7 +253,7 @@ export default function ServicesPage() {
                                 <tr key={device.name} className="border-b">
                                 <td>{device.name}</td>
                                 <td>${device.price}</td>
-                                <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock iCloud</Button></td>
+                                <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock</Button></td>
                                 </tr>
                             ))}
                             </tbody>
