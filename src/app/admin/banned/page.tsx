@@ -75,30 +75,6 @@ function BannedUsersDashboard() {
       });
   };
 
-  const handleRemoveBannedUser = async () => {
-    const trimmedId = userIdInput.trim();
-    if (!trimmedId) {
-      alert('Please enter a User ID to remove.');
-      return;
-    }
-
-    if (window.confirm('Are you sure you want to remove this user from the banned list?')) {
-      const docRef = doc(firestore, 'banned_users', trimmedId);
-      try {
-        await deleteDoc(docRef);
-        alert('User removed from banned list successfully.');
-        setUserIdInput('');
-      } catch (serverError) {
-        const permissionError = new FirestorePermissionError({
-            path: docRef.path,
-            operation: 'delete',
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        alert('Failed to remove user. Please check the ID and your permissions.');
-      }
-    }
-  };
-
   if (userLoading || !user || !isAdmin) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
@@ -167,7 +143,7 @@ function BannedUsersDashboard() {
         
         <Card className="mb-8">
             <CardHeader>
-                <CardTitle>Manage Banned Users</CardTitle>
+                <CardTitle>Ban a User</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="flex items-center gap-2">
@@ -178,10 +154,9 @@ function BannedUsersDashboard() {
                         value={userIdInput}
                         onChange={(e) => setUserIdInput(e.target.value)}
                         className="w-full"
-                        placeholder="Enter User ID to ban or remove from list"
+                        placeholder="Enter User ID to ban"
                     />
                     <Button onClick={handleAddBannedUser} className="btn-primary text-white">Add</Button>
-                    <Button onClick={handleRemoveBannedUser} variant="destructive">Remove</Button>
                 </div>
             </CardContent>
         </Card>
