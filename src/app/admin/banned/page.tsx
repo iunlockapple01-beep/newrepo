@@ -75,7 +75,7 @@ function BannedUsersDashboard() {
       });
   };
 
-  const handleRemoveBannedUser = async (docId: string) => {
+  const handleRemoveBannedUser = (docId: string) => {
     if (window.confirm('Are you sure you want to remove this user from the banned list?')) {
         const bannedUserRef = doc(firestore, 'banned_users', docId);
         deleteDoc(bannedUserRef)
@@ -218,5 +218,3 @@ function BannedUsersDashboard() {
 export default function BannedUsersPage() {
     return <BannedUsersDashboard />
 }
-
-    
