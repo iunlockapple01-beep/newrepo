@@ -19,7 +19,7 @@ import {
 import { LoginButton } from '@/components/login-button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirebase, useDoc } from '@/firebase';
-import { addDoc, collection, doc, serverTimestamp, runTransaction } from 'firebase/firestore';
+import { addDoc, collection, doc, serverTimestamp, runTransaction, query, where, getDocs, limit } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
@@ -151,13 +151,13 @@ function DeviceCheckContent() {
       return;
     }
     setValidationError(null);
+    setIsChecking(true);
 
     const trimmedImei = imei.trim();
     const isImeiValid = /^\d{15}$/.test(trimmedImei);
     const isSerialValid = /^[a-zA-Z0-9]{10,13}$/.test(trimmedImei);
 
     if (!isImeiValid && !isSerialValid) {
-        setIsChecking(true);
         setTimeout(() => {
             setIsChecking(false);
             setValidationError('Enter Valid IMEI or Serial');
@@ -165,6 +165,33 @@ function DeviceCheckContent() {
         }, 2000);
         return;
     }
+
+    // Check for existing submission with feedback
+    try {
+        const submissionsRef = collection(firestore, 'submissions');
+        const q = query(
+            submissionsRef, 
+            where('imei', '==', trimmedImei), 
+            where('status', 'in', ['eligible', 'not_supported']),
+            limit(1)
+        );
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            const existingSubmission = querySnapshot.docs[0];
+            setSubmissionId(existingSubmission.id);
+             if (typeof window !== 'undefined') {
+                sessionStorage.setItem('current_submission_id', existingSubmission.id);
+                sessionStorage.setItem(`submission_data_${existingSubmission.id}`, JSON.stringify({ model: existingSubmission.data().model, imei: existingSubmission.data().imei }));
+            }
+            setIsChecking(false);
+            return;
+        }
+    } catch (e) {
+        console.error("Error querying existing submissions: ", e);
+        // Fall through to creating a new one
+    }
+
 
     const newSubmission = {
       userId: user.uid,
@@ -184,8 +211,10 @@ function DeviceCheckContent() {
           sessionStorage.setItem('current_submission_id', docRef.id);
           sessionStorage.setItem(`submission_data_${docRef.id}`, JSON.stringify({ model: newSubmission.model, imei: newSubmission.imei }));
         }
+        setIsChecking(false);
       })
       .catch(async (serverError) => {
+        setIsChecking(false);
         const permissionError = new FirestorePermissionError({
           path: `submissions/unknown`, // Path is unknown until doc is created
           operation: 'create',
@@ -626,3 +655,4 @@ export default function ClientPortalPage() {
 }
 
     
+
