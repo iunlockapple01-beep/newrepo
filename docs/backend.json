@@ -141,6 +141,23 @@
         }
       },
       "required": ["registeredUsers", "unlockedDevices", "orderCounter"]
+    },
+    "banned_user": {
+      "title": "Banned User",
+      "description": "A user who is blocked from making new submissions",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the banned user"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date the user was banned"
+        }
+      },
+      "required": ["userId", "createdAt"]
     }
   },
   "auth": {
@@ -170,6 +187,12 @@
         "$ref": "#/backend/entities/counters"
       },
       "description": "Holds site-wide metrics like user and device counts"
+    },
+    "/banned_users/{userId}": {
+      "schema": {
+        "$ref": "#/backend/entities/banned_user"
+      },
+      "description": "List of user IDs who are banned from making new submissions"
     }
   }
 }

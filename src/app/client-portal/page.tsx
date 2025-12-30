@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
@@ -44,6 +43,12 @@ interface UserProfile {
     balance?: number;
 }
 
+interface BannedUser {
+    id: string;
+    userId: string;
+    createdAt: any;
+}
+
 
 const CopyToClipboard = ({ text, children }: { text: string; children: React.ReactNode }) => {
   const { toast } = useToast();
@@ -78,6 +83,8 @@ function DeviceCheckContent() {
 
   const { data: submission, loading: submissionLoading } = useDoc<Submission>('submissions', submissionId || ' ');
   const { data: userProfile, loading: profileLoading } = useDoc<UserProfile>('users', user?.uid || ' ');
+  const { data: bannedUser, loading: bannedUserLoading } = useDoc<BannedUser>('banned_users', user?.uid || ' ');
+
 
   const [isPaymentModalOpen, setPaymentModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -131,6 +138,12 @@ function DeviceCheckContent() {
       alert('Please log in to submit an IMEI.');
       return;
     }
+    
+    if (bannedUser) {
+        setValidationError('Maximum Free Checks Reached\n\nYou have submitted multiple IMEI or serial number checks without placing an unlock order. Your free check limit has been reached.\n\nIf you would like to proceed with unlocking a device, please contact Admin to have your account reset.');
+        return;
+    }
+
     setValidationError(null);
     setIsChecking(true);
 
@@ -286,7 +299,7 @@ function DeviceCheckContent() {
   const currentBalance = userProfile?.balance || 0;
   const amountToPay = Math.max(0, price - currentBalance);
 
-  if (userLoading || !user || profileLoading) {
+  if (userLoading || !user || profileLoading || bannedUserLoading) {
     return (
         <div className="flex justify-center items-center h-screen">
             <div>Loading...</div>
@@ -365,7 +378,7 @@ function DeviceCheckContent() {
                 disabled={!!submission || isChecking}
               />
               <div className="flex gap-3">
-                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={!!submission || isChecking}>Check IMEI</Button>
+                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={!!submission || isChecking}>Submit</Button>
                 <Button onClick={handleClear} variant="outline">Clear</Button>
               </div>
             </div>
@@ -437,7 +450,7 @@ function DeviceCheckContent() {
                  <p className="bg-red-100 text-red-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">❌ Unable to proceed with the unlock.</p>
                )}
                {submission.status === 'feedback' && (
-                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">ℹ️ Please clear the form, select the correct device model, and check again.</p>
+                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">ℹ️ Select the correct device model, and check again.</p>
                )}
             </div>
           )}

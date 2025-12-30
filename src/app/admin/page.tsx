@@ -32,7 +32,7 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Users } from 'lucide-react';
+import { Ban, Menu, Users } from 'lucide-react';
 
 interface Submission {
   id: string;
@@ -299,14 +299,22 @@ function AdminDashboard() {
                             </>
                         )}
                     </CardContent>
-                    <CardFooter className="flex justify-between">
+                    <CardFooter className="flex justify-between flex-wrap gap-2">
                         <Button onClick={handleUpdateMetrics} className="btn-primary text-white">Update Metrics</Button>
-                         <Link href="/admin/users">
-                            <Button variant="outline">
-                                <Users className="mr-2 h-4 w-4" />
-                                Manage Users
-                            </Button>
-                        </Link>
+                        <div className="flex gap-2">
+                            <Link href="/admin/users">
+                                <Button variant="outline">
+                                    <Users className="mr-2 h-4 w-4" />
+                                    Manage Users
+                                </Button>
+                            </Link>
+                             <Link href="/admin/banned">
+                                <Button variant="destructive">
+                                    <Ban className="mr-2 h-4 w-4" />
+                                    Banned Users
+                                </Button>
+                            </Link>
+                        </div>
                     </CardFooter>
                 </Card>
             </div>
