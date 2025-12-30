@@ -34,7 +34,7 @@ function BannedUsersDashboard() {
   const router = useRouter();
 
   const { data: bannedUsers, loading: bannedUsersLoading } = useCollection<BannedUser>('banned_users');
-  const [newBannedId, setNewBannedId] = useState('');
+  const [userIdInput, setUserIdInput] = useState('');
 
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
@@ -48,7 +48,7 @@ function BannedUsersDashboard() {
   }, [user, userLoading, isAdmin, router]);
 
   const handleAddBannedUser = async () => {
-    const trimmedId = newBannedId.trim();
+    const trimmedId = userIdInput.trim();
     if (!trimmedId) {
       return alert('Please enter a User ID.');
     }
@@ -62,7 +62,7 @@ function BannedUsersDashboard() {
     setDoc(bannedUserRef, bannedUserData)
       .then(() => {
         alert('User ID added to banned list.');
-        setNewBannedId('');
+        setUserIdInput('');
       })
       .catch((serverError) => {
         const permissionError = new FirestorePermissionError({
@@ -75,12 +75,18 @@ function BannedUsersDashboard() {
       });
   };
 
-  const handleRemoveBannedUser = (docId: string) => {
+  const handleRemoveBannedUser = () => {
+    const trimmedId = userIdInput.trim();
+    if (!trimmedId) {
+      return alert('Please enter a User ID to remove.');
+    }
+    
     if (window.confirm('Are you sure you want to remove this user from the banned list?')) {
-        const bannedUserRef = doc(firestore, 'banned_users', docId);
+        const bannedUserRef = doc(firestore, 'banned_users', trimmedId);
         deleteDoc(bannedUserRef)
             .then(() => {
                 alert('User removed from banned list.');
+                setUserIdInput('');
             })
             .catch((serverError) => {
                 const permissionError = new FirestorePermissionError({
@@ -88,7 +94,7 @@ function BannedUsersDashboard() {
                     operation: 'delete',
                 });
                 errorEmitter.emit('permission-error', permissionError);
-                alert('Failed to remove user.');
+                alert('Failed to remove user. Ensure the ID is correct.');
             });
     }
   };
@@ -161,7 +167,7 @@ function BannedUsersDashboard() {
         
         <Card className="mb-8">
             <CardHeader>
-                <CardTitle>Add User to Banned List</CardTitle>
+                <CardTitle>Manage Banned Users</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="flex items-center gap-2">
@@ -169,12 +175,13 @@ function BannedUsersDashboard() {
                     <Input
                         id="banned-id-input"
                         type="text"
-                        value={newBannedId}
-                        onChange={(e) => setNewBannedId(e.target.value)}
+                        value={userIdInput}
+                        onChange={(e) => setUserIdInput(e.target.value)}
                         className="w-full"
-                        placeholder="Enter User ID to ban"
+                        placeholder="Enter User ID to ban or remove from list"
                     />
                     <Button onClick={handleAddBannedUser} className="btn-primary text-white">Add</Button>
+                    <Button onClick={handleRemoveBannedUser} variant="destructive">Remove</Button>
                 </div>
             </CardContent>
         </Card>
@@ -191,7 +198,6 @@ function BannedUsersDashboard() {
                     <TableRow>
                         <TableHead>User ID</TableHead>
                         <TableHead>Date Added</TableHead>
-                        <TableHead className='text-right'>Actions</TableHead>
                     </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -199,11 +205,6 @@ function BannedUsersDashboard() {
                         <TableRow key={b.id}>
                             <TableCell className="font-mono text-xs">{b.userId}</TableCell>
                             <TableCell>{b.createdAt?.toDate().toLocaleDateString() || 'N/A'}</TableCell>
-                            <TableCell className='text-right'>
-                                <Button variant="destructive" onClick={() => handleRemoveBannedUser(b.id)}>
-                                    Remove
-                                </Button>
-                            </TableCell>
                         </TableRow>
                     ))}
                     </TableBody>
