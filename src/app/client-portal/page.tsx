@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
@@ -148,7 +147,7 @@ function DeviceCheckContent() {
         return;
     }
 
-    // Check for existing submission with feedback
+    // Check for existing submission with feedback, but ignore 'feedback' status to allow re-checking.
     try {
         const submissionsRef = collection(firestore, 'submissions');
         const q = query(
@@ -402,14 +401,14 @@ function DeviceCheckContent() {
               <p className="font-semibold">Loading submission...</p>
             </div>
           )}
-          {!isChecking && !validationError && submission && (submission.status === 'waiting' || submission.status === 'feedback') && (
+          {!isChecking && !validationError && submission && submission.status === 'waiting' && (
             <div className="flex flex-col items-center">
               <div className="spinner w-14 h-14 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
               <p className="font-semibold">Wait for results...</p>
               <p className="text-sm text-gray-500">Server is processing your request and will send the feedback here once the checks are complete.</p>
             </div>
           )}
-          {!isChecking && !validationError && submission && (submission.status === 'eligible' || submission.status === 'not_supported') && (
+          {!isChecking && !validationError && submission && (submission.status === 'eligible' || submission.status === 'not_supported' || submission.status === 'feedback') && (
             <div className="w-full text-left">
               <div className="space-y-2">
                 {submission.feedback?.map((line, index) => {
@@ -436,6 +435,9 @@ function DeviceCheckContent() {
               )}
                {submission.status === 'not_supported' && (
                  <p className="bg-red-100 text-red-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">❌ Unable to proceed with the unlock.</p>
+               )}
+               {submission.status === 'feedback' && (
+                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">ℹ️ Please clear the form, select the correct device model, and check again.</p>
                )}
             </div>
           )}
@@ -628,8 +630,3 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
-
-    
-
-
-

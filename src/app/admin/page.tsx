@@ -113,9 +113,10 @@ function AdminDashboard() {
     if (!status) {
       return alert('Please select an outcome.');
     }
-    // Allow empty feedback text, but trim it.
+    
+    // Allow empty feedback text only if status is eligible
     if (feedbackText.trim() === '' && status !== 'eligible') {
-        return alert('Please enter feedback.');
+        return alert('Please enter feedback for this outcome.');
     }
 
     const lines = feedbackText.split('\n').filter(l => l.trim());
