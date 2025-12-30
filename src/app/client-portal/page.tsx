@@ -35,7 +35,7 @@ interface Submission {
   price: number;
   image: string;
   imei: string;
-  status: 'waiting' | 'eligible' | 'not_supported' | 'paid';
+  status: 'waiting' | 'eligible' | 'not_supported' | 'paid' | 'feedback';
   feedback: string[] | null;
   createdAt: any;
 }
@@ -402,7 +402,7 @@ function DeviceCheckContent() {
               <p className="font-semibold">Loading submission...</p>
             </div>
           )}
-          {!isChecking && !validationError && submission && submission.status === 'waiting' && (
+          {!isChecking && !validationError && submission && (submission.status === 'waiting' || submission.status === 'feedback') && (
             <div className="flex flex-col items-center">
               <div className="spinner w-14 h-14 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
               <p className="font-semibold">Wait for results...</p>
@@ -630,5 +630,6 @@ export default function ClientPortalPage() {
 }
 
     
+
 
 

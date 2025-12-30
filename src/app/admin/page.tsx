@@ -73,7 +73,7 @@ function AdminDashboard() {
 
 
   const [feedbackValues, setFeedbackValues] = useState<{ [key: string]: string }>({});
-  const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' }>({});
+  const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' | 'feedback' }>({});
   const [registeredUsers, setRegisteredUsers] = useState<number>(0);
   const [unlockedDevices, setUnlockedDevices] = useState<number>(0);
   const [orderCounter, setOrderCounter] = useState<number>(0);
@@ -103,7 +103,7 @@ function AdminDashboard() {
     setFeedbackValues(prev => ({ ...prev, [id]: value }));
   };
 
-  const handleStatusChange = (id: string, value: 'eligible' | 'not_supported') => {
+  const handleStatusChange = (id: string, value: 'eligible' | 'not_supported' | 'feedback') => {
     setFeedbackStatus(prev => ({ ...prev, [id]: value }));
   };
 
@@ -122,6 +122,10 @@ function AdminDashboard() {
 
     if (status === 'eligible') {
       lines.push('FIND_MY_ON_STATUS');
+    }
+
+    if (status === 'feedback') {
+        lines.push('Choose correct device model and Check again');
     }
 
     const submissionRef = doc(firestore, 'submissions', submissionId);
@@ -331,20 +335,21 @@ function AdminDashboard() {
                         Enter Feedback (paste full details):
                       </label>
                       <Textarea
-                        value={feedbackValues[sub.id] || sub.feedback?.filter(l => l !== 'FIND_MY_ON_STATUS').join('\n') || ''}
+                        value={feedbackValues[sub.id] || sub.feedback?.filter(l => l !== 'FIND_MY_ON_STATUS' && l !== 'Choose correct device model and Check again').join('\n') || ''}
                         onChange={(e) => handleFeedbackChange(sub.id, e.target.value)}
                         className="font-mono"
                       />
                     </div>
                   </CardContent>
                   <CardFooter className='flex-col items-stretch gap-3'>
-                    <Select onValueChange={(value: 'eligible' | 'not_supported') => handleStatusChange(sub.id, value)}>
+                    <Select onValueChange={(value: 'eligible' | 'not_supported' | 'feedback') => handleStatusChange(sub.id, value)}>
                         <SelectTrigger>
                             <SelectValue placeholder="Select Outcome..." />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="eligible">Eligible for Unlock</SelectItem>
                             <SelectItem value="not_supported">Not Supported for Unlock</SelectItem>
+                            <SelectItem value="feedback">Choose correct device model and Check again</SelectItem>
                         </SelectContent>
                     </Select>
                     <div className='flex justify-end gap-2'>
