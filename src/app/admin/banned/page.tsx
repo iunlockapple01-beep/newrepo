@@ -75,27 +75,27 @@ function BannedUsersDashboard() {
       });
   };
 
-  const handleRemoveBannedUser = () => {
+  const handleRemoveBannedUser = async () => {
     const trimmedId = userIdInput.trim();
     if (!trimmedId) {
-      return alert('Please enter a User ID to remove.');
+      alert('Please enter a User ID to remove.');
+      return;
     }
-    
+
     if (window.confirm('Are you sure you want to remove this user from the banned list?')) {
-        const bannedUserRef = doc(firestore, 'banned_users', trimmedId);
-        deleteDoc(bannedUserRef)
-            .then(() => {
-                alert('User removed from banned list.');
-                setUserIdInput('');
-            })
-            .catch((serverError) => {
-                const permissionError = new FirestorePermissionError({
-                    path: bannedUserRef.path,
-                    operation: 'delete',
-                });
-                errorEmitter.emit('permission-error', permissionError);
-                alert('Failed to remove user. Ensure the ID is correct.');
-            });
+      const docRef = doc(firestore, 'banned_users', trimmedId);
+      try {
+        await deleteDoc(docRef);
+        alert('User removed from banned list successfully.');
+        setUserIdInput('');
+      } catch (serverError) {
+        const permissionError = new FirestorePermissionError({
+            path: docRef.path,
+            operation: 'delete',
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        alert('Failed to remove user. Please check the ID and your permissions.');
+      }
     }
   };
 
