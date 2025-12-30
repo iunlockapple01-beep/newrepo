@@ -109,24 +109,12 @@ function DeviceCheckContent() {
     setImei('');
     setSubmissionId(null);
     setValidationError(null);
-    if(typeof window !== 'undefined') {
-      sessionStorage.removeItem('current_submission_id');
-    }
   };
 
   useEffect(() => {
-    const currentId = sessionStorage.getItem('current_submission_id');
-    if (currentId) {
-      // Temporarily load submission from session to check model
-      const tempSub = JSON.parse(sessionStorage.getItem(`submission_data_${currentId}`) || '{}');
-      if (tempSub.model === model) {
-        setSubmissionId(currentId);
-      } else {
-        handleClear();
-      }
-    } else {
-        setImei(''); // Clear IMEI if there's no submission in session
-    }
+    // When the model from URL changes, we should clear everything
+    // to avoid showing a submission for a different device.
+    handleClear();
   }, [model]);
 
 
@@ -137,12 +125,6 @@ function DeviceCheckContent() {
     }
   }, [user, userLoading, router, searchParams]);
   
-  useEffect(() => {
-    if (submission && submissionId) {
-        sessionStorage.setItem(`submission_data_${submissionId}`, JSON.stringify({ model: submission.model, imei: submission.imei }));
-    }
-  }, [submission, submissionId]);
-
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   const handleSubmitImei = async () => {
@@ -179,11 +161,8 @@ function DeviceCheckContent() {
 
         if (!querySnapshot.empty) {
             const existingSubmission = querySnapshot.docs[0];
+            setImei(existingSubmission.data().imei);
             setSubmissionId(existingSubmission.id);
-             if (typeof window !== 'undefined') {
-                sessionStorage.setItem('current_submission_id', existingSubmission.id);
-                sessionStorage.setItem(`submission_data_${existingSubmission.id}`, JSON.stringify({ model: existingSubmission.data().model, imei: existingSubmission.data().imei }));
-            }
             setIsChecking(false);
             return;
         }
@@ -207,10 +186,6 @@ function DeviceCheckContent() {
     addDoc(collection(firestore, 'submissions'), newSubmission)
       .then(docRef => {
         setSubmissionId(docRef.id);
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem('current_submission_id', docRef.id);
-          sessionStorage.setItem(`submission_data_${docRef.id}`, JSON.stringify({ model: newSubmission.model, imei: newSubmission.imei }));
-        }
         setIsChecking(false);
       })
       .catch(async (serverError) => {
@@ -655,4 +630,5 @@ export default function ClientPortalPage() {
 }
 
     
+
 
