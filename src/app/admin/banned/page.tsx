@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -58,35 +59,37 @@ function BannedUsersDashboard() {
       createdAt: serverTimestamp(),
     };
 
-    try {
-      await setDoc(bannedUserRef, bannedUserData);
-      alert('User ID added to banned list.');
-      setNewBannedId('');
-    } catch (serverError) {
-      const permissionError = new FirestorePermissionError({
-        path: bannedUserRef.path,
-        operation: 'create',
-        requestResourceData: bannedUserData,
+    setDoc(bannedUserRef, bannedUserData)
+      .then(() => {
+        alert('User ID added to banned list.');
+        setNewBannedId('');
+      })
+      .catch((serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: bannedUserRef.path,
+          operation: 'create',
+          requestResourceData: bannedUserData,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        alert('Failed to add user to banned list.');
       });
-      errorEmitter.emit('permission-error', permissionError);
-      alert('Failed to add user to banned list.');
-    }
   };
 
   const handleRemoveBannedUser = async (userId: string) => {
     if (window.confirm('Are you sure you want to remove this user from the banned list?')) {
         const bannedUserRef = doc(firestore, 'banned_users', userId);
-        try {
-            await deleteDoc(bannedUserRef);
-            alert('User removed from banned list.');
-        } catch (serverError) {
-            const permissionError = new FirestorePermissionError({
-                path: bannedUserRef.path,
-                operation: 'delete',
+        deleteDoc(bannedUserRef)
+            .then(() => {
+                alert('User removed from banned list.');
+            })
+            .catch((serverError) => {
+                const permissionError = new FirestorePermissionError({
+                    path: bannedUserRef.path,
+                    operation: 'delete',
+                });
+                errorEmitter.emit('permission-error', permissionError);
+                alert('Failed to remove user.');
             });
-            errorEmitter.emit('permission-error', permissionError);
-            alert('Failed to remove user.');
-        }
     }
   };
 
