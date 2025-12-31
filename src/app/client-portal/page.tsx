@@ -161,27 +161,41 @@ function DeviceCheckContent() {
         return;
     }
 
-    // Check for existing submission with feedback, but ignore 'feedback' status to allow re-checking.
+    // Check for existing submission.
     try {
-        const submissionsRef = collection(firestore, 'submissions');
-        const q = query(
-            submissionsRef, 
-            where('imei', '==', trimmedImei), 
-            where('status', 'in', ['eligible', 'not_supported']),
-            limit(1)
-        );
-        const querySnapshot = await getDocs(q);
+      const submissionsRef = collection(firestore, 'submissions');
+      const q = query(
+        submissionsRef,
+        where('imei', '==', trimmedImei),
+        limit(1)
+      );
+      const querySnapshot = await getDocs(q);
 
-        if (!querySnapshot.empty) {
-            const existingSubmission = querySnapshot.docs[0];
-            setImei(existingSubmission.data().imei);
-            setSubmissionId(existingSubmission.id);
+      if (!querySnapshot.empty) {
+        const existingDoc = querySnapshot.docs[0];
+        const existingData = existingDoc.data() as Submission;
+
+        // If status is eligible, check if the model matches
+        if (existingData.status === 'eligible') {
+          if (existingData.model !== model) {
             setIsChecking(false);
+            setValidationError('This IMEI/Serial is already eligible for unlock with a different device model. Please select the correct model to proceed.');
             return;
+          }
         }
+        
+        // For other statuses or matching eligible model, load the existing submission
+        if (existingData.status !== 'feedback') {
+             setImei(existingData.imei);
+             setSubmissionId(existingDoc.id);
+             setIsChecking(false);
+             return;
+        }
+        // If status is 'feedback', fall through to create a new submission
+      }
     } catch (e) {
         console.error("Error querying existing submissions: ", e);
-        // Fall through to creating a new one
+        // Fall through to creating a new one if query fails
     }
 
 
@@ -644,3 +658,5 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
+
+    
