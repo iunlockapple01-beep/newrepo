@@ -158,18 +158,17 @@ function AdminDashboard() {
   const handleDelete = async (submissionId: string) => {
     if (window.confirm('Are you sure you want to delete this submission?')) {
       const submissionRef = doc(firestore, 'submissions', submissionId);
-      deleteDoc(submissionRef)
-        .then(() => {
-            alert('Submission deleted.');
-        })
-        .catch(async (serverError) => {
+      try {
+        await deleteDoc(submissionRef);
+        alert('Submission deleted.');
+      } catch (serverError) {
         const permissionError = new FirestorePermissionError({
-            path: submissionRef.path,
-            operation: 'delete',
+          path: submissionRef.path,
+          operation: 'delete',
         });
         errorEmitter.emit('permission-error', permissionError);
         alert('Failed to delete submission.');
-      });
+      }
     }
   };
 
