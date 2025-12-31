@@ -176,12 +176,10 @@ function DeviceCheckContent() {
         const existingData = existingDoc.data() as Submission;
 
         // If status is eligible, check if the model matches
-        if (existingData.status === 'eligible') {
-          if (existingData.model !== model) {
+        if (existingData.status === 'eligible' && existingData.model !== model) {
             setIsChecking(false);
             setValidationError('This IMEI/Serial is already eligible for unlock with a different device model. Please select the correct model to proceed.');
             return;
-          }
         }
         
         // For other statuses or matching eligible model, load the existing submission
@@ -659,4 +657,5 @@ export default function ClientPortalPage() {
     )
 }
 
+    
     
