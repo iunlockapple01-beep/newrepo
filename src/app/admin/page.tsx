@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import {
@@ -155,18 +156,23 @@ function AdminDashboard() {
   };
 
   const handleDelete = async (submissionId: string) => {
+    if (!submissionId) {
+      alert('Cannot delete: submission ID is missing.');
+      return;
+    }
     if (window.confirm('Are you sure you want to delete this submission?')) {
       const submissionRef = doc(firestore, 'submissions', submissionId);
       try {
         await deleteDoc(submissionRef);
-        alert('Submission deleted.');
+        alert('Submission deleted successfully.');
       } catch (serverError) {
+        console.error('Failed to delete submission:', serverError);
         const permissionError = new FirestorePermissionError({
           path: submissionRef.path,
           operation: 'delete',
         });
         errorEmitter.emit('permission-error', permissionError);
-        alert('Failed to delete submission.');
+        alert('Failed to delete submission. See console for details.');
       }
     }
   };
