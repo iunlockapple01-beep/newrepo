@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { PlaceHolderImages, getImage } from '@/lib/placeholder-images';
 import { LoginButton } from '@/components/login-button';
 import { where } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
@@ -104,10 +104,11 @@ function MyAccountContent() {
     setBulkPaid(true); // This will hide the button until the page is reloaded or orders change
   }
 
-  const usdtImage = PlaceHolderImages.find(img => img.id === 'usdt-icon');
-  const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
-  const usdtTrc20Image = PlaceHolderImages.find(img => img.id === 'usdt-trc20-icon');
-  const bitcoinImage = PlaceHolderImages.find(img => img.id === 'bitcoin-icon');
+  const usdtImage = getImage('usdt-icon');
+  const telegramIcon = getImage('telegram-icon');
+  const whatsappIcon = getImage('whatsapp-icon');
+  const usdtTrc20Image = getImage('usdt-trc20-icon');
+  const bitcoinImage = getImage('bitcoin-icon');
   
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
@@ -398,28 +399,33 @@ function MyAccountContent() {
                     </ul>
                 </div>
                 <div>
-                    <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudUnlocks2023" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
-                        {telegramIconImage && <Image 
-                            src={telegramIconImage.imageUrl} 
-                            alt="Telegram Group" 
-                            width={18} 
-                            height={18}
-                            className="mr-2"
-                        />}
-                        Telegram Channel
-                    </a>
-                    <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudUnlocks_2023" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
-                        {telegramIconImage && <Image 
-                             src={telegramIconImage.imageUrl} 
-                            alt="Telegram" 
-                            width={18} 
-                            height={18}
-                            className="mr-2"
-                        />}
-                        Contact us on Telegram
-                    </a>
+                    <h4 className="font-semibold mb-4">Contact Us</h4>
+                    <ul className="space-y-2 text-gray-400">
+                        <li>
+                            <a href="https://t.me/iUnlock_AppleUS" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
+                                Telegram Channel
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://t.me/iUnlock_Apple" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
+                                Support Channel
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://t.me/Chris_Morgan057" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
+                                Technician (Support)
+                            </a>
+                        </li>
+                        <li>
+                           <a href="https://t.me/iCloudUnlocks_2023" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {whatsappIcon && <Image src={whatsappIcon.imageUrl} alt="WhatsApp" width={18} height={18} className="mr-2" />}
+                                WhatsApp
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
             <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
@@ -446,3 +452,4 @@ export default function MyAccountPage() {
     
 
     
+

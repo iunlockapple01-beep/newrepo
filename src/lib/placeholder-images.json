@@ -19,6 +19,12 @@
       "imageHint": "telegram logo"
     },
     {
+      "id": "whatsapp-icon",
+      "description": "WhatsApp messaging app logo",
+      "imageUrl": "https://i.postimg.cc/8cR8tG3F/whatsapp-icon.png",
+      "imageHint": "whatsapp logo"
+    },
+    {
       "id": "usdt-icon",
       "description": "Tether (USDT) BEP20 cryptocurrency coin",
       "imageUrl": "https://i.postimg.cc/BQCv1n3D/usdt.jpg",

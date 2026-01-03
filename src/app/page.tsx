@@ -10,7 +10,7 @@ import { LoginButton } from '@/components/login-button';
 import { useUser, useDoc } from '@/firebase';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { PlaceHolderImages, getImage } from '@/lib/placeholder-images';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 
@@ -207,7 +207,9 @@ export default function IcloudUnlocksPage() {
   const { data: user } = useUser();
   const isAdmin = user?.email === ADMIN_EMAIL;
   const { toast } = useToast();
-  const telegramIconImage = PlaceHolderImages.find(img => img.id === 'telegram-icon');
+  const telegramIcon = getImage('telegram-icon');
+  const whatsappIcon = getImage('whatsapp-icon');
+
 
   const { data: counters, loading: countersLoading } = useDoc<Counters>('counters', 'metrics');
 
@@ -438,13 +440,13 @@ export default function IcloudUnlocksPage() {
           <div className="max-w-lg mx-auto">
               <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">Get in Touch</h3>
               <div className="grid sm:grid-cols-2 gap-6">
-                 <a href="https://t.me/iCloudUnlocks_2023" target="_blank" rel="noopener noreferrer" className="flex items-center p-4 rounded-lg border hover:bg-gray-100 transition-colors">
+                 <a href="https://t.me/iUnlock_AppleUS" target="_blank" rel="noopener noreferrer" className="flex items-center p-4 rounded-lg border hover:bg-gray-100 transition-colors">
                   <div className="w-12 h-12 apple-gradient rounded-lg flex items-center justify-center mr-4">
-                     {telegramIconImage && <Image src={telegramIconImage.imageUrl} alt="Telegram" width={28} height={28} />}
+                     {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={28} height={28} />}
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">Telegram</p>
-                    <p className="text-blue-600">@iCloudUnlocks_2023</p>
+                    <p className="text-blue-600">@iUnlock_AppleUS</p>
                   </div>
                 </a>
                 <div className="flex items-center p-4 rounded-lg border">
@@ -484,28 +486,33 @@ export default function IcloudUnlocksPage() {
                     </ul>
                 </div>
                 <div>
-                    <h4 className="font-semibold mb-4">Join our Telegram</h4>
-                    <a href="https://t.me/iCloudUnlocks2023" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white inline-flex items-center">
-                        {telegramIconImage && <Image 
-                            src={telegramIconImage.imageUrl} 
-                            alt="Telegram Group" 
-                            width={18} 
-                            height={18}
-                            className="mr-2"
-                        />}
-                        Telegram Channel
-                    </a>
-                    <h4 className="font-semibold mb-4 mt-4">Contact Us</h4>
-                     <a href="https://t.me/iCloudUnlocks_2023" className="text-gray-400 hover:text-white inline-flex items-center mb-2">
-                         {telegramIconImage && <Image 
-                             src={telegramIconImage.imageUrl} 
-                            alt="Telegram" 
-                            width={18} 
-                            height={18}
-                            className="mr-2"
-                        />}
-                        Contact us on Telegram
-                    </a>
+                    <h4 className="font-semibold mb-4">Contact Us</h4>
+                    <ul className="space-y-2 text-gray-400">
+                        <li>
+                            <a href="https://t.me/iUnlock_AppleUS" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
+                                Telegram Channel
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://t.me/iUnlock_Apple" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
+                                Support Channel
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://t.me/Chris_Morgan057" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
+                                Technician (Support)
+                            </a>
+                        </li>
+                        <li>
+                           <a href="https://t.me/iCloudUnlocks_2023" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {whatsappIcon && <Image src={whatsappIcon.imageUrl} alt="WhatsApp" width={18} height={18} className="mr-2" />}
+                                WhatsApp
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
             <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
@@ -520,6 +527,7 @@ export default function IcloudUnlocksPage() {
     
 
     
+
 
 
 
