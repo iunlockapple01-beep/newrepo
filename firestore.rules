@@ -1,43 +1,9 @@
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Allow public read on counters, but only admin write
-    match /counters/{counterId} {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.token.email == 'iunlockapple01@gmail.com';
-    }
-
-    // Users can only read/update their own profile
-    match /users/{userId} {
-      allow read, update: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null;
-    }
-
-    // Banned users list can be read by anyone, but only written by admin
-    match /banned_users/{userId} {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.token.email == 'iunlockapple01@gmail.com';
-    }
-
-    // Submissions can be created by any auth'd user.
-    // They can only be read/updated by the user who created them or an admin.
-    match /submissions/{submissionId} {
-      allow read, update, delete: if request.auth != null && (resource.data.userId == request.auth.uid || request.auth.token.email == 'iunlockapple01@gmail.com');
-      allow create: if request.auth != null;
-    }
-
-    // Orders can be created by any auth'd user.
-    // They can only be read/updated by the user who created them or an admin.
-    match /orders/{orderId} {
-      allow read, update: if request.auth != null && (resource.data.userId == request.auth.uid || request.auth.token.email == 'iunlockapple01@gmail.com');
-      allow create: if request.auth != null;
-    }
-
-    // Default deny all other reads/writes
     match /{document=**} {
-      allow read, write: if false;
+      allow read: if true;
+      allow write: if true;
     }
   }
 }
