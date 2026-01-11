@@ -440,13 +440,13 @@ export default function IcloudUnlocksPage() {
           <div className="max-w-lg mx-auto">
               <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">Get in Touch</h3>
               <div className="grid sm:grid-cols-2 gap-6">
-                 <a href="https://t.me/iUnlock_AppleUS" target="_blank" rel="noopener noreferrer" className="flex items-center p-4 rounded-lg border hover:bg-gray-100 transition-colors">
+                 <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="flex items-center p-4 rounded-lg border hover:bg-gray-100 transition-colors">
                   <div className="w-12 h-12 apple-gradient rounded-lg flex items-center justify-center mr-4">
-                     {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={28} height={28} />}
+                     {whatsappIcon && <Image src={whatsappIcon.imageUrl} alt="WhatsApp" width={28} height={28} />}
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">Telegram</p>
-                    <p className="text-blue-600">@iUnlock_AppleUS</p>
+                    <p className="font-semibold text-gray-900">WhatsApp</p>
+                    <p className="text-blue-600">Chat with us</p>
                   </div>
                 </a>
                 <div className="flex items-center p-4 rounded-lg border">
@@ -533,6 +533,7 @@ export default function IcloudUnlocksPage() {
     
 
     
+
 
 
 
