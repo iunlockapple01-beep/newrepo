@@ -560,8 +560,14 @@ function DeviceCheckContent() {
                     )}
                 </DialogTitle>
                 <DialogDescription>
-                    Send the exact amount to one of the addresses below.
+                   Pay unlock fees for this device. Send the exact crypto amount to one of the addresses below.
                 </DialogDescription>
+                 {submission && (
+                    <div className="text-sm bg-gray-100 p-3 rounded-md text-gray-600">
+                        <p><strong>Model:</strong> {submission.model}</p>
+                        <p><strong>IMEI/Serial:</strong> {submission.imei}</p>
+                    </div>
+                )}
             </DialogHeader>
              <ScrollArea className="max-h-[70vh]">
                 <div className="space-y-4 animate-fade-in py-4 pr-6">
@@ -671,4 +677,6 @@ export default function ClientPortalPage() {
 }
 
     
+    
+
     

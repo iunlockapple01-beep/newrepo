@@ -285,6 +285,14 @@ function MyAccountContent() {
                 <DialogDescription>
                     Pay for multiple orders at once and receive a discount. Send the exact amount to one of the addresses below.
                 </DialogDescription>
+                 <div className="text-sm bg-gray-100 p-3 rounded-md text-gray-600 space-y-2">
+                    <p className="font-semibold">Unlocking {ordersForBulkPay.length} devices:</p>
+                    <ul className="list-disc list-inside text-xs">
+                        {ordersForBulkPay.map(order => (
+                            <li key={order.id}>{order.model} - <span className='font-mono'>{order.imei}</span></li>
+                        ))}
+                    </ul>
+                </div>
             </DialogHeader>
             <ScrollArea className="max-h-[70vh]">
               <div className="space-y-4 py-4 pr-6">
@@ -460,3 +468,4 @@ export default function MyAccountPage() {
     
 
 
+    
