@@ -125,7 +125,7 @@ function AdminDashboard() {
         return alert('Please enter feedback for this outcome.');
     }
 
-    const lines = feedbackText.split('\n').filter(l => l.trim());
+    const lines = feedbackText.split('\n').filter(l => l.trim() && !l.startsWith('TIMESTAMP:'));
 
     if (status === 'eligible') {
       lines.push('FIND_MY_ON_STATUS');
