@@ -481,8 +481,16 @@ function DeviceCheckContent() {
                   <Button onClick={openPaymentModal} className="btn-primary text-white">Proceed with Unlock</Button>
                 </div>
               )}
-               {(submission.status === 'not_supported' || submission.status === 'find_my_off') && (
+               {submission.status === 'not_supported' && (
                  <p className="bg-red-100 text-red-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">❌ Unable to proceed with the unlock.</p>
+               )}
+               {submission.status === 'find_my_off' && (
+                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">
+                    Find My is OFF. If you need help restoring your device, please contact the {' '}
+                    <a href="https://t.me/Chris_Morgan057" target="_blank" rel="noopener noreferrer" className="underline font-bold">
+                        technician
+                    </a>.
+                 </p>
                )}
                {submission.status === 'feedback' && (
                  <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">ℹ️ Select the correct device model, and check again.</p>
@@ -700,4 +708,5 @@ export default function ClientPortalPage() {
     
 
     
+
 
