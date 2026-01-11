@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -35,7 +35,7 @@ interface Submission {
   price: number;
   image: string;
   imei: string;
-  status: 'waiting' | 'eligible' | 'not_supported' | 'paid' | 'feedback';
+  status: 'waiting' | 'eligible' | 'not_supported' | 'paid' | 'feedback' | 'find_my_off';
   feedback: string[] | null;
   createdAt: any;
 }
@@ -94,6 +94,15 @@ function DeviceCheckContent() {
   const [isChecking, setIsChecking] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(20 * 60);
+  
+  const feedbackData = useMemo(() => {
+    if (!submission?.feedback) return { lines: [], timestamp: null };
+    const lines = submission.feedback.filter(line => !line.startsWith('TIMESTAMP:'));
+    const timestampLine = submission.feedback.find(line => line.startsWith('TIMESTAMP:'));
+    const timestamp = timestampLine ? timestampLine.replace('TIMESTAMP:', '') : null;
+    return { lines, timestamp };
+  }, [submission?.feedback]);
+
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -436,15 +445,23 @@ function DeviceCheckContent() {
               <p className="text-sm text-gray-500">Server is processing your request and will send the feedback here once the checks are complete.</p>
             </div>
           )}
-          {!isChecking && !validationError && submission && (submission.status === 'eligible' || submission.status === 'not_supported' || submission.status === 'feedback') && (
+          {!isChecking && !validationError && submission && (submission.status === 'eligible' || submission.status === 'not_supported' || submission.status === 'feedback' || submission.status === 'find_my_off') && (
             <div className="w-full text-left">
               <div className="space-y-2">
-                {submission.feedback?.map((line, index) => {
+                {feedbackData.lines.map((line, index) => {
                   if (line === 'FIND_MY_ON_STATUS') {
                     return (
                       <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
                         <span>Find My:</span>
                         <span className="bg-red-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">ON</span>
+                      </div>
+                    )
+                  }
+                  if (line === 'FIND_MY_OFF_STATUS') {
+                    return (
+                      <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
+                        <span>Find My:</span>
+                        <span className="bg-green-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">OFF</span>
                       </div>
                     )
                   }
@@ -455,13 +472,16 @@ function DeviceCheckContent() {
                   )
                 })}
               </div>
+              {feedbackData.timestamp && (
+                <p className="text-xs text-gray-500 mt-2 text-right">Feedback received: {feedbackData.timestamp}</p>
+              )}
               {submission.status === 'eligible' && (
                 <div className="mt-4 text-right flex items-center justify-end gap-4 animate-fade-in">
                   <p className="bg-green-100 text-green-800 font-semibold p-2 px-3 rounded-lg">✅ This device is eligible for iCloud Unlock</p>
                   <Button onClick={openPaymentModal} className="btn-primary text-white">Proceed with Unlock</Button>
                 </div>
               )}
-               {submission.status === 'not_supported' && (
+               {(submission.status === 'not_supported' || submission.status === 'find_my_off') && (
                  <p className="bg-red-100 text-red-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">❌ Unable to proceed with the unlock.</p>
                )}
                {submission.status === 'feedback' && (

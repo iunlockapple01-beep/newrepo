@@ -33,6 +33,7 @@ import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Ban, Menu, Users } from 'lucide-react';
+import { format } from 'date-fns';
 
 interface Submission {
   id: string;
@@ -40,7 +41,7 @@ interface Submission {
   model: string;
   price: number;
   imei: string;
-  status: 'waiting' | 'feedback' | 'paid' | 'eligible' | 'not_supported';
+  status: 'waiting' | 'feedback' | 'paid' | 'eligible' | 'not_supported' | 'find_my_off';
   feedback: string[] | null;
 }
 
@@ -73,7 +74,7 @@ function AdminDashboard() {
 
 
   const [feedbackValues, setFeedbackValues] = useState<{ [key: string]: string }>({});
-  const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' | 'feedback' }>({});
+  const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' }>({});
   const [registeredUsers, setRegisteredUsers] = useState<number>(0);
   const [unlockedDevices, setUnlockedDevices] = useState<number>(0);
   const [orderCounter, setOrderCounter] = useState<number>(0);
@@ -109,7 +110,7 @@ function AdminDashboard() {
     setFeedbackValues(prev => ({ ...prev, [id]: value }));
   };
 
-  const handleStatusChange = (id: string, value: 'eligible' | 'not_supported' | 'feedback') => {
+  const handleStatusChange = (id: string, value: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off') => {
     setFeedbackStatus(prev => ({ ...prev, [id]: value }));
   };
 
@@ -120,8 +121,7 @@ function AdminDashboard() {
       return alert('Please select an outcome.');
     }
     
-    // Allow empty feedback text only if status is eligible
-    if (feedbackText.trim() === '' && status !== 'eligible') {
+    if (feedbackText.trim() === '' && status !== 'eligible' && status !== 'find_my_off') {
         return alert('Please enter feedback for this outcome.');
     }
 
@@ -129,6 +129,15 @@ function AdminDashboard() {
 
     if (status === 'eligible') {
       lines.push('FIND_MY_ON_STATUS');
+    }
+
+    if (status === 'find_my_off') {
+        lines.push('FIND_MY_OFF_STATUS');
+    }
+    
+    if (status === 'eligible' || status === 'find_my_off') {
+        const timestamp = format(new Date(), "PPpp"); // e.g., Jun 21, 2024, 2:30:00 PM
+        lines.push(`TIMESTAMP:${timestamp}`);
     }
 
     if (status === 'feedback') {
@@ -354,14 +363,14 @@ function AdminDashboard() {
                         Enter Feedback (paste full details):
                       </label>
                       <Textarea
-                        value={feedbackValues[sub.id] || sub.feedback?.filter(l => l !== 'FIND_MY_ON_STATUS' && l !== 'You Have Selected Wrong Device Model').join('\n') || ''}
+                        value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:') && l !== 'You Have Selected Wrong Device Model').join('\n') || ''}
                         onChange={(e) => handleFeedbackChange(sub.id, e.target.value)}
                         className="font-mono"
                       />
                     </div>
                   </CardContent>
                   <CardFooter className='flex-col items-stretch gap-3'>
-                    <Select onValueChange={(value: 'eligible' | 'not_supported' | 'feedback') => handleStatusChange(sub.id, value)}>
+                    <Select onValueChange={(value: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off') => handleStatusChange(sub.id, value)}>
                         <SelectTrigger>
                             <SelectValue placeholder="Select Outcome..." />
                         </SelectTrigger>
@@ -369,6 +378,7 @@ function AdminDashboard() {
                             <SelectItem value="eligible">Eligible for Unlock</SelectItem>
                             <SelectItem value="not_supported">Not Supported for Unlock</SelectItem>
                             <SelectItem value="feedback">Choose correct device model and Check again</SelectItem>
+                            <SelectItem value="find_my_off">Find My: OFF</SelectItem>
                         </SelectContent>
                     </Select>
                     <div className='flex justify-end gap-2'>
