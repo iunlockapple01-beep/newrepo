@@ -52,7 +52,7 @@ interface Order {
   imei: string;
   model: string;
   price: number;
-  status: 'confirming_payment' | 'approved' | 'declined' | 'unlocked';
+  status: 'confirming_payment' | 'approved' | 'declined' | 'unlocked' | 'processing';
   createdAt: { toDate: () => Date };
 }
 
@@ -420,8 +420,9 @@ function AdminDashboard() {
                                 <TableCell>
                                     <Badge variant={
                                         order.status === 'approved' || order.status === 'unlocked' ? 'secondary' : 
-                                        order.status === 'declined' ? 'destructive' : 'default'
-                                    } className={order.status === 'confirming_payment' ? 'animate-pulse' : ''}>
+                                        order.status === 'declined' ? 'destructive' : 
+                                        order.status === 'processing' ? 'default' : 'default'
+                                    } className={order.status === 'confirming_payment' || order.status === 'processing' ? 'animate-pulse' : ''}>
                                     {order.status.replace('_', ' ')}
                                     </Badge>
                                 </TableCell>
@@ -432,6 +433,7 @@ function AdminDashboard() {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="confirming_payment">Confirming Payment</SelectItem>
+                                            <SelectItem value="processing">Processing</SelectItem>
                                             <SelectItem value="approved">Approved</SelectItem>
                                             <SelectItem value="declined">Declined</SelectItem>
                                             <SelectItem value="unlocked">Unlocked</SelectItem>

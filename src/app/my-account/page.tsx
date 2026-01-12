@@ -35,7 +35,7 @@ interface Order {
   createdAt: { toDate: () => Date };
   model: string;
   imei: string;
-  status: 'confirming_payment' | 'approved' | 'declined';
+  status: 'confirming_payment' | 'approved' | 'declined' | 'processing';
   price: number;
 }
 
@@ -260,7 +260,7 @@ function MyAccountContent() {
                         <Badge variant={
                             order.status === 'approved' ? 'secondary' : 
                             order.status === 'declined' ? 'destructive' : 'default'
-                        } className={order.status === 'confirming_payment' ? 'animate-pulse' : ''}>
+                        } className={order.status === 'confirming_payment' || order.status === 'processing' ? 'animate-pulse' : ''}>
                           {order.status.replace('_', ' ')}
                         </Badge>
                       </TableCell>
