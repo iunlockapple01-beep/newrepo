@@ -161,6 +161,7 @@ function UserManagementDashboard() {
                     <TableRow>
                         <TableHead>Display Name</TableHead>
                         <TableHead>Email</TableHead>
+                        <TableHead>User ID</TableHead>
                         <TableHead>Current Balance ($)</TableHead>
                         <TableHead>Update Balance</TableHead>
                     </TableRow>
@@ -170,6 +171,7 @@ function UserManagementDashboard() {
                         <TableRow key={u.id}>
                             <TableCell>{u.displayName}</TableCell>
                             <TableCell>{u.email}</TableCell>
+                            <TableCell className="font-mono text-xs">{u.id}</TableCell>
                             <TableCell>${u.balance?.toFixed(2) || '0.00'}</TableCell>
                             <TableCell>
                                 <div className="flex items-center gap-2">
