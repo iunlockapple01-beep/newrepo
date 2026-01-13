@@ -52,7 +52,7 @@ interface Order {
   imei: string;
   model: string;
   price: number;
-  status: 'confirming_payment' | 'approved' | 'declined' | 'unlocked' | 'processing' | 'ready_for_activation_bulk';
+  status: 'confirming_payment' | 'approved' | 'declined' | 'unlocked' | 'processing' | 'ready_for_activation_bulk' | 'ready_for_activation';
   createdAt: { toDate: () => Date };
 }
 
@@ -421,7 +421,7 @@ function AdminDashboard() {
                                     <Badge variant={
                                         order.status === 'approved' || order.status === 'unlocked' ? 'secondary' : 
                                         order.status === 'declined' ? 'destructive' : 
-                                        order.status === 'processing' || order.status === 'ready_for_activation_bulk' ? 'default' : 'default'
+                                        order.status === 'processing' || order.status === 'ready_for_activation_bulk' || order.status === 'ready_for_activation' ? 'default' : 'default'
                                     } className={order.status === 'confirming_payment' || order.status === 'processing' ? 'animate-pulse' : ''}>
                                     {order.status.replace(/_/g, ' ')}
                                     </Badge>
@@ -437,6 +437,7 @@ function AdminDashboard() {
                                             <SelectItem value="approved">Approved</SelectItem>
                                             <SelectItem value="declined">Declined</SelectItem>
                                             <SelectItem value="unlocked">Unlocked</SelectItem>
+                                            <SelectItem value="ready_for_activation">Ready for activation</SelectItem>
                                             <SelectItem value="ready_for_activation_bulk">Ready for activation (bulk)</SelectItem>
                                         </SelectContent>
                                     </Select>

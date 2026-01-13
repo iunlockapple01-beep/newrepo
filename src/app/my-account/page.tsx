@@ -35,7 +35,7 @@ interface Order {
   createdAt: { toDate: () => Date };
   model: string;
   imei: string;
-  status: 'confirming_payment' | 'approved' | 'declined' | 'processing' | 'unlocked' | 'ready_for_activation_bulk';
+  status: 'confirming_payment' | 'approved' | 'declined' | 'processing' | 'unlocked' | 'ready_for_activation_bulk' | 'ready_for_activation';
   price: number;
 }
 
@@ -107,6 +107,9 @@ function MyAccountContent() {
   const formatStatus = (status: Order['status']) => {
     if (status === 'ready_for_activation_bulk') {
         return 'Ready for activation (bulk)';
+    }
+    if (status === 'ready_for_activation') {
+        return 'Ready for activation';
     }
     return status.replace(/_/g, ' ');
   };
