@@ -2,7 +2,7 @@
 
 'use client';
 
-import Link from 'link';
+import Link from 'next/link';
 import { PlaceHolderImages, getImage } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { useUser } from '@/firebase';
@@ -368,11 +368,3 @@ export default function ServicesPage() {
     </div>
   );
 }
-
-    
-
-    
-
-
-
-
