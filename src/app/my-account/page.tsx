@@ -45,15 +45,15 @@ interface UserProfile {
 }
 
 const paymentMethods = [
-    { name: 'Visa', imageUrl: 'https://i.postimg.cc/cHXYLWJb/download.jpg' },
-    { name: 'Mastercard', imageUrl: 'https://i.postimg.cc/qRjnvr7Y/download.png' },
-    { name: 'PayPal', imageUrl: 'https://i.postimg.cc/HxpXmnTv/download_(1).jpg' },
-    { name: 'Binance', imageUrl: 'https://i.postimg.cc/BQVwY9J3/binance.jpg' },
-    { name: 'Bitcoin', imageUrl: 'https://i.postimg.cc/RFMKmhv8/download_(2).png' },
-    { name: 'Ethereum', imageUrl: 'https://i.postimg.cc/LXHLS5mr/download_(3).png' },
     { name: 'USDT', imageUrl: 'https://i.postimg.cc/ZRTpmnTk/download_(4).png' },
-    { name: 'Binance Pay', imageUrl: 'https://i.postimg.cc/XJQFYWvH/download_(5).png' },
     { name: 'Apple Pay', imageUrl: 'https://i.postimg.cc/G2qYmRpg/download_(6).png' },
+    { name: 'Binance', imageUrl: 'https://i.postimg.cc/BQVwY9J3/binance.jpg' },
+    { name: 'Visa', imageUrl: 'https://i.postimg.cc/8zY1dPKW/download.png' },
+    { name: 'MasterCard', imageUrl: 'https://i.postimg.cc/P57tbr3p/download_(1).png' },
+    { name: 'Bitcoin', imageUrl: 'https://i.postimg.cc/rwH8GFn4/download_(2).png' },
+    { name: 'Ethereum', imageUrl: 'https://i.postimg.cc/0y48G2WY/download_(3).png' },
+    { name: 'Skrill', imageUrl: 'https://i.postimg.cc/Z5QTPK7p/images.png' },
+    { name: 'Perfect Money', imageUrl: 'https://i.postimg.cc/6pP9V5jC/images.jpg' },
 ];
 
 const CopyToClipboard = ({ text, children }: { text: string; children: React.ReactNode }) => {
