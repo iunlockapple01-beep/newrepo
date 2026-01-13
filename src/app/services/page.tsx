@@ -2,7 +2,7 @@
 
 'use client';
 
-import Link from 'next/link';
+import Link from 'link';
 import { PlaceHolderImages, getImage } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { useUser } from '@/firebase';
@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { LoginButton } from '@/components/login-button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu } from 'lucide-react';
+import { Menu, Clock } from 'lucide-react';
 
 export default function ServicesPage() {
   const { data: user } = useUser();
@@ -269,15 +269,38 @@ export default function ServicesPage() {
             </div>
         </section>
 
-        <section className="text-center py-20 bg-white">
-            <h2 className="text-3xl font-bold text-gray-900">Contact Us</h2>
-            <p className="mt-4 text-lg text-gray-600">Ready to unlock your device? Get in touch with us today.</p>
-            <a href="mailto:info@icloudunlocks.com">
-                <Button className="mt-8 btn-primary text-white px-8 py-4 rounded-lg font-semibold text-lg h-auto">
-                    Email Us
-                </Button>
-            </a>
-        </section>
+        <section id="contact" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h2>
+            <p className="text-xl text-gray-600">We're here to help you</p>
+          </div>
+          
+          <div className="max-w-lg mx-auto">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">Get in Touch</h3>
+              <div className="grid sm:grid-cols-2 gap-6">
+                 <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="flex items-center p-4 rounded-lg border hover:bg-gray-100 transition-colors">
+                  <div className="w-12 h-12 apple-gradient rounded-lg flex items-center justify-center mr-4">
+                     {whatsappIcon && <Image src={whatsappIcon.imageUrl} alt="WhatsApp" width={28} height={28} />}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">WhatsApp</p>
+                    <p className="text-blue-600">Chat with us</p>
+                  </div>
+                </a>
+                <div className="flex items-center p-4 rounded-lg border">
+                  <div className="w-12 h-12 apple-gradient rounded-lg flex items-center justify-center mr-4">
+                    <Clock className="text-white" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">Hours</p>
+                    <p className="text-gray-600">24/7 Support</p>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </section>
       </main>
 
       <footer className="bg-gray-900 text-white py-12">
@@ -349,6 +372,7 @@ export default function ServicesPage() {
     
 
     
+
 
 
 
