@@ -104,6 +104,13 @@ function MyAccountContent() {
     setBulkPaid(true); // This will hide the button until the page is reloaded or orders change
   }
 
+  const formatStatus = (status: Order['status']) => {
+    if (status === 'ready_for_activation_bulk') {
+        return 'Ready for activation (bulk)';
+    }
+    return status.replace(/_/g, ' ');
+  };
+
   const usdtImage = getImage('usdt-icon');
   const telegramIcon = getImage('telegram-icon');
   const whatsappIcon = getImage('whatsapp-icon');
@@ -261,7 +268,7 @@ function MyAccountContent() {
                             order.status === 'approved' || order.status === 'unlocked' ? 'secondary' : 
                             order.status === 'declined' ? 'destructive' : 'default'
                         } className={order.status === 'confirming_payment' || order.status === 'processing' ? 'animate-pulse' : ''}>
-                          {order.status.replace(/_/g, ' ')}
+                          {formatStatus(order.status)}
                         </Badge>
                       </TableCell>
                       <TableCell>${order.price.toFixed(2)}</TableCell>
@@ -469,4 +476,5 @@ export default function MyAccountPage() {
 
 
     
+
 
