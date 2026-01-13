@@ -72,39 +72,58 @@ export default function ServicesPage() {
   ];
 
   const macbookModels = [
-      { name: 'MacBook (12", 2016–2017)', price: 60 },
-      { name: 'MacBook Air (2017–2019 Intel)', price: 80 },
-      { name: 'MacBook Air (2020–2022 M1/M2)', price: 150 },
-      { name: 'MacBook Air (2023–2024 M2/M3)', price: 140 },
-      { name: 'MacBook Pro (2016–2019 Intel)', price: 90 },
-      { name: 'MacBook Pro (2020 M1/M1 Pro)', price: 160 },
-      { name: 'MacBook Pro (2021–2024 M1/M1 Pro/Max, M2, M3)', price: 180 },
+    { name: 'MacBook 2016', price: 60 },
+    { name: 'MacBook 2017', price: 65 },
+    { name: 'MacBook Air 2017', price: 80 },
+    { name: 'MacBook Air 2018', price: 85 },
+    { name: 'MacBook Air 2019', price: 90 },
+    { name: 'MacBook Air M1 2020', price: 150 },
+    { name: 'MacBook Air M2 2022', price: 155 },
+    { name: 'MacBook Air M2 2023', price: 140 },
+    { name: 'MacBook Air M3 2024', price: 145 },
+    { name: 'MacBook Pro 2016', price: 90 },
+    { name: 'MacBook Pro 2017', price: 95 },
+    { name: 'MacBook Pro 2018', price: 100 },
+    { name: 'MacBook Pro 2019', price: 110 },
+    { name: 'MacBook Pro M1 2020', price: 160 },
+    { name: 'MacBook Pro M1 Pro/Max 2021', price: 180 },
+    { name: 'MacBook Pro M2 2022', price: 185 },
+    { name: 'MacBook Pro M3 2023', price: 190 },
+    { name: 'MacBook Pro M3 Pro/Max 2024', price: 195 },
   ];
 
   const watchModels = [
-      { name: 'Series 2 / 3', price: 30, note: 'Clean' },
-      { name: 'Series 4 / 5', price: 40, note: 'Clean' },
-      { name: 'Series 6 / SE (1st Gen)', price: 50, note: 'Clean' },
-      { name: 'Series 8 / SE (2nd Gen)', price: 70, note: 'Clean' },
-      { name: 'Series 9', price: 80, note: 'Clean' },
-      { name: 'Ultra', price: 90, note: 'Clean' },
-      { name: 'Ultra 2', price: 95, note: 'Clean' },
+    { name: 'Apple Watch Series 2', price: 30 },
+    { name: 'Apple Watch Series 3', price: 35 },
+    { name: 'Apple Watch Series 4', price: 40 },
+    { name: 'Apple Watch Series 5', price: 45 },
+    { name: 'Apple Watch Series 6', price: 50 },
+    { name: 'Apple Watch SE (1st Gen)', price: 55 },
+    { name: 'Apple Watch Series 8', price: 70 },
+    { name: 'Apple Watch SE (2nd Gen)', price: 75 },
+    { name: 'Apple Watch Series 9', price: 80 },
+    { name: 'Apple Watch Ultra', price: 90 },
+    { name: 'Apple Watch Ultra 2', price: 95 },
   ];
 
   const ipadModels = [
-      { name: 'iPad (5th / 6th Gen, 2017–2018)', price: 60 },
-      { name: 'iPad (7th / 8th Gen, 2019–2020)', price: 65 },
-      { name: 'iPad (9th Gen, 2021)', price: 70 },
-      { name: 'iPad (10th Gen, 2022–2024)', price: 75 },
-      { name: 'iPad Air (3rd Gen, 2019)', price: 70 },
-      { name: 'iPad Air (4th Gen, 2020)', price: 80 },
-      { name: 'iPad Air (5th Gen, 2022)', price: 85 },
-      { name: 'iPad Pro (2017 10.5" & 12.9")', price: 80 },
-      { name: 'iPad Pro (2018 Face ID, 11" & 12.9")', price: 90 },
-      { name: 'iPad Pro (2020 M1)', price: 100 },
-      { name: 'iPad Pro (2021–2024 M1/M2)', price: 110 },
-      { name: 'iPad Mini (5th Gen, 2019)', price: 65 },
-      { name: 'iPad Mini (6th Gen, 2021)', price: 80 },
+    { name: 'iPad 5th Gen (2017)', price: 60 },
+    { name: 'iPad 6th Gen (2018)', price: 65 },
+    { name: 'iPad 7th Gen (2019)', price: 70 },
+    { name: 'iPad 8th Gen (2020)', price: 75 },
+    { name: 'iPad 9th Gen (2021)', price: 80 },
+    { name: 'iPad 10th Gen (2022-2024)', price: 85 },
+    { name: 'iPad Air 3rd Gen (2019)', price: 70 },
+    { name: 'iPad Air 4th Gen (2020)', price: 80 },
+    { name: 'iPad Air 5th Gen (2022)', price: 85 },
+    { name: 'iPad Pro 10.5" (2017)', price: 80 },
+    { name: 'iPad Pro 12.9" (2017)', price: 85 },
+    { name: 'iPad Pro 11" (2018)', price: 90 },
+    { name: 'iPad Pro 12.9" (2018)', price: 95 },
+    { name: 'iPad Pro M1 (2020)', price: 100 },
+    { name: 'iPad Pro M1/M2 (2021-2024)', price: 110 },
+    { name: 'iPad Mini 5th Gen (2019)', price: 65 },
+    { name: 'iPad Mini 6th Gen (2021)', price: 80 },
   ];
 
   const telegramIcon = getImage('telegram-icon');
@@ -196,7 +215,7 @@ export default function ServicesPage() {
                 </div>
 
                 <div className="bg-white p-6 rounded-2xl shadow-lg">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">💻 MacBook Unlock Prices (2016 → 2024)</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">💻 MacBook Unlock Prices</h2>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
@@ -220,7 +239,7 @@ export default function ServicesPage() {
                 </div>
 
                 <div className="bg-white p-6 rounded-2xl shadow-lg">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">⌚ Apple Watch Unlock Prices (2016 → 2024)</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">⌚ Apple Watch Unlock Prices</h2>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
@@ -233,7 +252,7 @@ export default function ServicesPage() {
                             <tbody>
                             {watchModels.map(device => (
                                 <tr key={device.name} className="border-b">
-                                <td>{device.note ? `${device.name} (${device.note})` : device.name}</td>
+                                <td>{device.name}</td>
                                 <td>${device.price}</td>
                                 <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock</Button></td>
                                 </tr>
@@ -244,7 +263,7 @@ export default function ServicesPage() {
                 </div>
                 
                 <div className="bg-white p-6 rounded-2xl shadow-lg">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">📱 iPad Unlock Prices (2016 → 2024)</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">📱 iPad Unlock Prices</h2>
                      <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
