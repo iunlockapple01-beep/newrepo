@@ -89,7 +89,7 @@ function UserManagementDashboard() {
   }
 
   return (
-    <div className="bg-gray-50 text-gray-800 min-h-screen">
+    <div className="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
        <nav className="glass-effect fixed w-full top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -140,7 +140,7 @@ function UserManagementDashboard() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+      <main className="flex-grow max-w-7xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8 w-full">
         <div className="flex items-center gap-4 mb-10">
             <Link href="/admin">
                 <Button variant="outline" size="icon">

@@ -333,7 +333,7 @@ function DeviceCheckContent() {
   }
   
   return (
-    <div className="bg-gray-50 text-gray-800">
+    <div className="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
       <nav className="glass-effect fixed w-full top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -384,7 +384,7 @@ function DeviceCheckContent() {
         </div>
       </nav>
 
-      <main className="max-w-4xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+      <main className="flex-grow max-w-4xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8 w-full">
         <div className="bg-white p-6 rounded-2xl shadow-lg md:flex md:gap-6 md:items-center">
           <div className="relative w-full md:w-56 h-36 flex-shrink-0 rounded-lg bg-gray-100 overflow-hidden mb-4 md:mb-0">
              <Image src={image} alt={model} layout="fill" objectFit="cover" />
