@@ -35,7 +35,7 @@ interface Order {
   createdAt: { toDate: () => Date };
   model: string;
   imei: string;
-  status: 'confirming_payment' | 'approved' | 'declined' | 'processing';
+  status: 'confirming_payment' | 'approved' | 'declined' | 'processing' | 'unlocked' | 'ready_for_activation_bulk';
   price: number;
 }
 
@@ -258,10 +258,10 @@ function MyAccountContent() {
                       <TableCell className="font-mono text-xs">{order.imei}</TableCell>
                       <TableCell>
                         <Badge variant={
-                            order.status === 'approved' ? 'secondary' : 
+                            order.status === 'approved' || order.status === 'unlocked' ? 'secondary' : 
                             order.status === 'declined' ? 'destructive' : 'default'
                         } className={order.status === 'confirming_payment' || order.status === 'processing' ? 'animate-pulse' : ''}>
-                          {order.status.replace('_', ' ')}
+                          {order.status.replace(/_/g, ' ')}
                         </Badge>
                       </TableCell>
                       <TableCell>${order.price.toFixed(2)}</TableCell>
@@ -469,3 +469,4 @@ export default function MyAccountPage() {
 
 
     
+
