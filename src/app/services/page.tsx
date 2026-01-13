@@ -61,9 +61,14 @@ export default function ServicesPage() {
     { name: 'iPhone 15 Pro', price: 110 },
     { name: 'iPhone 15 Pro Max', price: 120 },
     { name: 'iPhone 16', price: 120 },
+    { name: 'iPhone 16e', price: 120 },
     { name: 'iPhone 16 Plus', price: 120 },
     { name: 'iPhone 16 Pro', price: 125 },
     { name: 'iPhone 16 Pro Max', price: 130 },
+    { name: 'iPhone 17', price: 130 },
+    { name: 'iPhone 17 Air', price: 130 },
+    { name: 'iPhone 17 Pro', price: 135 },
+    { name: 'iPhone 17 Pro Max', price: 135 },
   ];
 
   const macbookModels = [
@@ -344,5 +349,6 @@ export default function ServicesPage() {
     
 
     
+
 
 
