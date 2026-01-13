@@ -56,7 +56,7 @@ const paymentMethods = [
     { name: 'Visa', imageUrl: 'https://i.postimg.cc/cHXYLWJb/download.jpg' },
     { name: 'Mastercard', imageUrl: 'https://i.postimg.cc/qRjnvr7Y/download.png' },
     { name: 'PayPal', imageUrl: 'https://i.postimg.cc/HxpXmnTv/download_(1).jpg' },
-    { name: 'Skrill', imageUrl: 'https://i.postimg.cc/4dJVGyJk/download_(1).png' },
+    { name: 'Binance', imageUrl: 'https://i.postimg.cc/BQVwY9J3/binance.jpg' },
     { name: 'Bitcoin', imageUrl: 'https://i.postimg.cc/RFMKmhv8/download_(2).png' },
     { name: 'Ethereum', imageUrl: 'https://i.postimg.cc/LXHLS5mr/download_(3).png' },
     { name: 'USDT', imageUrl: 'https://i.postimg.cc/ZRTpmnTk/download_(4).png' },
@@ -729,17 +729,3 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
-
-    
-    
-
-    
-
-
-
-
-    
-
-
-
-
