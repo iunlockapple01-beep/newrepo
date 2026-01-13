@@ -259,7 +259,7 @@ export default function FaqPage() {
                     <h4 className="font-semibold mb-4">Accepted Payments</h4>
                     <div className="flex flex-wrap gap-2">
                         {paymentMethods.map(method => (
-                            <div key={method.name} className="bg-white rounded-md flex items-center justify-center h-[25px] w-[40px]">
+                            <div key={method.name} className="bg-white rounded-md flex items-center justify-center h-[25px] w-[38px]">
                                 <Image src={method.imageUrl} alt={method.name} width={40} height={25} style={{objectFit: 'contain'}} />
                             </div>
                         ))}
@@ -278,6 +278,7 @@ export default function FaqPage() {
     
 
     
+
 
 
 
