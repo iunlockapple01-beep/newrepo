@@ -11,6 +11,18 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 
+const paymentMethods = [
+    { name: 'Visa', imageUrl: 'https://i.postimg.cc/cHXYLWJb/download.jpg' },
+    { name: 'Mastercard', imageUrl: 'https://i.postimg.cc/qRjnvr7Y/download.png' },
+    { name: 'PayPal', imageUrl: 'https://i.postimg.cc/HxpXmnTv/download_(1).jpg' },
+    { name: 'Skrill', imageUrl: 'https://i.postimg.cc/4dJVGyJk/download_(1).png' },
+    { name: 'Bitcoin', imageUrl: 'https://i.postimg.cc/RFMKmhv8/download_(2).png' },
+    { name: 'Ethereum', imageUrl: 'https://i.postimg.cc/LXHLS5mr/download_(3).png' },
+    { name: 'USDT', imageUrl: 'https://i.postimg.cc/ZRTpmnTk/download_(4).png' },
+    { name: 'Binance Pay', imageUrl: 'https://i.postimg.cc/XJQFYWvH/download_(5).png' },
+    { name: 'Apple Pay', imageUrl: 'https://i.postimg.cc/G2qYmRpg/download_(6).png' },
+];
+
 export default function PrivacyPolicyPage() {
   const { data: user } = useUser();
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
@@ -19,7 +31,7 @@ export default function PrivacyPolicyPage() {
 
 
   return (
-    <div className="bg-gray-50 text-gray-800">
+    <div className="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
       <nav className="glass-effect fixed w-full top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -70,7 +82,7 @@ export default function PrivacyPolicyPage() {
         </div>
       </nav>
 
-      <main className="max-w-4xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-4xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8 flex-grow">
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
           <h1 className="text-4xl font-bold text-center mb-8">Privacy Policy – iCloud Unlocks</h1>
           
@@ -150,9 +162,9 @@ export default function PrivacyPolicyPage() {
         </div>
       </main>
 
-      <footer className="bg-gray-900 text-white py-12 mt-20">
+      <footer className="bg-gray-900 text-white py-12 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
                         <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
@@ -206,6 +218,16 @@ export default function PrivacyPolicyPage() {
                         </li>
                     </ul>
                 </div>
+                 <div>
+                    <h4 className="font-semibold mb-4">Accepted Payments</h4>
+                    <div className="flex flex-wrap gap-2">
+                        {paymentMethods.map(method => (
+                            <div key={method.name} className="bg-white p-1 rounded-md">
+                                <Image src={method.imageUrl} alt={method.name} width={40} height={25} style={{objectFit: 'contain'}} />
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
             <p>&copy; 2023 iCloud Unlocks. All rights reserved.</p>
@@ -219,5 +241,6 @@ export default function PrivacyPolicyPage() {
     
 
     
+
 
 

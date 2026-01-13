@@ -44,6 +44,18 @@ interface UserProfile {
     balance?: number;
 }
 
+const paymentMethods = [
+    { name: 'Visa', imageUrl: 'https://i.postimg.cc/cHXYLWJb/download.jpg' },
+    { name: 'Mastercard', imageUrl: 'https://i.postimg.cc/qRjnvr7Y/download.png' },
+    { name: 'PayPal', imageUrl: 'https://i.postimg.cc/HxpXmnTv/download_(1).jpg' },
+    { name: 'Skrill', imageUrl: 'https://i.postimg.cc/4dJVGyJk/download_(1).png' },
+    { name: 'Bitcoin', imageUrl: 'https://i.postimg.cc/RFMKmhv8/download_(2).png' },
+    { name: 'Ethereum', imageUrl: 'https://i.postimg.cc/LXHLS5mr/download_(3).png' },
+    { name: 'USDT', imageUrl: 'https://i.postimg.cc/ZRTpmnTk/download_(4).png' },
+    { name: 'Binance Pay', imageUrl: 'https://i.postimg.cc/XJQFYWvH/download_(5).png' },
+    { name: 'Apple Pay', imageUrl: 'https://i.postimg.cc/G2qYmRpg/download_(6).png' },
+];
+
 const CopyToClipboard = ({ text, children }: { text: string; children: React.ReactNode }) => {
   const { toast } = useToast();
   const handleCopy = () => {
@@ -402,7 +414,7 @@ function MyAccountContent() {
 
       <footer className="bg-gray-900 text-white py-12 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                     <div className="mb-4 flex items-center gap-2">
                         <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
@@ -456,6 +468,16 @@ function MyAccountContent() {
                         </li>
                     </ul>
                 </div>
+                 <div>
+                    <h4 className="font-semibold mb-4">Accepted Payments</h4>
+                    <div className="flex flex-wrap gap-2">
+                        {paymentMethods.map(method => (
+                            <div key={method.name} className="bg-white p-1 rounded-md">
+                                <Image src={method.imageUrl} alt={method.name} width={40} height={25} style={{objectFit: 'contain'}} />
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
             <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
                  <p>
@@ -489,3 +511,4 @@ export default function MyAccountPage() {
 
 
     
+
