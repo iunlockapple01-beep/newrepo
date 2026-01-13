@@ -122,7 +122,7 @@ export default function BulkUnlockDiscountPage() {
         </div>
       </main>
 
-      <footer className="bg-gray-900 text-white py-12 mt-auto">
+      <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
@@ -182,7 +182,7 @@ export default function BulkUnlockDiscountPage() {
                     <h4 className="font-semibold mb-4">Accepted Payments</h4>
                     <div className="flex flex-wrap gap-2">
                         {paymentMethods.map(method => (
-                            <div key={method.name} className="bg-white p-1 rounded-md">
+                            <div key={method.name} className="bg-white rounded-md flex items-center justify-center h-[25px] w-[40px]">
                                 <Image src={method.imageUrl} alt={method.name} width={40} height={25} style={{objectFit: 'contain'}} />
                             </div>
                         ))}
