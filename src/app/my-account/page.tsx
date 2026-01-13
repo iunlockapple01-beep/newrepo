@@ -303,6 +303,11 @@ function MyAccountContent() {
             </DialogHeader>
             <ScrollArea className="max-h-[70vh]">
               <div className="space-y-4 py-4 pr-6">
+                  <Alert variant="default" className="bg-blue-50 border-blue-200">
+                    <AlertDescription>
+                      For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
+                    </AlertDescription>
+                  </Alert>
                   <div className="text-center">
                       <p className="text-gray-500">Original Total ({ordersForBulkPay.length} items)</p>
                       <p className="line-through text-lg">${bulkTotal.toFixed(2)}</p>
@@ -478,3 +483,6 @@ export default function MyAccountPage() {
     
 
 
+
+
+    

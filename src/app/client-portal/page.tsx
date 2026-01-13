@@ -27,6 +27,7 @@ import { Copy, Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 // Define the structure for a submission
 interface Submission {
@@ -599,6 +600,11 @@ function DeviceCheckContent() {
             </DialogHeader>
              <ScrollArea className="max-h-[70vh]">
                 <div className="space-y-4 animate-fade-in py-4 pr-6">
+                    <Alert variant="default" className="bg-blue-50 border-blue-200">
+                      <AlertDescription>
+                        For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
+                      </AlertDescription>
+                    </Alert>
                     <div className="text-center">
                         <p className="text-gray-500">Service Cost</p>
                         <p className="text-lg font-semibold">${price.toFixed(2)}</p>
@@ -710,3 +716,6 @@ export default function ClientPortalPage() {
     
 
 
+
+
+    
