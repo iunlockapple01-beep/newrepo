@@ -178,6 +178,7 @@ function DeviceCheckContent() {
       const q = query(
         submissionsRef,
         where('imei', '==', trimmedImei),
+        where('status', 'in', ['eligible', 'find_my_off', 'not_supported', 'paid']),
         limit(1)
       );
       const querySnapshot = await getDocs(q);
@@ -186,21 +187,18 @@ function DeviceCheckContent() {
         const existingDoc = querySnapshot.docs[0];
         const existingData = existingDoc.data() as Submission;
 
-        // If status is eligible, check if the model matches
-        if (existingData.status === 'eligible' && existingData.model !== model) {
+        // If an eligible submission exists, but the model is different, show an error.
+        if (existingData.model !== model) {
             setIsChecking(false);
             setValidationError('This IMEI/Serial is already eligible for unlock with a different device model. Please select the correct model to proceed.');
             return;
         }
         
-        // For other statuses or matching eligible model, load the existing submission
-        if (existingData.status !== 'feedback') {
-             setImei(existingData.imei);
-             setSubmissionId(existingDoc.id);
-             setIsChecking(false);
-             return;
-        }
-        // If status is 'feedback', fall through to create a new submission
+        // If the model matches, load the existing submission to show the feedback.
+        setImei(existingData.imei);
+        setSubmissionId(existingDoc.id);
+        setIsChecking(false);
+        return;
       }
     } catch (e) {
         console.error("Error querying existing submissions: ", e);
@@ -719,3 +717,4 @@ export default function ClientPortalPage() {
 
 
     
+
