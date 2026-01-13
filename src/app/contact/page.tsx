@@ -10,6 +10,7 @@ import { Mail, Clock, Building, Menu } from 'lucide-react';
 import { PlaceHolderImages, getImage } from '@/lib/placeholder-images';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function ContactPage() {
   const { data: user } = useUser();
@@ -19,25 +20,35 @@ export default function ContactPage() {
 
   const contactMethods = [
     { 
-      icon: 'telegram',
-      title: 'Telegram', 
-      value: '@iCloudUnlocks_2023', 
-      link: 'https://t.me/iCloudUnlocks_2023',
-      note: 'Direct messaging'
+      icon: telegramIcon,
+      title: 'Telegram Channel', 
+      value: 'Official Announcements', 
+      link: 'https://t.me/iUnlock_AppleUS',
     },
     { 
-      icon: Mail, 
-      title: 'Email', 
-      value: 'support@icloudunlocks.com', 
-      link: 'mailto:support@icloudunlocks.com',
-      note: 'For detailed inquiries'
+      icon: telegramIcon, 
+      title: 'Support 1', 
+      value: 'General Inquiries', 
+      link: 'https://t.me/iCloudUnlocks_2023',
     },
-  ];
-  
-  const socialChannels = [
-    { icon: 'telegram', name: 'Telegram Group', handle: 'iCloudUnlocks2023', link: 'https://t.me/iCloudUnlocks2023' },
-    { icon: 'twitter', name: 'Twitter', handle: '@iCloudUnlocks', link: '#' },
-    { icon: 'facebook', name: 'Facebook', handle: 'iCloud Unlocks', link: '#' },
+    { 
+      icon: telegramIcon, 
+      title: 'Support 2', 
+      value: 'Billing & Payments', 
+      link: 'https://t.me/iUnlock_Apple',
+    },
+    { 
+      icon: telegramIcon, 
+      title: 'Technician', 
+      value: 'Technical Support', 
+      link: 'https://t.me/Chris_Morgan057',
+    },
+    {
+      icon: whatsappIcon,
+      title: 'WhatsApp',
+      value: 'Alternative Contact',
+      link: 'https://wa.me/message/P2IXLAG23I23P1'
+    }
   ];
 
   return (
@@ -95,85 +106,39 @@ export default function ContactPage() {
       </nav>
 
       <main className="max-w-4xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold">Contact Us</h1>
-            <p className="text-lg text-gray-600 mt-2">We’re here to help you with all unlocking requests.</p>
-          </div>
+        <Card className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
+          <CardHeader className="text-center p-0 mb-8">
+            <CardTitle className="text-4xl font-bold">Get in Touch</CardTitle>
+            <p className="text-lg text-gray-600 mt-2">
+              Our support team is available 24/7. For the fastest response, please contact us via Telegram.
+            </p>
+          </CardHeader>
           
-          <div className="space-y-10">
-            <section>
-              <h2 className="text-2xl font-semibold mb-4 text-gray-900 border-b pb-2">Customer Support (24/7)</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-                {contactMethods.map(method => (
-                  <a key={method.title} href={method.link} target="_blank" rel="noopener noreferrer" className="block p-4 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors">
-                    <div className="flex items-center gap-4">
-                      {method.icon === 'telegram' && telegramIcon ? (
-                        <Image src={telegramIcon.imageUrl} alt="Telegram" width={24} height={24} />
-                      ) : (
-                        method.icon !== 'telegram' && <method.icon className="w-6 h-6 text-primary" />
-                      )}
-                      <div>
-                        <p className="font-semibold text-gray-800">{method.title}</p>
-                        <p className="text-blue-600 hover:underline">{method.value}</p>
-                        <p className="text-xs text-gray-500">{method.note}</p>
-                      </div>
+          <CardContent className="p-0">
+              <div className="space-y-4">
+                {contactMethods.map((method, index) => (
+                  <a 
+                    key={index}
+                    href={method.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="flex items-center p-4 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-all duration-300 transform hover:scale-105"
+                  >
+                    {method.icon && (
+                        <Image src={method.icon.imageUrl} alt={`${method.title} icon`} width={40} height={40} className="mr-4" />
+                    )}
+                    <div>
+                        <p className="font-semibold text-lg text-gray-900">{method.title}</p>
+                        <p className="text-gray-600">{method.value}</p>
+                    </div>
+                    <div className="ml-auto text-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-up-right"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
                     </div>
                   </a>
                 ))}
               </div>
-            </section>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <section>
-                <h2 className="text-2xl font-semibold mb-4 text-gray-900 border-b pb-2">Social Channels</h2>
-                 <ul className="space-y-3 mt-4">
-                  {socialChannels.map(channel => (
-                     <li key={channel.name}>
-                      <a href={channel.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-primary">
-                        {channel.icon === 'telegram' && telegramIcon ? <Image src={telegramIcon.imageUrl} alt="Telegram" width={20} height={20} /> : <span className="font-bold">@{channel.handle}</span>}
-                        <span>{channel.name}</span>
-                      </a>
-                     </li>
-                  ))}
-                 </ul>
-              </section>
-
-              <section>
-                <h2 className="text-2xl font-semibold mb-4 text-gray-900 border-b pb-2">Office Hours</h2>
-                <div className="mt-4 space-y-3 text-gray-700">
-                    <div className="flex items-start gap-3">
-                        <Clock className="w-5 h-5 mt-1 text-primary"/>
-                        <div>
-                            <p className="font-semibold">Physical Office Hours</p>
-                            <ul className="list-disc list-inside text-gray-600">
-                                <li>Mon–Fri: 9:00 AM – 6:00 PM CST</li>
-                                <li>Sat: 10:00 AM – 4:00 PM CST</li>
-                                <li>Sun: Closed</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                        <Building className="w-5 h-5 mt-1 text-primary"/>
-                        <div>
-                            <p className="font-semibold">Mailing Address</p>
-                            <address className="not-italic text-gray-600">
-                                iCloud Unlocks<br />
-                                123 Unlock Services Lane<br />
-                                Tech City, TX 75001, USA
-                            </address>
-                        </div>
-                    </div>
-                </div>
-              </section>
-            </div>
-            
-            <div className="text-center text-gray-600 pt-8 border-t">
-                <h3 className="text-xl font-semibold mb-2 text-gray-800">Feedback</h3>
-                <p>We welcome suggestions and customer feedback at any time.</p>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </main>
 
       <footer className="bg-gray-900 text-white py-12 mt-20">
@@ -241,9 +206,3 @@ export default function ContactPage() {
     </div>
   );
 }
-
-    
-
-    
-
-
