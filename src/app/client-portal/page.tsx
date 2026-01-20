@@ -269,55 +269,47 @@ function DeviceCheckContent() {
   const handlePaid = async () => {
     if (!submissionId || !submission || !user) return alert('No submission selected.');
 
+    const generateRandomPart = (length: number) => {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    };
+    const newOrderId = `#ORD-${generateRandomPart(5)}`;
+
     try {
-        const newOrderId = await runTransaction(firestore, async (transaction) => {
-            const counterRef = doc(firestore, 'counters', 'metrics');
-            const counterDoc = await transaction.get(counterRef);
+      const newOrderData = {
+        orderId: newOrderId,
+        userId: user.uid,
+        submissionId: submissionId,
+        imei: submission.imei,
+        model: submission.model,
+        price: submission.price,
+        status: 'confirming_payment' as const,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
 
-            if (!counterDoc.exists()) {
-                throw "Counter document does not exist!";
-            }
+      const ordersCollectionRef = collection(firestore, 'orders');
+      await addDoc(ordersCollectionRef, newOrderData);
 
-            const newOrderCount = (counterDoc.data().orderCounter || 0) + 1;
-            const formattedOrderId = `#${7892 + newOrderCount}`;
-
-            const newOrderRef = doc(collection(firestore, 'orders'));
-            
-            const newOrderData = {
-                orderId: formattedOrderId,
-                userId: user.uid,
-                submissionId: submissionId,
-                imei: submission.imei,
-                model: submission.model,
-                price: submission.price,
-                status: 'confirming_payment' as const,
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp(),
-            };
-
-            transaction.set(newOrderRef, newOrderData);
-            transaction.update(counterRef, { orderCounter: newOrderCount });
-            
-            return formattedOrderId;
-        });
-
-        setPaymentModalOpen(false);
-        alert(`Payment submitted for confirmation. Your Order ID is: ${newOrderId}. You will be redirected to your account page.`);
-        if (typeof window !== 'undefined') {
-          window.location.assign('/my-account');
-        }
+      setPaymentModalOpen(false);
+      alert(`Payment submitted for confirmation. Your Order ID is: ${newOrderId}. You will be redirected to your account page.`);
+      if (typeof window !== 'undefined') {
+        window.location.assign('/my-account');
+      }
 
     } catch (e: any) {
-        console.error("Transaction failed: ", e);
-        
-        // Emit a generic error because we don't have fine-grained context inside a transaction
-        const permissionError = new FirestorePermissionError({
-          path: `orders/unknown or counters/metrics`,
-          operation: 'write',
-          requestResourceData: { note: 'Transaction failed', error: e.message },
-        });
-        errorEmitter.emit('permission-error', permissionError);
-        alert('Failed to create order. Please try again.');
+      console.error("Order creation failed: ", e);
+      const permissionError = new FirestorePermissionError({
+        path: 'orders', // Path for collection on create
+        operation: 'create',
+        requestResourceData: { orderId: newOrderId, note: 'Failed to create order' },
+      });
+      errorEmitter.emit('permission-error', permissionError);
+      alert('Failed to create order. Please try again.');
     }
   };
 

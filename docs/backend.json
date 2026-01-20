@@ -85,7 +85,7 @@
       "properties": {
         "orderId": {
           "type": "string",
-          "description": "The user-facing sequential order ID"
+          "description": "The user-facing unique order ID, in #ORD-XXXXX format."
         },
         "userId": {
           "type": "string",
@@ -135,13 +135,9 @@
         "unlockedDevices": {
           "type": "number",
           "description": "Total number of unlocked devices"
-        },
-        "orderCounter": {
-            "type": "number",
-            "description": "The last used sequential order ID number"
         }
       },
-      "required": ["registeredUsers", "unlockedDevices", "orderCounter"]
+      "required": ["registeredUsers", "unlockedDevices"]
     },
     "banned_user": {
       "title": "Banned User",

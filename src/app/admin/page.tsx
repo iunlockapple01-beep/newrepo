@@ -59,7 +59,7 @@ interface Order {
 interface Counters {
     registeredUsers: number;
     unlockedDevices: number;
-    orderCounter: number;
+    orderCounter?: number;
 }
 
 function AdminDashboard() {
@@ -77,7 +77,6 @@ function AdminDashboard() {
   const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' }>({});
   const [registeredUsers, setRegisteredUsers] = useState<number>(0);
   const [unlockedDevices, setUnlockedDevices] = useState<number>(0);
-  const [orderCounter, setOrderCounter] = useState<number>(0);
 
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
@@ -96,7 +95,6 @@ function AdminDashboard() {
     if (counters) {
       setRegisteredUsers(counters.registeredUsers || 0);
       setUnlockedDevices(counters.unlockedDevices || 0);
-      setOrderCounter(counters.orderCounter || 0);
     }
   }, [counters]);
 
@@ -207,7 +205,6 @@ function AdminDashboard() {
     const metricsData = {
       registeredUsers: Number(registeredUsers),
       unlockedDevices: Number(unlockedDevices),
-      orderCounter: Number(orderCounter),
     };
     
     setDoc(metricsRef, metricsData, { merge: true })
@@ -306,14 +303,6 @@ function AdminDashboard() {
                                         type="number" 
                                         value={unlockedDevices} 
                                         onChange={(e) => setUnlockedDevices(Number(e.target.value))} />
-                                </div>
-                                <div className='grid gap-2'>
-                                    <Label htmlFor="orderCounter">Last Order ID</Label>
-                                    <Input 
-                                        id="orderCounter" 
-                                        type="number" 
-                                        value={orderCounter} 
-                                        onChange={(e) => setOrderCounter(Number(e.target.value))} />
                                 </div>
                             </>
                         )}
