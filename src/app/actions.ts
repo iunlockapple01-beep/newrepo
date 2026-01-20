@@ -43,7 +43,7 @@ export async function sendTelegramNotification(message: string) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = '1003679135';
 
-  if (!botToken || botToken === 'YOUR_TELEGRAM_BOT_TOKEN_HERE') {
+  if (!botToken || botToken === 'PUT_TOKEN_HERE') {
     console.error('Telegram bot token is not configured in .env file.');
     // We don't want to block the user flow if notifications fail.
     // So we just log the error on the server and return.

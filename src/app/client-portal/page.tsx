@@ -239,7 +239,7 @@ function DeviceCheckContent() {
       .then(docRef => {
         setSubmissionId(docRef.id);
         setIsChecking(false);
-        sendTelegramNotification(`New Device Check Submitted\nModel: ${newSubmission.model}\nIMEI/Serial: ${newSubmission.imei}`);
+        sendTelegramNotification("New form submission received 🚀");
       })
       .catch(async (serverError) => {
         setIsChecking(false);
