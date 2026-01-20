@@ -28,7 +28,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { sendTelegramNotification } from '@/app/actions';
 
 // Define the structure for a submission
 interface Submission {
@@ -236,10 +235,24 @@ function DeviceCheckContent() {
     };
     
     addDoc(collection(firestore, 'submissions'), newSubmission)
-      .then(docRef => {
+      .then(async (docRef) => {
         setSubmissionId(docRef.id);
         setIsChecking(false);
-        sendTelegramNotification("New form submission received 🚀");
+
+        // Send notification via API route
+        const message = `<b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
+        try {
+          await fetch('/api/telegram', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message }),
+          });
+        } catch (error) {
+          console.error("Failed to send Telegram notification:", error);
+          // Don't block user flow if notification fails
+        }
       })
       .catch(async (serverError) => {
         setIsChecking(false);
