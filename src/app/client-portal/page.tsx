@@ -28,6 +28,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { sendTelegramNotification } from '@/app/actions';
 
 // Define the structure for a submission
 interface Submission {
@@ -200,7 +201,7 @@ function DeviceCheckContent() {
         const existingData = existingDoc.data() as Submission;
 
         // If an eligible/feedback submission exists, but the model is different, show an error.
-        if ((existingData.status === 'eligible' || existingData.status === 'feedback') && existingData.model !== model) {
+        if ((existingData.status === 'eligible' || existingData.status === 'feedback' || existingData.status === 'find_my_off') && existingData.model !== model) {
             setIsChecking(false);
             setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
             return;
@@ -233,6 +234,7 @@ function DeviceCheckContent() {
       .then(docRef => {
         setSubmissionId(docRef.id);
         setIsChecking(false);
+        sendTelegramNotification(`New Device Check Submitted\nModel: ${newSubmission.model}\nIMEI/Serial: ${newSubmission.imei}`);
       })
       .catch(async (serverError) => {
         setIsChecking(false);
