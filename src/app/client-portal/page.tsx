@@ -240,7 +240,7 @@ function DeviceCheckContent() {
         setIsChecking(false);
 
         // Send notification via API route
-        const message = `🤫 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
+        const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
         try {
           await fetch('/api/telegram', {
             method: 'POST',
