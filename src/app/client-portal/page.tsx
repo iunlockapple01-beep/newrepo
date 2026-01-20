@@ -200,18 +200,23 @@ function DeviceCheckContent() {
         const existingDoc = querySnapshot.docs[0];
         const existingData = existingDoc.data() as Submission;
 
-        // If an eligible/feedback submission exists, but the model is different, show an error.
-        if ((existingData.status === 'eligible' || existingData.status === 'feedback' || existingData.status === 'find_my_off') && existingData.model !== model) {
+        // If admin requested a re-check (status 'feedback'), allow a fresh submission.
+        if (existingData.status === 'feedback') {
+            // Do nothing here; let the code fall through to create a new submission.
+        } else {
+            // For other statuses, enforce the existing logic.
+            if ((existingData.status === 'eligible' || existingData.status === 'find_my_off') && existingData.model !== model) {
+                setIsChecking(false);
+                setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
+                return;
+            }
+            
+            // If the model matches (or status is not one that cares about model), load the existing submission.
+            setImei(existingData.imei);
+            setSubmissionId(existingDoc.id);
             setIsChecking(false);
-            setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
             return;
         }
-        
-        // If the model matches (or status is not one that cares about model), load the existing submission.
-        setImei(existingData.imei);
-        setSubmissionId(existingDoc.id);
-        setIsChecking(false);
-        return;
       }
     } catch (e) {
         console.error("Error querying existing submissions: ", e);
