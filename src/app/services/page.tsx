@@ -183,7 +183,7 @@ export default function ServicesPage() {
                         {isAdmin && (
                             <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>
                         )}
-                        <div className="pt-4">
+                        <div className='pt-4'>
                           <LoginButton />
                         </div>
                       </div>
@@ -359,7 +359,7 @@ export default function ServicesPage() {
                     <h4 className="font-semibold mb-4">Contact Us</h4>
                     <ul className="space-y-2 text-gray-400">
                         <li className='block'>
-                            <a href="https://t.me/iUnlock_AppleUS" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                            <a href="https://t.me/iUnlock_Apple1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
                                 {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
                                 Telegram Channel
                             </a>
