@@ -31,9 +31,9 @@ const reviews = [
     imageHints: ['keypad', 'security']
   },
   {
-    name: 'Michael S.',
-    avatarUrl: 'https://i.postimg.cc/QCJNCCd1/IMG-8016-2.jpg',
-    flag: '🇺🇸',
+    name: 'Mark.',
+    avatarUrl: 'https://i.postimg.cc/MHYYZ0k4/IMG-8028.jpg',
+    flag: '🇨🇦',
     date: 'january 21, 2026',
     images: [
       'https://i.postimg.cc/fyGb24Sc/IMG_8012.jpg',
