@@ -32,15 +32,15 @@ const reviews = [
   },
   {
     name: 'Michael S.',
-    avatarUrl: 'https://picsum.photos/seed/michael/40/40',
+    avatarUrl: 'https://i.postimg.cc/QCJNCCd1/IMG-8016-2.jpg',
     flag: '🇺🇸',
-    date: 'April 15, 2023',
+    date: 'january 21, 2026',
     images: [
-      'https://i.postimg.cc/6qZtyDPS/IMG_5343.jpg',
-      'https://i.postimg.cc/Y9Zt2pXK/IMG_5344.jpg'
+      'https://i.postimg.cc/fyGb24Sc/IMG_8012.jpg',
+      'https://i.postimg.cc/fyGb24S9/IMG_8013.jpg'
     ],
-    review: '"iCloud Unlocks is truly reliable. I had an iPhone 11 that needed unlocking, and they delivered exactly as promised. The support team was fantastic, guiding me through everything. A seamless and trustworthy experience from start to finish. Very satisfied!"',
-    unlockedDevice: 'iPhone 11',
+    review: '"Unlocked iPhone 15 Pro Max. The experience was good and professional. Everything worked well, and the device is fully unlocked"',
+    unlockedDevice: 'iPhone 15 Pro Max',
     imageHints: ['keypad', 'security']
   },
   {
