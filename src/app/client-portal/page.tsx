@@ -200,7 +200,7 @@ function DeviceCheckContent() {
     }
     
     if (bannedUser) {
-        setValidationError('Maximum Free Checks Reached\n\nYou have submitted multiple IMEI or serial number checks without placing an unlock order. Your free check limit has been reached.\n\nIf you would like to proceed with unlocking a device, please contact Admin to have your account reset.');
+        setValidationError('Maximum Free Checks Reached\n\nYou have submitted multiple IMEI or serial number checks without placing an unlock order. Your free check limit has been reached.\n\nIf you would like to proceed with unlocking a device, please contact the Admin to have your account reset.');
         return;
     }
 
@@ -222,6 +222,19 @@ function DeviceCheckContent() {
         return;
     }
 
+    const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
+    try {
+      fetch('/api/telegram', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+    } catch (error) {
+      console.error("Failed to send Telegram notification:", error);
+    }
+
     // Check for existing submission.
     try {
       const submissionsRef = collection(firestore, 'submissions');
@@ -237,10 +250,11 @@ function DeviceCheckContent() {
         const existingDoc = querySnapshot.docs[0];
         const existingData = existingDoc.data() as Submission;
 
+        // If admin requested a re-check, allow a new submission.
         if (existingData.status === 'feedback') {
-            setAnimationSpeed('slow');
+            // This will allow the code to proceed to create a new document below.
         } else {
-            if ((existingData.status === 'eligible' || existingData.status === 'find_my_off') && existingData.model !== model) {
+             if ((existingData.status === 'eligible' || existingData.status === 'find_my_off') && existingData.model !== model) {
                 setIsChecking(false);
                 setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
                 return;
@@ -279,19 +293,6 @@ function DeviceCheckContent() {
       .then(async (docRef) => {
         setSubmissionId(docRef.id);
         setIsChecking(false);
-
-        const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
-        try {
-          await fetch('/api/telegram', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ message }),
-          });
-        } catch (error) {
-          console.error("Failed to send Telegram notification:", error);
-        }
       })
       .catch(async (serverError) => {
         setIsChecking(false);
