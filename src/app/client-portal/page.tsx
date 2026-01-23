@@ -107,6 +107,8 @@ function DeviceCheckContent() {
   const [isChecking, setIsChecking] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(20 * 60);
+  const [loadingSteps, setLoadingSteps] = useState<string[]>([]);
+  const [animationSpeed, setAnimationSpeed] = useState<'slow' | 'fast'>('slow');
   
   const feedbackData = useMemo(() => {
     if (!submission?.feedback) return { lines: [], timestamp: null };
@@ -115,6 +117,40 @@ function DeviceCheckContent() {
     const timestamp = timestampLine ? timestampLine.replace('TIMESTAMP:', '') : null;
     return { lines, timestamp };
   }, [submission?.feedback]);
+
+  const allSteps = useMemo(() => [
+    'Checking device model…',
+    'Checking iCloud lock status…',
+    'Checking blacklist / lost mode…',
+    'Checking other details…',
+    'Verifying server support…',
+    'Finalizing compatibility check…',
+  ], []);
+
+  const shouldShowLoader = isChecking || (submission && submission.status === 'waiting');
+
+  useEffect(() => {
+    let timers: NodeJS.Timeout[] = [];
+    if (shouldShowLoader) {
+      const isFast = animationSpeed === 'fast';
+      const interval = isFast ? (20 * 1000) / allSteps.length : 10 * 1000;
+
+      allSteps.forEach((step, index) => {
+        const timer = setTimeout(() => {
+          setLoadingSteps(prev => {
+            if (prev.includes(step)) return prev;
+            return [...prev, step];
+          });
+        }, index * interval);
+        timers.push(timer);
+      });
+    } else {
+      setLoadingSteps([]);
+    }
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, [shouldShowLoader, animationSpeed, allSteps]);
 
 
   useEffect(() => {
@@ -168,7 +204,9 @@ function DeviceCheckContent() {
         return;
     }
 
+    setLoadingSteps([]);
     setValidationError(null);
+    setAnimationSpeed('slow');
     setIsChecking(true);
 
     const trimmedImei = imei.trim();
@@ -201,16 +239,14 @@ function DeviceCheckContent() {
 
         // If admin requested a re-check (status 'feedback'), allow a fresh submission.
         if (existingData.status === 'feedback') {
-            // Do nothing here; let the code fall through to create a new submission.
+            setAnimationSpeed('slow');
         } else {
-            // For other statuses, enforce the existing logic.
             if ((existingData.status === 'eligible' || existingData.status === 'find_my_off') && existingData.model !== model) {
                 setIsChecking(false);
                 setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
                 return;
             }
-            
-            // If the model matches (or status is not one that cares about model), load the existing submission.
+            setAnimationSpeed('fast');
             setImei(existingData.imei);
             setSubmissionId(existingDoc.id);
             setIsChecking(false);
@@ -219,7 +255,6 @@ function DeviceCheckContent() {
       }
     } catch (e) {
         console.error("Error querying existing submissions: ", e);
-        // Fall through to creating a new one if query fails
     }
 
 
@@ -239,7 +274,6 @@ function DeviceCheckContent() {
         setSubmissionId(docRef.id);
         setIsChecking(false);
 
-        // Send notification via API route
         const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
         try {
           await fetch('/api/telegram', {
@@ -251,13 +285,12 @@ function DeviceCheckContent() {
           });
         } catch (error) {
           console.error("Failed to send Telegram notification:", error);
-          // Don't block user flow if notification fails
         }
       })
       .catch(async (serverError) => {
         setIsChecking(false);
         const permissionError = new FirestorePermissionError({
-          path: `submissions/unknown`, // Path is unknown until doc is created
+          path: `submissions/unknown`,
           operation: 'create',
           requestResourceData: newSubmission,
         });
@@ -268,7 +301,7 @@ function DeviceCheckContent() {
   };
 
   const openPaymentModal = () => {
-    setTimeLeft(20 * 60); // Reset timer
+    setTimeLeft(20 * 60);
     setIsLoading(true);
     setLoadingMessage('Processing payment...');
 
@@ -322,7 +355,7 @@ function DeviceCheckContent() {
     } catch (e: any) {
       console.error("Order creation failed: ", e);
       const permissionError = new FirestorePermissionError({
-        path: 'orders', // Path for collection on create
+        path: 'orders',
         operation: 'create',
         requestResourceData: { orderId: newOrderId, note: 'Failed to create order' },
       });
@@ -422,10 +455,10 @@ function DeviceCheckContent() {
                 value={submission ? submission.imei : imei}
                 onChange={(e) => setImei(e.target.value)}
                 className="w-full sm:w-80"
-                disabled={!!submission || isChecking}
+                disabled={shouldShowLoader}
               />
               <div className="flex gap-3">
-                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={!!submission || isChecking}>Submit</Button>
+                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={shouldShowLoader}>Submit</Button>
                 <Button onClick={handleClear} variant="outline">Clear</Button>
               </div>
             </div>
@@ -436,39 +469,44 @@ function DeviceCheckContent() {
         </div>
 
         <div className="mt-5 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[120px] flex items-center justify-center flex-col text-center">
-          {isChecking && (
-             <div className="flex flex-col items-center">
-              <div className="spinner w-14 h-14 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
-              <p className="font-semibold">Wait for results...</p>
-            </div>
+          {shouldShowLoader && !validationError && (
+              <div className="w-full text-left">
+                  <div className="flex flex-col w-full font-mono text-sm text-gray-600 p-4 bg-gray-100 rounded-md space-y-2">
+                      {loadingSteps.map((step, index) => (
+                          <div key={index} className="w-full flex items-center justify-between">
+                              <span>{step}</span>
+                              {index === loadingSteps.length - 1 && (
+                                  <span className="loading-dots inline-flex">
+                                      <span>.</span><span>.</span><span>.</span>
+                                  </span>
+                              )}
+                          </div>
+                      ))}
+                      {loadingSteps.length === 0 && (
+                          <div className="w-full flex items-center justify-between">
+                              <span>Initializing check...</span>
+                              <span className="loading-dots inline-flex">
+                                  <span>.</span><span>.</span><span>.</span>
+                              </span>
+                          </div>
+                      )}
+                  </div>
+              </div>
           )}
-          {!isChecking && validationError && (
+          {!shouldShowLoader && validationError && (
               <div className="w-full text-left">
                   <div className="p-2 px-3 rounded-md bg-red-100 border border-red-200 text-sm whitespace-pre-wrap font-mono text-red-800">
                     {validationError}
                   </div>
               </div>
           )}
-          {!isChecking && !validationError && !submissionId && !submissionLoading && (
+          {!shouldShowLoader && !validationError && !submissionId && (
             <div>
               <p className="font-semibold text-gray-700">No IMEI submitted yet.</p>
               <p className="text-sm text-gray-500">Submit your IMEI or serial number to check if unlock is supported.</p>
             </div>
           )}
-          {!isChecking && !validationError && submissionLoading && (
-             <div className="flex flex-col items-center">
-              <div className="spinner w-14 h-14 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
-              <p className="font-semibold">Loading submission...</p>
-            </div>
-          )}
-          {!isChecking && !validationError && submission && submission.status === 'waiting' && (
-            <div className="flex flex-col items-center">
-              <div className="spinner w-14 h-14 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
-              <p className="font-semibold">Wait for results...</p>
-              <p className="text-sm text-gray-500">Server is processing your request and will send the feedback here once the checks are complete.</p>
-            </div>
-          )}
-          {!isChecking && !validationError && submission && (submission.status === 'eligible' || submission.status === 'not_supported' || submission.status === 'feedback' || submission.status === 'find_my_off') && (
+          {!shouldShowLoader && !validationError && submission && (submission.status === 'eligible' || submission.status === 'not_supported' || submission.status === 'feedback' || submission.status === 'find_my_off') && (
             <div className="w-full text-left">
               <div className="space-y-2">
                 {feedbackData.lines.map((line, index) => {
@@ -520,7 +558,7 @@ function DeviceCheckContent() {
                )}
             </div>
           )}
-           {!isChecking && !validationError && !submission && !submissionLoading && submissionId && (
+           {!shouldShowLoader && !validationError && !submission && submissionId && (
             <div>
               <p className="font-semibold text-destructive">This submission was not found.</p>
               <p className="text-sm text-gray-500">It may have been deleted by an administrator. Please clear and try again.</p>
