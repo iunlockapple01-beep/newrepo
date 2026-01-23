@@ -121,7 +121,7 @@ function DeviceCheckContent() {
   const allSteps = useMemo(() => [
     'Checking device model…',
     'Checking iCloud lock status…',
-    'Checking blacklist / lost mode…',
+    'Checking blacklist…',
     'Checking other details…',
     'Verifying server support…',
     'Finalizing compatibility check…',
