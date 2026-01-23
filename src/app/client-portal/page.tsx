@@ -23,7 +23,7 @@ import { addDoc, collection, doc, serverTimestamp, runTransaction, query, where,
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu } from 'lucide-react';
+import { Copy, Menu, Loader } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -237,7 +237,6 @@ function DeviceCheckContent() {
         const existingDoc = querySnapshot.docs[0];
         const existingData = existingDoc.data() as Submission;
 
-        // If admin requested a re-check (status 'feedback'), allow a fresh submission.
         if (existingData.status === 'feedback') {
             setAnimationSpeed('slow');
         } else {
@@ -246,11 +245,18 @@ function DeviceCheckContent() {
                 setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
                 return;
             }
+            // Cached result scenario
             setAnimationSpeed('fast');
+            setIsChecking(true);
             setImei(existingData.imei);
-            setSubmissionId(existingDoc.id);
-            setIsChecking(false);
-            return;
+
+            // Wait for fast animation to finish
+            setTimeout(() => {
+                setSubmissionId(existingDoc.id);
+                setIsChecking(false);
+            }, 20000); // 20 seconds for fast animation
+
+            return; // Exit function here
         }
       }
     } catch (e) {
@@ -476,18 +482,14 @@ function DeviceCheckContent() {
                           <div key={index} className="w-full flex items-center justify-between">
                               <span>{step}</span>
                               {index === loadingSteps.length - 1 && (
-                                  <span className="loading-dots inline-flex">
-                                      <span>.</span><span>.</span><span>.</span>
-                                  </span>
+                                  <Loader className="h-4 w-4 animate-spin text-gray-500" />
                               )}
                           </div>
                       ))}
                       {loadingSteps.length === 0 && (
                           <div className="w-full flex items-center justify-between">
                               <span>Initializing check...</span>
-                              <span className="loading-dots inline-flex">
-                                  <span>.</span><span>.</span><span>.</span>
-                              </span>
+                              <Loader className="h-4 w-4 animate-spin text-gray-500" />
                           </div>
                       )}
                   </div>
