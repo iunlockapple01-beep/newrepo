@@ -700,8 +700,8 @@ function DeviceCheckContent() {
                                     </div>
                                 </div>
                                 <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                <span>0x13283c0fb8F25845Dc2745E99C42D224e44103d9</span>
-                                    <CopyToClipboard text="0x13283c0fb8F25845Dc2745E99C42D224e44103d9">
+                                <span>0x49F905885f09F83f454591eb79674703D5D91aa9</span>
+                                    <CopyToClipboard text="0x49F905885f09F83f454591eb79674703D5D91aa9">
                                         <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
                                     </CopyToClipboard>
                                 </div>
