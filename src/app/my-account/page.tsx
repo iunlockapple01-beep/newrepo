@@ -218,7 +218,7 @@ function MyAccountContent() {
                            )}
                            <div>
                              <p className="text-sm">USDT BEP20 Address:</p>
-                             <p className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all">0x13283c0fb8F25845Dc2745E99C42D224e44103d9</p>
+                             <p className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all">0x49F905885f09F83f454591eb79674703D5D91aa9</p>
                            </div>
                         </div>
                     </div>
