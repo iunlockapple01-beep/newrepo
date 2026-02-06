@@ -128,7 +128,7 @@ function DeviceCheckContent() {
     'Finalizing compatibility check…',
   ], []);
 
-  const shouldShowLoader = isChecking || (submission && submission.status === 'waiting');
+  const shouldShowLoader = isChecking || submission?.status === 'waiting';
 
   useEffect(() => {
     let timers: NodeJS.Timeout[] = [];
@@ -208,21 +208,12 @@ function DeviceCheckContent() {
     setLoadingSteps([]);
     setValidationError(null);
     setAnimationSpeed('slow');
-    setIsChecking(true);
+    
 
     const trimmedImei = imei.trim();
     const isImeiValid = /^\d{15}$/.test(trimmedImei);
     const isSerialValid = /^[a-zA-Z0-9]{10,13}$/.test(trimmedImei);
-
-    if (!isImeiValid && !isSerialValid) {
-        setTimeout(() => {
-            setIsChecking(false);
-            setValidationError('Enter Valid IMEI or Serial');
-            setImei('');
-        }, 2000);
-        return;
-    }
-
+    
     const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
     try {
       fetch('/api/telegram', {
@@ -235,6 +226,17 @@ function DeviceCheckContent() {
     } catch (error) {
       console.error("Failed to send Telegram notification:", error);
     }
+
+    if (!isImeiValid && !isSerialValid) {
+        setTimeout(() => {
+            setIsChecking(false);
+            setValidationError('Enter Valid IMEI or Serial');
+            setImei('');
+        }, 2000);
+        return;
+    }
+
+    setIsChecking(true);
 
     // Check for existing submission.
     try {
