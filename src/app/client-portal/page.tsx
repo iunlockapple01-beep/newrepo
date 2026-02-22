@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -23,11 +21,13 @@ import { addDoc, collection, doc, serverTimestamp, runTransaction, query, where,
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu, Loader } from 'lucide-react';
+import { Copy, Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { VerificationAnimation } from '@/components/ui/verification-animation';
+import { cn } from '@/lib/utils';
 
 // Define the structure for a submission
 interface Submission {
@@ -108,7 +108,6 @@ function DeviceCheckContent() {
   const [isChecking, setIsChecking] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(20 * 60);
-  const [loadingSteps, setLoadingSteps] = useState<string[]>([]);
   const [animationSpeed, setAnimationSpeed] = useState<'slow' | 'fast'>('slow');
   
   const feedbackData = useMemo(() => {
@@ -119,39 +118,7 @@ function DeviceCheckContent() {
     return { lines, timestamp };
   }, [submission?.feedback]);
 
-  const allSteps = useMemo(() => [
-    'Checking device model…',
-    'Checking iCloud lock status…',
-    'Checking blacklist…',
-    'Checking other details…',
-    'Verifying server support…',
-    'Finalizing compatibility check…',
-  ], []);
-
-  const shouldShowLoader = isChecking || submission?.status === 'waiting';
-
-  useEffect(() => {
-    let timers: NodeJS.Timeout[] = [];
-    if (shouldShowLoader) {
-      const isFast = animationSpeed === 'fast';
-      const interval = isFast ? (20 * 1000) / allSteps.length : 10 * 1000;
-
-      allSteps.forEach((step, index) => {
-        const timer = setTimeout(() => {
-          setLoadingSteps(prev => {
-            if (prev.includes(step)) return prev;
-            return [...prev, step];
-          });
-        }, index * interval);
-        timers.push(timer);
-      });
-    } else {
-      setLoadingSteps([]);
-    }
-    return () => {
-      timers.forEach(clearTimeout);
-    };
-  }, [shouldShowLoader, animationSpeed, allSteps]);
+  const shouldShowLoader = isChecking || (submission?.status === 'waiting' && !submission.feedback);
 
 
   useEffect(() => {
@@ -205,7 +172,6 @@ function DeviceCheckContent() {
         return;
     }
 
-    setLoadingSteps([]);
     setValidationError(null);
     setAnimationSpeed('slow');
     
@@ -478,26 +444,11 @@ function DeviceCheckContent() {
           </div>
         </div>
 
-        <div className="mt-5 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[120px] flex items-center justify-center flex-col text-center">
+        <div className={cn("mt-5 rounded-lg border border-gray-200", 
+            shouldShowLoader ? "bg-white overflow-hidden" : "p-4 bg-gray-50 min-h-[120px] flex items-center justify-center flex-col text-center"
+        )}>
           {shouldShowLoader && !validationError && (
-              <div className="w-full text-left">
-                  <div className="flex flex-col w-full font-mono text-sm text-gray-600 p-4 bg-gray-100 rounded-md space-y-2">
-                      {loadingSteps.map((step, index) => (
-                          <div key={index} className="w-full flex items-center justify-between">
-                              <span>{step}</span>
-                              {index === loadingSteps.length - 1 && (
-                                  <Loader className="h-4 w-4 animate-spin text-gray-500" />
-                              )}
-                          </div>
-                      ))}
-                      {loadingSteps.length === 0 && (
-                          <div className="w-full flex items-center justify-between">
-                              <span>Initializing check...</span>
-                              <Loader className="h-4 w-4 animate-spin text-gray-500" />
-                          </div>
-                      )}
-                  </div>
-              </div>
+              <VerificationAnimation />
           )}
           {!shouldShowLoader && validationError && (
               <div className="w-full text-left">

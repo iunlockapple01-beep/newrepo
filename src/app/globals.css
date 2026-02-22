@@ -145,12 +145,6 @@
         animation: float 6s ease-in-out infinite;
     }
 
-    @keyframes float {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
-        100% { transform: translateY(0px); }
-    }
-
     .hero-image-glow {
         position: absolute;
         width: 60%;
@@ -197,4 +191,179 @@
         background: rgba(255, 255, 255, 1);
         transform: translateY(-1px);
     }
+}
+
+.mono-font {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Main Container Box */
+.main-container {
+    width: 100%;
+    height: 500px; /* Adjusted from 600px */
+    background: #ffffff;
+    border-radius: 1rem; /* from rounded-lg */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Subtle Grid Background */
+.bg-grid {
+    position: absolute;
+    inset: 0;
+    background-size: 40px 40px;
+    background-image: 
+        linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+}
+
+/* Device Icon Styling */
+.device-icon {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.06));
+}
+
+.device-icon.active-scan {
+    opacity: 1;
+    filter: drop-shadow(0 4px 20px rgba(59, 130, 246, 0.25));
+    transform: scale(1.2);
+    color: #2563eb;
+}
+
+.device-icon.inactive {
+    opacity: 0.2;
+    transform: scale(0.95);
+}
+
+/* Scanning Line Animation inside Lens */
+.scan-line {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.8), transparent);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    animation: scan 2.5s infinite ease-in-out;
+    top: 0;
+}
+
+@keyframes scan {
+    0% { top: 10%; opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { top: 90%; opacity: 0; }
+}
+
+/* Floating Animation for background devices */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-3px); }
+}
+
+/* Lens Handle - Professional metallic look */
+.lens-handle {
+    position: absolute;
+    width: 18px;
+    height: 60px;
+    background: linear-gradient(90deg, #525252 0%, #737373 30%, #a3a3a3 50%, #737373 70%, #525252 100%);
+    border-radius: 0 0 9px 9px;
+    top: 88%;
+    left: 50%;
+    transform: translateX(-50%) rotate(-45deg);
+    transform-origin: top center;
+    box-shadow: 
+        0 4px 12px rgba(0,0,0,0.15),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+    z-index: -1;
+}
+
+.lens-handle::before {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 5px;
+    background: linear-gradient(90deg, #404040, #525252);
+    border-radius: 3px;
+    top: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Progress bar styling */
+.progress-container {
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 999px;
+    overflow: hidden;
+    width: 200px;
+    height: 4px;
+}
+
+.progress-fill {
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    height: 100%;
+}
+
+/* Lens overlay with zoom effect */
+.lens-overlay {
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.lens-content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform: scale(1.6);
+}
+
+/* Glass rim effect */
+.lens-rim {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 
+        inset 0 2px 4px rgba(255,255,255,0.5),
+        inset 0 -2px 4px rgba(0,0,0,0.1),
+        0 8px 32px rgba(0, 0, 0, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.08);
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 50%);
+}
+
+.lens-inner-ring {
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.lens-dashed-ring {
+    position: absolute;
+    inset: 16px;
+    border-radius: 50%;
+    border: 1px dashed rgba(59, 130, 246, 0.3);
+    animation: spin 12s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Scene container */
+.scene-area {
+    position: relative;
+    flex: 1;
+    margin: 20px;
+    background: #fafafa;
+    border-radius: 16px;
+    overflow: hidden;
 }
