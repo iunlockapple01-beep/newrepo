@@ -465,8 +465,9 @@ function DeviceCheckContent() {
     if (submission?.status === 'device_found') {
         if (showDeviceFoundNotif) {
             return (
-                <div className="flex items-center justify-center h-full">
-                    <p className="text-2xl font-bold animate-fade-in">Device Found</p>
+                <div className="flex flex-col items-center justify-center h-full animate-pop-in">
+                    <CheckCircle2 className="w-24 h-24 text-green-500 mb-4" />
+                    <p className="text-3xl font-bold text-gray-800">Device Found</p>
                 </div>
             );
         }
@@ -833,5 +834,7 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
+
+    
 
     
