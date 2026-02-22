@@ -157,6 +157,9 @@ function DeviceCheckContent() {
   const [showDeviceFoundNotif, setShowDeviceFoundNotif] = useState(false);
   const [startVerificationSteps, setStartVerificationSteps] = useState(false);
   
+  const formDisabled = isChecking || submissionLoading || !!submissionId;
+  const showVerificationAnimation = isChecking || (submission && submission.status === 'waiting');
+
   useEffect(() => {
     if (submission?.status === 'device_found') {
         setShowDeviceFoundNotif(true);
@@ -179,8 +182,6 @@ function DeviceCheckContent() {
     const timestamp = timestampLine ? timestampLine.replace('TIMESTAMP:', '') : null;
     return { lines, timestamp };
   }, [submission?.feedback]);
-
-  const shouldShowMainLoader = isChecking || !submission || submission.status === 'waiting';
 
 
   useEffect(() => {
@@ -457,7 +458,7 @@ function DeviceCheckContent() {
         );
     }
 
-    if (submissionLoading || shouldShowMainLoader) {
+    if (submissionLoading || showVerificationAnimation) {
       return <VerificationAnimation />;
     }
 
@@ -469,7 +470,9 @@ function DeviceCheckContent() {
                 </div>
             );
         }
-        return <VerificationSteps steps={verificationStepsList} />;
+        if (startVerificationSteps) {
+          return <VerificationSteps steps={verificationStepsList} />;
+        }
     }
 
     if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off'].includes(submission.status)) {
@@ -598,10 +601,10 @@ function DeviceCheckContent() {
                 value={submission ? submission.imei : imei}
                 onChange={(e) => setImei(e.target.value)}
                 className="w-full sm:w-80"
-                disabled={shouldShowMainLoader}
+                disabled={formDisabled}
               />
               <div className="flex gap-3">
-                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={shouldShowMainLoader}>Submit</Button>
+                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={formDisabled}>Submit</Button>
                 <Button onClick={handleClear} variant="outline">Clear</Button>
               </div>
             </div>
@@ -612,7 +615,7 @@ function DeviceCheckContent() {
         </div>
 
         <div className={cn("mt-5 rounded-lg border border-gray-200", 
-            shouldShowMainLoader ? "bg-white overflow-hidden" : "p-4 bg-gray-50 min-h-[120px] flex items-center justify-center flex-col text-center"
+            (submissionLoading || showVerificationAnimation) ? "bg-white overflow-hidden" : "p-4 bg-gray-50 min-h-[120px] flex items-center justify-center flex-col text-center"
         )}>
           {renderContent()}
         </div>
@@ -830,3 +833,5 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
+
+    
