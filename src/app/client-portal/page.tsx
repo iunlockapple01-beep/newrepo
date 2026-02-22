@@ -29,6 +29,7 @@ import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { VerificationAnimation } from '@/components/ui/verification-animation';
 import { cn } from '@/lib/utils';
+import { TypingAnimation } from '@/components/ui/typing-animation';
 
 // Define the structure for a submission
 interface Submission {
@@ -157,8 +158,9 @@ function DeviceCheckContent() {
   const [showDeviceFoundNotif, setShowDeviceFoundNotif] = useState(false);
   const [startVerificationSteps, setStartVerificationSteps] = useState(false);
   
-  const formDisabled = isChecking || submissionLoading || !!submissionId;
-  const showVerificationAnimation = isChecking || (submission && submission.status === 'waiting');
+  const formDisabled = isChecking || !!submission;
+  const shouldShowLoader = isChecking || (submission && submission.status === 'waiting');
+
 
   useEffect(() => {
     if (submission?.status === 'device_found') {
@@ -245,6 +247,14 @@ function DeviceCheckContent() {
 
     const trimmedImei = imei.trim();
     
+    const isImeiValid = /^\d{15}$/.test(trimmedImei);
+    const isSerialValid = /^[a-zA-Z0-9]{10,13}$/.test(trimmedImei);
+    
+    if (!isImeiValid && !isSerialValid) {
+        setValidationError('Enter Valid IMEI or Serial');
+        return;
+    }
+
     const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
     try {
       fetch('/api/telegram', {
@@ -258,18 +268,6 @@ function DeviceCheckContent() {
       console.error("Failed to send Telegram notification:", error);
     }
     
-    const isImeiValid = /^\d{15}$/.test(trimmedImei);
-    const isSerialValid = /^[a-zA-Z0-9]{10,13}$/.test(trimmedImei);
-
-    if (!isImeiValid && !isSerialValid) {
-        setTimeout(() => {
-            setIsChecking(false);
-            setValidationError('Enter Valid IMEI or Serial');
-            setImei('');
-        }, 2000);
-        return;
-    }
-
     setIsChecking(true);
 
     // Check for existing submission.
@@ -299,8 +297,7 @@ function DeviceCheckContent() {
             // Cached result scenario
             setAnimationSpeed('fast');
             setIsChecking(true);
-            setImei(existingData.imei);
-
+            
             // Wait for fast animation to finish
             setTimeout(() => {
                 setSubmissionId(existingDoc.id);
@@ -329,6 +326,8 @@ function DeviceCheckContent() {
     addDoc(collection(firestore, 'submissions'), newSubmission)
       .then(async (docRef) => {
         setSubmissionId(docRef.id);
+        // We set isChecking to false after getting the submissionId
+        // The loader will continue to show based on the submission status 'waiting'
         setIsChecking(false);
       })
       .catch(async (serverError) => {
@@ -458,7 +457,7 @@ function DeviceCheckContent() {
         );
     }
 
-    if (submissionLoading || showVerificationAnimation) {
+    if (shouldShowLoader) {
       return <VerificationAnimation />;
     }
 
@@ -477,13 +476,16 @@ function DeviceCheckContent() {
     }
 
     if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off'].includes(submission.status)) {
+        const specialStatusLines = feedbackData.lines.filter(line => line === 'FIND_MY_ON_STATUS' || line === 'FIND_MY_OFF_STATUS');
+        const feedbackText = feedbackData.lines.filter(line => !specialStatusLines.includes(line)).join('\n');
+        
         return (
             <div className="w-full text-left p-4">
               <div className="space-y-2">
-                {feedbackData.lines.map((line, index) => {
+                {specialStatusLines.map((line, index) => {
                   if (line === 'FIND_MY_ON_STATUS') {
                     return (
-                      <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
+                      <div key={`special-${index}`} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
                         <span>Find My:</span>
                         <span className="bg-red-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">ON</span>
                       </div>
@@ -491,18 +493,22 @@ function DeviceCheckContent() {
                   }
                   if (line === 'FIND_MY_OFF_STATUS') {
                     return (
-                      <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
+                      <div key={`special-${index}`} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
                         <span>Find My:</span>
                         <span className="bg-green-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">OFF</span>
                       </div>
                     )
                   }
-                  return (
-                    <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm whitespace-pre-wrap font-mono">
-                      {line}
-                    </div>
-                  )
+                  return null;
                 })}
+
+                {feedbackText && (
+                    <TypingAnimation 
+                        text={feedbackText} 
+                        duration={5000} 
+                        className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono"
+                    />
+                )}
               </div>
               {feedbackData.timestamp && (
                 <p className="text-xs text-gray-500 mt-2 text-right">Feedback received: {feedbackData.timestamp}</p>
@@ -616,7 +622,7 @@ function DeviceCheckContent() {
         </div>
 
         <div className={cn("mt-5 rounded-lg border border-gray-200", 
-            (submissionLoading || showVerificationAnimation) ? "bg-white overflow-hidden" : "p-4 bg-gray-50 min-h-[120px] flex items-center justify-center flex-col text-center"
+            shouldShowLoader ? "bg-white overflow-hidden" : "p-4 bg-gray-50 min-h-[120px] flex items-center justify-center flex-col text-center"
         )}>
           {renderContent()}
         </div>
