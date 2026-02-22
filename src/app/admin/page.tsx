@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import {
@@ -99,8 +98,14 @@ function AdminDashboard() {
   }, [counters]);
 
   const sortedSubmissions = submissions?.sort((a, b) => {
-    if (a.status === 'waiting' && b.status !== 'waiting') return -1;
-    if (a.status !== 'waiting' && b.status === 'waiting') return 1;
+    const isPriority = (status: Submission['status']) => status === 'waiting' || status === 'device_found';
+
+    if (isPriority(a.status) && !isPriority(b.status)) {
+      return -1;
+    }
+    if (!isPriority(a.status) && isPriority(b.status)) {
+      return 1;
+    }
     return 0;
   });
 
@@ -354,7 +359,7 @@ function AdminDashboard() {
             )}
             <div className="space-y-6">
               {sortedSubmissions && sortedSubmissions.map(sub => (
-                <Card key={sub.id} className={`bg-white ${sub.status === 'waiting' ? 'border-2 border-primary' : ''}`}>
+                <Card key={sub.id} className={`bg-white ${sub.status === 'waiting' || sub.status === 'device_found' ? 'border-2 border-primary' : ''}`}>
                   <CardHeader>
                     <CardTitle className='flex justify-between items-center'>
                         <span>{sub.model}</span>
@@ -470,5 +475,3 @@ function AdminDashboard() {
 export default function AdminPage() {
     return <AdminDashboard />
 }
-
-    
