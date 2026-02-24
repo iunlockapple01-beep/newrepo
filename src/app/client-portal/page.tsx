@@ -153,10 +153,12 @@ function DeviceCheckContent() {
   const [isChecking, setIsChecking] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(20 * 60);
-  const [animationSpeed, setAnimationSpeed] = useState<'slow' | 'fast'>('slow');
   
   const [showDeviceFoundNotif, setShowDeviceFoundNotif] = useState(false);
   const [startVerificationSteps, setStartVerificationSteps] = useState(false);
+
+  const [showCachedDataNotification, setShowCachedDataNotification] = useState(false);
+  const [isCachedCheck, setIsCachedCheck] = useState(false);
   
   const formDisabled = isChecking || !!submission;
   const shouldShowLoader = isChecking || (submission && submission.status === 'waiting');
@@ -210,6 +212,8 @@ function DeviceCheckContent() {
     setValidationError(null);
     setShowDeviceFoundNotif(false);
     setStartVerificationSteps(false);
+    setShowCachedDataNotification(false);
+    setIsCachedCheck(false);
   };
 
   useEffect(() => {
@@ -242,9 +246,7 @@ function DeviceCheckContent() {
     setValidationError(null);
     setShowDeviceFoundNotif(false);
     setStartVerificationSteps(false);
-    setAnimationSpeed('slow');
     
-
     const trimmedImei = imei.trim();
     
     const isImeiValid = /^\d{15}$/.test(trimmedImei);
@@ -255,19 +257,6 @@ function DeviceCheckContent() {
         return;
     }
 
-    const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
-    try {
-      fetch('/api/telegram', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message }),
-      });
-    } catch (error) {
-      console.error("Failed to send Telegram notification:", error);
-    }
-    
     setIsChecking(true);
 
     // Check for existing submission.
@@ -285,32 +274,40 @@ function DeviceCheckContent() {
         const existingDoc = querySnapshot.docs[0];
         const existingData = existingDoc.data() as Submission;
 
-        // If admin requested a re-check, allow a new submission.
-        if (existingData.status === 'feedback') {
-            // This will allow the code to proceed to create a new document below.
-        } else {
-             if ((existingData.status === 'eligible' || existingData.status === 'find_my_off' || existingData.status === 'device_found') && existingData.model !== model) {
-                setIsChecking(false);
-                setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
-                return;
-            }
-            // Cached result scenario
-            setAnimationSpeed('fast');
-            setIsChecking(true);
-            
-            // Wait for fast animation to finish
+        if (existingData.model === model) {
+            // Cached data flow
+            setIsCachedCheck(true);
             setTimeout(() => {
-                setSubmissionId(existingDoc.id);
                 setIsChecking(false);
-            }, 20000); // 20 seconds for fast animation
-
-            return; // Exit function here
+                setShowCachedDataNotification(true);
+                setTimeout(() => {
+                    setShowCachedDataNotification(false);
+                    setSubmissionId(existingDoc.id);
+                }, 2000); // show notification for 2 seconds
+            }, 4000); // show checking animation for 4 seconds
+            return;
+        } else {
+             setIsChecking(false);
+             setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
+             return;
         }
       }
     } catch (e) {
         console.error("Error querying existing submissions: ", e);
     }
-
+    
+    const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
+    try {
+      fetch('/api/telegram', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+    } catch (error) {
+      console.error("Failed to send Telegram notification:", error);
+    }
 
     const newSubmission = {
       userId: user.uid,
@@ -440,6 +437,16 @@ function DeviceCheckContent() {
           </div>
       );
     }
+    if (showCachedDataNotification) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full animate-pop-in">
+          <CheckCircle2 className="w-24 h-24 text-blue-500 mb-4" />
+          <h2 className="text-3xl font-bold text-gray-800">Device Data Found</h2>
+          <p className="text-lg text-gray-600 mt-2">Loading existing information from our database...</p>
+        </div>
+      );
+    }
+
     if (!submissionId) {
         return (
             <div className="flex flex-col items-center justify-center h-full">
@@ -503,11 +510,17 @@ function DeviceCheckContent() {
                 })}
 
                 {feedbackText && (
+                  isCachedCheck ? (
+                    <div className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono whitespace-pre-wrap">
+                      {feedbackText}
+                    </div>
+                  ) : (
                     <TypingAnimation 
                         text={feedbackText} 
                         duration={5000} 
                         className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono"
                     />
+                  )
                 )}
               </div>
               {feedbackData.timestamp && (
@@ -840,7 +853,3 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
-
-    
-
-    
