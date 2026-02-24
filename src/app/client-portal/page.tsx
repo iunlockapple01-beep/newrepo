@@ -437,6 +437,11 @@ function DeviceCheckContent() {
           </div>
       );
     }
+    
+    if (shouldShowLoader) {
+      return <VerificationAnimation />;
+    }
+
     if (showCachedDataNotification) {
       return (
         <div className="flex flex-col items-center justify-center h-full animate-pop-in">
@@ -462,10 +467,6 @@ function DeviceCheckContent() {
               <p className="text-sm text-gray-500">It may have been deleted by an administrator. Please clear and try again.</p>
             </div>
         );
-    }
-
-    if (shouldShowLoader) {
-      return <VerificationAnimation />;
     }
 
     if (submission?.status === 'device_found') {
@@ -853,5 +854,7 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
+
+    
 
     
