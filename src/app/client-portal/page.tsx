@@ -226,6 +226,7 @@ function DeviceCheckContent() {
     setIsCachedCheck(false);
     setIsOfflineSimulating(false);
     setOfflineError(false);
+    setIsChecking(false);
   };
 
   useEffect(() => {
@@ -270,8 +271,48 @@ function DeviceCheckContent() {
         return;
     }
 
-    // IF SERVER IS OFFLINE
+    setIsChecking(true);
+
+    // 1. Check for existing submission FIRST (This works regardless of server status)
+    try {
+      const submissionsRef = collection(firestore, 'submissions');
+      const q = query(
+        submissionsRef,
+        where('imei', '==', trimmedImei),
+        where('status', 'in', ['eligible', 'find_my_off', 'not_supported', 'paid', 'feedback', 'device_found']),
+        limit(1)
+      );
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const existingDoc = querySnapshot.docs[0];
+        const existingData = existingDoc.data() as Submission;
+
+        if (existingData.model === model) {
+            // Cached data flow - used even if server is offline
+            setIsCachedCheck(true);
+            setTimeout(() => {
+                setIsChecking(false);
+                setShowCachedDataNotification(true);
+                setTimeout(() => {
+                    setShowCachedDataNotification(false);
+                    setSubmissionId(existingDoc.id);
+                }, 2000); // show notification for 2 seconds
+            }, 4000); // show checking animation for 4 seconds
+            return;
+        } else {
+             setIsChecking(false);
+             setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
+             return;
+        }
+      }
+    } catch (e) {
+        console.error("Error querying existing submissions: ", e);
+    }
+
+    // 2. IF NO CACHED DATA FOUND, check server status for new submission
     if (!isServerOnline) {
+        setIsChecking(false);
         setIsOfflineSimulating(true);
         // Still log the submission so admin can see it
         const newOfflineSubmission = {
@@ -293,46 +334,8 @@ function DeviceCheckContent() {
         }, 60000);
         return;
     }
-
-    setIsChecking(true);
-
-    // Check for existing submission.
-    try {
-      const submissionsRef = collection(firestore, 'submissions');
-      const q = query(
-        submissionsRef,
-        where('imei', '==', trimmedImei),
-        where('status', 'in', ['eligible', 'find_my_off', 'not_supported', 'paid', 'feedback', 'device_found']),
-        limit(1)
-      );
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const existingDoc = querySnapshot.docs[0];
-        const existingData = existingDoc.data() as Submission;
-
-        if (existingData.model === model) {
-            // Cached data flow
-            setIsCachedCheck(true);
-            setTimeout(() => {
-                setIsChecking(false);
-                setShowCachedDataNotification(true);
-                setTimeout(() => {
-                    setShowCachedDataNotification(false);
-                    setSubmissionId(existingDoc.id);
-                }, 2000); // show notification for 2 seconds
-            }, 4000); // show checking animation for 4 seconds
-            return;
-        } else {
-             setIsChecking(false);
-             setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
-             return;
-        }
-      }
-    } catch (e) {
-        console.error("Error querying existing submissions: ", e);
-    }
     
+    // 3. PROCEED WITH NEW SUBMISSION (Server is Online)
     const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
     try {
       fetch('/api/telegram', {
