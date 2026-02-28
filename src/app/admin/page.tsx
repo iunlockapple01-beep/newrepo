@@ -31,8 +31,9 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Ban, Menu, Users } from 'lucide-react';
+import { Ban, Menu, Users, Server, ServerOff } from 'lucide-react';
 import { format } from 'date-fns';
+import { Switch } from '@/components/ui/switch';
 
 interface Submission {
   id: string;
@@ -59,6 +60,7 @@ interface Counters {
     registeredUsers: number;
     unlockedDevices: number;
     orderCounter?: number;
+    isServerOnline?: boolean;
 }
 
 function AdminDashboard() {
@@ -76,6 +78,7 @@ function AdminDashboard() {
   const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' }>({});
   const [registeredUsers, setRegisteredUsers] = useState<number>(0);
   const [unlockedDevices, setUnlockedDevices] = useState<number>(0);
+  const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
 
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
@@ -94,6 +97,7 @@ function AdminDashboard() {
     if (counters) {
       setRegisteredUsers(counters.registeredUsers || 0);
       setUnlockedDevices(counters.unlockedDevices || 0);
+      setIsServerOnline(counters.isServerOnline !== false);
     }
   }, [counters]);
 
@@ -230,11 +234,12 @@ function AdminDashboard() {
     const metricsData = {
       registeredUsers: Number(registeredUsers),
       unlockedDevices: Number(unlockedDevices),
+      isServerOnline: isServerOnline,
     };
     
     setDoc(metricsRef, metricsData, { merge: true })
       .then(() => {
-        alert('Site metrics updated successfully!');
+        alert('Site settings updated successfully!');
       })
       .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
@@ -308,32 +313,53 @@ function AdminDashboard() {
             <div className="mb-12">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Site Metrics</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                            <span>Site Settings & Metrics</span>
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        {countersLoading ? <p>Loading metrics...</p> : (
+                    <CardContent className="space-y-6">
+                        {countersLoading ? <p>Loading settings...</p> : (
                             <>
-                                <div className='grid gap-2'>
-                                    <Label htmlFor="registeredUsers">Registered Users</Label>
-                                    <Input 
-                                        id="registeredUsers" 
-                                        type="number" 
-                                        value={registeredUsers} 
-                                        onChange={(e) => setRegisteredUsers(Number(e.target.value))} />
+                                <div className="p-4 rounded-lg bg-gray-50 border flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`p-2 rounded-full ${isServerOnline ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                                            {isServerOnline ? <Server size={20} /> : <ServerOff size={20} />}
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="server-status" className="text-base font-bold">Device Check Server</Label>
+                                            <p className="text-sm text-gray-500">Status: <span className={isServerOnline ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}>{isServerOnline ? 'ONLINE' : 'OFFLINE'}</span></p>
+                                        </div>
+                                    </div>
+                                    <Switch 
+                                        id="server-status" 
+                                        checked={isServerOnline} 
+                                        onCheckedChange={setIsServerOnline}
+                                    />
                                 </div>
-                                <div className='grid gap-2'>
-                                    <Label htmlFor="unlockedDevices">Unlocked Devices</Label>
-                                    <Input 
-                                        id="unlockedDevices" 
-                                        type="number" 
-                                        value={unlockedDevices} 
-                                        onChange={(e) => setUnlockedDevices(Number(e.target.value))} />
+
+                                <div className='grid gap-4 sm:grid-cols-2'>
+                                    <div className='grid gap-2'>
+                                        <Label htmlFor="registeredUsers">Registered Users</Label>
+                                        <Input 
+                                            id="registeredUsers" 
+                                            type="number" 
+                                            value={registeredUsers} 
+                                            onChange={(e) => setRegisteredUsers(Number(e.target.value))} />
+                                    </div>
+                                    <div className='grid gap-2'>
+                                        <Label htmlFor="unlockedDevices">Unlocked Devices</Label>
+                                        <Input 
+                                            id="unlockedDevices" 
+                                            type="number" 
+                                            value={unlockedDevices} 
+                                            onChange={(e) => setUnlockedDevices(Number(e.target.value))} />
+                                    </div>
                                 </div>
                             </>
                         )}
                     </CardContent>
                     <CardFooter className="flex justify-between flex-wrap gap-2">
-                        <Button onClick={handleUpdateMetrics} className="btn-primary text-white">Update Metrics</Button>
+                        <Button onClick={handleUpdateMetrics} className="btn-primary text-white">Save All Settings</Button>
                         <div className="flex gap-2">
                             <Link href="/admin/users">
                                 <Button variant="outline">

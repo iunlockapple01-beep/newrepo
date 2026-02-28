@@ -22,7 +22,7 @@ import { addDoc, collection, doc, serverTimestamp, runTransaction, query, where,
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu, Loader, CheckCircle2 } from 'lucide-react';
+import { Copy, Menu, Loader, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -52,6 +52,10 @@ interface BannedUser {
     id: string;
     userId: string;
     createdAt: any;
+}
+
+interface Counters {
+    isServerOnline?: boolean;
 }
 
 const paymentMethods = [
@@ -145,7 +149,9 @@ function DeviceCheckContent() {
   const { data: submission, loading: submissionLoading } = useDoc<Submission>('submissions', submissionId || ' ');
   const { data: userProfile, loading: profileLoading } = useDoc<UserProfile>('users', user?.uid || ' ');
   const { data: bannedUser, loading: bannedUserLoading } = useDoc<BannedUser>('banned_users', user?.uid || ' ');
+  const { data: counters } = useDoc<Counters>('counters', 'metrics');
 
+  const isServerOnline = counters?.isServerOnline !== false;
 
   const [isPaymentModalOpen, setPaymentModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -160,8 +166,12 @@ function DeviceCheckContent() {
   const [showCachedDataNotification, setShowCachedDataNotification] = useState(false);
   const [isCachedCheck, setIsCachedCheck] = useState(false);
   
-  const formDisabled = isChecking || !!submission;
-  const shouldShowLoader = isChecking || (submission && submission.status === 'waiting');
+  // Offline simulation state
+  const [isOfflineSimulating, setIsOfflineSimulating] = useState(false);
+  const [offlineError, setOfflineError] = useState(false);
+
+  const formDisabled = isChecking || !!submission || isOfflineSimulating;
+  const shouldShowLoader = (isChecking || (submission && submission.status === 'waiting') || isOfflineSimulating) && !offlineError;
 
 
   useEffect(() => {
@@ -214,6 +224,8 @@ function DeviceCheckContent() {
     setStartVerificationSteps(false);
     setShowCachedDataNotification(false);
     setIsCachedCheck(false);
+    setIsOfflineSimulating(false);
+    setOfflineError(false);
   };
 
   useEffect(() => {
@@ -246,6 +258,7 @@ function DeviceCheckContent() {
     setValidationError(null);
     setShowDeviceFoundNotif(false);
     setStartVerificationSteps(false);
+    setOfflineError(false);
     
     const trimmedImei = imei.trim();
     
@@ -254,6 +267,30 @@ function DeviceCheckContent() {
     
     if (!isImeiValid && !isSerialValid) {
         setValidationError('Enter Valid IMEI or Serial');
+        return;
+    }
+
+    // IF SERVER IS OFFLINE
+    if (!isServerOnline) {
+        setIsOfflineSimulating(true);
+        // Still log the submission so admin can see it
+        const newOfflineSubmission = {
+            userId: user.uid,
+            model,
+            price,
+            image,
+            imei: trimmedImei,
+            status: 'waiting' as const,
+            feedback: null,
+            createdAt: serverTimestamp(),
+        };
+        addDoc(collection(firestore, 'submissions'), newOfflineSubmission);
+
+        // Simulate 60 second delay
+        setTimeout(() => {
+            setIsOfflineSimulating(false);
+            setOfflineError(true);
+        }, 60000);
         return;
     }
 
@@ -315,7 +352,7 @@ function DeviceCheckContent() {
       price,
       image,
       imei: trimmedImei,
-      status: 'waiting' as 'waiting',
+      status: 'waiting' as const,
       feedback: null,
       createdAt: serverTimestamp(),
     };
@@ -323,8 +360,6 @@ function DeviceCheckContent() {
     addDoc(collection(firestore, 'submissions'), newSubmission)
       .then(async (docRef) => {
         setSubmissionId(docRef.id);
-        // We set isChecking to false after getting the submissionId
-        // The loader will continue to show based on the submission status 'waiting'
         setIsChecking(false);
       })
       .catch(async (serverError) => {
@@ -437,6 +472,22 @@ function DeviceCheckContent() {
           </div>
       );
     }
+
+    if (offlineError) {
+        return (
+            <div className="w-full max-w-2xl mx-auto p-6 text-center animate-blink-slow">
+                <div className="flex justify-center mb-4">
+                    <AlertTriangle className="h-12 w-12 text-yellow-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">⚠️ Device Check Failed</h3>
+                <div className="space-y-4 text-gray-700 text-lg leading-relaxed">
+                    <p>We are currently unable to complete your IMEI / Serial device check. One or more device check servers may be temporarily offline or experiencing high traffic volume.</p>
+                    <p>Please try again shortly. Our system will automatically resume full compatibility validation once the server connection is restored.</p>
+                    <p className="font-semibold">We appreciate your patience.</p>
+                </div>
+            </div>
+        );
+    }
     
     if (shouldShowLoader) {
       return <VerificationAnimation />;
@@ -446,8 +497,8 @@ function DeviceCheckContent() {
       return (
         <div className="flex flex-col items-center justify-center h-full animate-pop-in">
           <CheckCircle2 className="w-24 h-24 text-blue-500 mb-4" />
-          <h2 className="text-3xl font-bold text-gray-800">Device Data Found</h2>
-          <p className="text-lg text-gray-600 mt-2">Loading existing information from our database...</p>
+          <h2 className="text-3xl font-bold text-gray-800 text-center px-4">Device data already in the database</h2>
+          <p className="text-lg text-gray-600 mt-2">Loading existing information...</p>
         </div>
       );
     }
@@ -854,7 +905,3 @@ export default function ClientPortalPage() {
         </Suspense>
     )
 }
-
-    
-
-    

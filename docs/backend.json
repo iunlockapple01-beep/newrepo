@@ -135,6 +135,10 @@
         "unlockedDevices": {
           "type": "number",
           "description": "Total number of unlocked devices"
+        },
+        "isServerOnline": {
+          "type": "boolean",
+          "description": "Toggle to control the device check server availability"
         }
       },
       "required": ["registeredUsers", "unlockedDevices"]
