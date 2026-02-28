@@ -229,6 +229,21 @@ function AdminDashboard() {
     });
   };
 
+  const handleToggleServer = async (checked: boolean) => {
+    setIsServerOnline(checked);
+    const metricsRef = doc(firestore, 'counters', 'metrics');
+    try {
+        await updateDoc(metricsRef, { isServerOnline: checked });
+    } catch (serverError) {
+        const permissionError = new FirestorePermissionError({
+            path: metricsRef.path,
+            operation: 'update',
+            requestResourceData: { isServerOnline: checked },
+        });
+        errorEmitter.emit('permission-error', permissionError);
+    }
+  };
+
   const handleUpdateMetrics = async () => {
     const metricsRef = doc(firestore, 'counters', 'metrics');
     const metricsData = {
@@ -333,7 +348,7 @@ function AdminDashboard() {
                                     <Switch 
                                         id="server-status" 
                                         checked={isServerOnline} 
-                                        onCheckedChange={setIsServerOnline}
+                                        onCheckedChange={handleToggleServer}
                                     />
                                 </div>
 
