@@ -826,8 +826,8 @@ function DeviceCheckContent() {
                                     </div>
                                 </div>
                                 <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                <span>0x72ae0d7f55c517F8B53D5a475Ef93fa1D386a182</span>
-                                    <CopyToClipboard text="0x72ae0d7f55c517F8B53D5a475Ef93fa1D386a182">
+                                <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                    <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
                                         <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
                                     </CopyToClipboard>
                                 </div>
@@ -843,8 +843,8 @@ function DeviceCheckContent() {
                                     </div>
                                 </div>
                                 <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                    <span>TSPbNogDBGPT5gN5g9jtYs9TaFMyi1cNx1</span>
-                                    <CopyToClipboard text="TSPbNogDBGPT5gN5g9jtYs9TaFMyi1cNx1">
+                                    <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
+                                    <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
                                         <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
                                     </CopyToClipboard>
                                 </div>
@@ -860,8 +860,8 @@ function DeviceCheckContent() {
                                     </div>
                                 </div>
                                 <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                    <span>bc1qmxa8clutf2cvdt87tktwuqkphdv8qmkmnd2x7t</span>
-                                    <CopyToClipboard text="bc1qmxa8clutf2cvdt87tktwuqkphdv8qmkmnd2x7t">
+                                    <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
+                                    <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
                                         <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
                                     </CopyToClipboard>
                                 </div>

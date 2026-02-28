@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
@@ -175,7 +174,7 @@ function MyAccountContent() {
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
                     {user && (
-                        <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">My Account</Link>
+                        <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
                     )}
                     {isAdmin && (
                       <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>
@@ -219,7 +218,7 @@ function MyAccountContent() {
                            )}
                            <div>
                              <p className="text-sm">USDT BEP20 Address:</p>
-                             <p className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all">0x72ae0d7f55c517F8B53D5a475Ef93fa1D386a182</p>
+                             <p className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all">0x04bF65223Aa01924691773101FF250E4Fc6903c3</p>
                            </div>
                         </div>
                     </div>
@@ -348,8 +347,8 @@ function MyAccountContent() {
                               </div>
                           </div>
                           <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                            <span>0x72ae0d7f55c517F8B53D5a475Ef93fa1D386a182</span>
-                              <CopyToClipboard text="0x72ae0d7f55c517F8B53D5a475Ef93fa1D386a182">
+                            <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                              <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
                                   <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
                               </CopyToClipboard>
                           </div>
@@ -365,8 +364,8 @@ function MyAccountContent() {
                               </div>
                           </div>
                           <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                              <span>TSPbNogDBGPT5gN5g9jtYs9TaFMyi1cNx1</span>
-                              <CopyToClipboard text="TSPbNogDBGPT5gN5g9jtYs9TaFMyi1cNx1">
+                              <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
+                              <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
                                   <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
                               </CopyToClipboard>
                           </div>
@@ -382,8 +381,8 @@ function MyAccountContent() {
                               </div>
                           </div>
                           <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                              <span>bc1qmxa8clutf2cvdt87tktwuqkphdv8qmkmnd2x7t</span>
-                              <CopyToClipboard text="bc1qmxa8clutf2cvdt87tktwuqkphdv8qmkmnd2x7t">
+                              <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
+                              <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
                                   <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
                               </CopyToClipboard>
                           </div>
