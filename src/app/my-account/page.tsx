@@ -139,6 +139,7 @@ function MyAccountContent() {
   const whatsappIcon = getImage('whatsapp-icon');
   const usdtTrc20Image = getImage('usdt-trc20-icon');
   const bitcoinImage = getImage('bitcoin-icon');
+  const usdcImage = getImage('usdc-icon');
   
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
@@ -396,37 +397,57 @@ function MyAccountContent() {
                                 </Button>
                             </div>
 
-                            {/* USDT TRC20 */}
-                            <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
-                                <div className="flex items-center gap-3">
-                                    {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
-                                    <div>
-                                        <p className="font-semibold text-sm">USDT (TRC20 Network)</p>
-                                        <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                            <div className="text-xs text-blue-600 font-medium mb-1 px-1">More payment options below:</div>
+                            <div className="max-h-[200px] overflow-y-auto space-y-3 p-2 border rounded-md bg-gray-50/50">
+                                {/* USDT TRC20 */}
+                                <div className="p-3 border rounded-lg bg-white space-y-2">
+                                    <div className="flex items-center gap-3">
+                                        {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
+                                        <div>
+                                            <p className="font-semibold text-sm">USDT (TRC20 Network)</p>
+                                            <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                                        </div>
+                                    </div>
+                                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                        <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
+                                        <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
+                                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                        </CopyToClipboard>
                                     </div>
                                 </div>
-                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                    <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
-                                    <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
-                                        <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                    </CopyToClipboard>
-                                </div>
-                            </div>
 
-                            {/* Bitcoin */}
-                            <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
-                                <div className="flex items-center gap-3">
-                                    {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}
-                                    <div>
-                                        <p className="font-semibold text-sm">Bitcoin</p>
-                                        <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                                {/* USDC ERC20 */}
+                                <div className="p-3 border rounded-lg bg-white space-y-2">
+                                    <div className="flex items-center gap-3">
+                                        {usdcImage && <Image src={usdcImage.imageUrl} alt="USDC ERC20" width={32} height={32} className="rounded-full" />}
+                                        <div>
+                                            <p className="font-semibold text-sm">USDC (ERC20 Network)</p>
+                                            <p className="text-xs text-gray-500">Reliable Ethereum chain transaction.</p>
+                                        </div>
+                                    </div>
+                                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                        <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                        <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                        </CopyToClipboard>
                                     </div>
                                 </div>
-                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                    <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
-                                    <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
-                                        <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                    </CopyToClipboard>
+
+                                {/* Bitcoin */}
+                                <div className="p-3 border rounded-lg bg-white space-y-2">
+                                    <div className="flex items-center gap-3">
+                                        {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}
+                                        <div>
+                                            <p className="font-semibold text-sm">Bitcoin</p>
+                                            <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                                        </div>
+                                    </div>
+                                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                        <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
+                                        <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
+                                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                        </CopyToClipboard>
+                                    </div>
                                 </div>
                             </div>
                         </div>

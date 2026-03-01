@@ -41,6 +41,12 @@
       "description": "Bitcoin cryptocurrency coin",
       "imageUrl": "https://i.postimg.cc/9fwWCj87/Screenshot-2025-12-10-at-18-25-51.png",
       "imageHint": "bitcoin logo"
+    },
+    {
+      "id": "usdc-icon",
+      "description": "USD Coin (USDC) cryptocurrency coin",
+      "imageUrl": "https://i.postimg.cc/0y48G2WY/download_(3).png",
+      "imageHint": "usdc coin"
     }
   ]
 }
