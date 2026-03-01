@@ -274,8 +274,10 @@ function DeviceCheckContent() {
 
     try {
       const submissionsRef = collection(firestore, 'submissions');
+      // Adding userId filter to query to satisfy security rules for non-admin users
       const q = query(
         submissionsRef,
+        where('userId', '==', user.uid),
         where('imei', '==', trimmedImei),
         where('status', 'in', ['eligible', 'find_my_off', 'not_supported', 'paid', 'feedback', 'device_found']),
         limit(1)
@@ -305,6 +307,7 @@ function DeviceCheckContent() {
       }
     } catch (e) {
         console.error("Error querying existing submissions: ", e);
+        // If it's a permission error, we still want to proceed with creation if it's new
     }
 
     if (!isServerOnline) {

@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, useCollection } from '@/firebase';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import { ArrowLeft, MessageSquare, Clock, Filter } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
+import { where } from 'firebase/firestore';
 
 interface SupportTicket {
   id: string;
@@ -31,14 +31,22 @@ export default function AdminTicketsPage() {
   const { data: user, loading: userLoading } = useUser();
   const router = useRouter();
 
-  const { data: tickets, loading: ticketsLoading } = useCollection<SupportTicket>('tickets');
+  const isAdmin = user?.email === ADMIN_EMAIL;
+
+  const ticketConstraints = useMemo(() => {
+    if (userLoading || !user) return [where('userId', '==', 'none')];
+    if (isAdmin) return [];
+    return [where('userId', '==', user.uid)];
+  }, [isAdmin, user, userLoading]);
+
+  const { data: tickets, loading: ticketsLoading } = useCollection<SupportTicket>('tickets', { constraints: ticketConstraints });
 
   useEffect(() => {
     if (userLoading) return;
-    if (!user || user.email !== ADMIN_EMAIL) {
+    if (!user || !isAdmin) {
       router.push('/');
     }
-  }, [user, userLoading, router]);
+  }, [user, userLoading, isAdmin, router]);
 
   const getStatusVariant = (status: string) => {
     switch (status) {
@@ -51,11 +59,15 @@ export default function AdminTicketsPage() {
     }
   };
 
-  if (userLoading || !user || user.email !== ADMIN_EMAIL) {
+  if (userLoading || !user || !isAdmin) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
-  const sortedTickets = tickets?.sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime());
+  const sortedTickets = tickets?.sort((a, b) => {
+    const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+    const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+    return timeB - timeA;
+  });
 
   return (
     <div className="bg-gray-50 min-h-screen pb-12">
@@ -121,7 +133,7 @@ export default function AdminTicketsPage() {
                 <TableBody>
                   {sortedTickets.map(ticket => (
                     <TableRow key={ticket.id} className={ticket.status === 'open' ? 'bg-blue-50/30' : ''}>
-                      <TableCell className="text-xs">{format(ticket.createdAt.toDate(), 'MMM dd, p')}</TableCell>
+                      <TableCell className="text-xs">{ticket.createdAt?.toDate ? format(ticket.createdAt.toDate(), 'MMM dd, p') : 'N/A'}</TableCell>
                       <TableCell className="font-mono text-xs uppercase">{ticket.id.slice(0, 8)}</TableCell>
                       <TableCell>
                         <div className="flex flex-col">

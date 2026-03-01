@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -6,12 +5,12 @@ import {
   useFirebase,
   useCollection,
 } from '@/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, where } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { LoginButton } from '@/components/login-button';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -28,15 +27,23 @@ interface UserProfile {
   balance?: number;
 }
 
+const ADMIN_EMAIL = 'iunlockapple01@gmail.com';
+
 function UserManagementDashboard() {
   const { data: user, loading: userLoading } = useUser();
   const { firestore } = useFirebase();
   const router = useRouter();
 
-  const { data: users, loading: usersLoading } = useCollection<UserProfile>('users');
-  const [balances, setBalances] = useState<{ [key: string]: number }>({});
+  const isAdmin = user?.email === ADMIN_EMAIL;
 
-  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
+  const userConstraints = useMemo(() => {
+    if (userLoading || !user) return [where('email', '==', 'none')];
+    if (isAdmin) return [];
+    return [where('email', '==', user.email)];
+  }, [isAdmin, user, userLoading]);
+
+  const { data: users, loading: usersLoading } = useCollection<UserProfile>('users', { constraints: userConstraints });
+  const [balances, setBalances] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
     if (userLoading) return;

@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -14,13 +13,14 @@ import {
   deleteDoc,
   serverTimestamp,
   setDoc,
+  where,
 } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { LoginButton } from '@/components/login-button';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -63,14 +63,31 @@ interface Counters {
     isServerOnline?: boolean;
 }
 
+const ADMIN_EMAIL = 'iunlockapple01@gmail.com';
+
 function AdminDashboard() {
   const { data: user, loading: userLoading } = useUser();
   const { firestore } = useFirebase();
   const router = useRouter();
 
+  const isAdmin = user?.email === ADMIN_EMAIL;
+
+  // Use memoized constraints to avoid permission errors before isAdmin is confirmed
+  const submissionConstraints = useMemo(() => {
+    if (userLoading || !user) return [where('userId', '==', 'none')];
+    if (isAdmin) return [];
+    return [where('userId', '==', user.uid)];
+  }, [isAdmin, user, userLoading]);
+
+  const orderConstraints = useMemo(() => {
+    if (userLoading || !user) return [where('userId', '==', 'none')];
+    if (isAdmin) return [];
+    return [where('userId', '==', user.uid)];
+  }, [isAdmin, user, userLoading]);
+
   const { data: submissions, loading: submissionsLoading } =
-    useCollection<Submission>('submissions');
-  const { data: orders, loading: ordersLoading } = useCollection<Order>('orders');
+    useCollection<Submission>('submissions', { constraints: submissionConstraints });
+  const { data: orders, loading: ordersLoading } = useCollection<Order>('orders', { constraints: orderConstraints });
   const { data: counters, loading: countersLoading } = useDoc<Counters>('counters', 'metrics');
 
 
@@ -79,8 +96,6 @@ function AdminDashboard() {
   const [registeredUsers, setRegisteredUsers] = useState<number>(0);
   const [unlockedDevices, setUnlockedDevices] = useState<number>(0);
   const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
-
-  const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   useEffect(() => {
     if (userLoading) {
