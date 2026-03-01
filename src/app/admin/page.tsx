@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -24,7 +25,7 @@ import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { LoginButton } from '@/components/login-button';
 import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -72,7 +73,6 @@ function AdminDashboard() {
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
-  // Use memoized constraints to avoid permission errors before isAdmin is confirmed
   const submissionConstraints = useMemo(() => {
     if (userLoading || !user) return [where('userId', '==', 'none')];
     if (isAdmin) return [];
@@ -90,7 +90,6 @@ function AdminDashboard() {
   const { data: orders, loading: ordersLoading } = useCollection<Order>('orders', { constraints: orderConstraints });
   const { data: counters, loading: countersLoading } = useDoc<Counters>('counters', 'metrics');
 
-
   const [feedbackValues, setFeedbackValues] = useState<{ [key: string]: string }>({});
   const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' }>({});
   const [registeredUsers, setRegisteredUsers] = useState<number>(0);
@@ -98,9 +97,7 @@ function AdminDashboard() {
   const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
 
   useEffect(() => {
-    if (userLoading) {
-      return;
-    }
+    if (userLoading) return;
     if (!user) {
       router.push('/login?redirect=/admin');
     } else if (!isAdmin) {
@@ -118,13 +115,8 @@ function AdminDashboard() {
 
   const sortedSubmissions = submissions?.sort((a, b) => {
     const isPriority = (status: Submission['status']) => status === 'waiting' || status === 'device_found';
-
-    if (isPriority(a.status) && !isPriority(b.status)) {
-      return -1;
-    }
-    if (!isPriority(a.status) && isPriority(b.status)) {
-      return 1;
-    }
+    if (isPriority(a.status) && !isPriority(b.status)) return -1;
+    if (!isPriority(a.status) && isPriority(b.status)) return 1;
     return 0;
   });
 
@@ -136,55 +128,38 @@ function AdminDashboard() {
     setFeedbackStatus(prev => ({ ...prev, [id]: value }));
   };
   
-  const handleDeviceFound = async (submissionId: string) => {
+  const handleDeviceFound = (submissionId: string) => {
     const submissionRef = doc(firestore, 'submissions', submissionId);
     const updatedData = {
       status: 'device_found' as const,
       updatedAt: serverTimestamp(),
     };
-    try {
-        await updateDoc(submissionRef, updatedData);
-        alert('Client has been notified that the device was found.');
-    } catch (serverError) {
+    updateDoc(submissionRef, updatedData)
+      .then(() => alert('Client notified.'))
+      .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
             path: submissionRef.path,
             operation: 'update',
             requestResourceData: updatedData,
         });
         errorEmitter.emit('permission-error', permissionError);
-        alert('Failed to update submission status.');
-    }
+    });
   };
 
-  const handleSendFeedback = async (submissionId: string) => {
+  const handleSendFeedback = (submissionId: string) => {
     const feedbackText = feedbackValues[submissionId] || '';
     const status = feedbackStatus[submissionId];
-    if (!status) {
-      return alert('Please select an outcome.');
-    }
-    
-    if (feedbackText.trim() === '' && status !== 'eligible' && status !== 'find_my_off') {
-        return alert('Please enter feedback for this outcome.');
-    }
+    if (!status) return alert('Select an outcome.');
+    if (feedbackText.trim() === '' && status !== 'eligible' && status !== 'find_my_off') return alert('Enter feedback.');
 
     const lines = feedbackText.split('\n').filter(l => l.trim() && !l.startsWith('TIMESTAMP:'));
-
-    if (status === 'eligible') {
-      lines.push('FIND_MY_ON_STATUS');
-    }
-
-    if (status === 'find_my_off') {
-        lines.push('FIND_MY_OFF_STATUS');
-    }
-    
+    if (status === 'eligible') lines.push('FIND_MY_ON_STATUS');
+    if (status === 'find_my_off') lines.push('FIND_MY_OFF_STATUS');
     if (status === 'eligible' || status === 'find_my_off') {
         const timestamp = format(new Date(), "PPpp"); 
         lines.push(`TIMESTAMP:${timestamp}`);
     }
-
-    if (status === 'feedback') {
-        lines.push('You Have Selected Wrong Device Model');
-    }
+    if (status === 'feedback') lines.push('You Have Selected Wrong Device Model');
 
     const submissionRef = doc(firestore, 'submissions', submissionId);
     const updatedData = {
@@ -192,43 +167,33 @@ function AdminDashboard() {
       status: status,
       updatedAt: serverTimestamp(),
     };
-    try {
-        await updateDoc(submissionRef, updatedData);
-        alert('Feedback sent to client successfully!');
-    } catch (serverError) {
+    updateDoc(submissionRef, updatedData)
+      .then(() => alert('Feedback sent!'))
+      .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
             path: submissionRef.path,
             operation: 'update',
             requestResourceData: updatedData,
         });
         errorEmitter.emit('permission-error', permissionError);
-        alert('Failed to send feedback.');
-    }
+    });
   };
 
-  const handleDelete = async (submissionId: string) => {
-    if (!submissionId) {
-      alert('Cannot delete: submission ID is missing.');
-      return;
-    }
-    if (window.confirm('Are you sure you want to delete this submission?')) {
+  const handleDelete = (submissionId: string) => {
+    if (!submissionId) return;
+    if (window.confirm('Are you sure?')) {
       const submissionRef = doc(firestore, 'submissions', submissionId);
-      try {
-        await deleteDoc(submissionRef);
-        alert('Submission deleted successfully.');
-      } catch (serverError) {
-        console.error('Failed to delete submission:', serverError);
+      deleteDoc(submissionRef).catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
           path: submissionRef.path,
           operation: 'delete',
         });
         errorEmitter.emit('permission-error', permissionError);
-        alert('Failed to delete submission. See console for details.');
-      }
+      });
     }
   };
 
-  const handleOrderStatusChange = async (orderId: string, status: Order['status']) => {
+  const handleOrderStatusChange = (orderId: string, status: Order['status']) => {
     const orderRef = doc(firestore, 'orders', orderId);
     const updatedData = { status, updatedAt: serverTimestamp() };
     updateDoc(orderRef, updatedData)
@@ -240,37 +205,31 @@ function AdminDashboard() {
             requestResourceData: updatedData,
         });
         errorEmitter.emit('permission-error', permissionError);
-        alert('Failed to update order status.');
     });
   };
 
-  const handleToggleServer = async (checked: boolean) => {
+  const handleToggleServer = (checked: boolean) => {
     setIsServerOnline(checked);
     const metricsRef = doc(firestore, 'counters', 'metrics');
-    try {
-        await updateDoc(metricsRef, { isServerOnline: checked });
-    } catch (serverError) {
+    updateDoc(metricsRef, { isServerOnline: checked }).catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
             path: metricsRef.path,
             operation: 'update',
             requestResourceData: { isServerOnline: checked },
         });
         errorEmitter.emit('permission-error', permissionError);
-    }
+    });
   };
 
-  const handleUpdateMetrics = async () => {
+  const handleUpdateMetrics = () => {
     const metricsRef = doc(firestore, 'counters', 'metrics');
     const metricsData = {
       registeredUsers: Number(registeredUsers),
       unlockedDevices: Number(unlockedDevices),
       isServerOnline: isServerOnline,
     };
-    
     setDoc(metricsRef, metricsData, { merge: true })
-      .then(() => {
-        alert('Site settings updated successfully!');
-      })
+      .then(() => alert('Site settings updated!'))
       .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
           path: metricsRef.path,
@@ -278,58 +237,35 @@ function AdminDashboard() {
           requestResourceData: metricsData,
         });
         errorEmitter.emit('permission-error', permissionError);
-        alert('Failed to update site metrics.');
       });
   };
 
-  if (userLoading || !user || !isAdmin) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  }
+  if (userLoading || !user || !isAdmin) return <div className="flex justify-center items-center h-screen">Loading...</div>;
 
   return (
     <div className="bg-gray-50 text-gray-800 min-h-screen">
        <nav className="glass-effect fixed w-full top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center gap-2">
-                <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
-              </Link>
-            </div>
+            <Link href="/" className="flex items-center gap-2"><Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} /></Link>
             <div className="hidden md:flex items-center gap-4">
               <Link href="/" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</Link>
               <Link href="/services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</Link>
-               {user && (
-                  <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>
-              )}
-              {isAdmin && (
-                <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>
-              )}
+              {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>}
+              {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
               <LoginButton />
             </div>
              <div className="md:hidden">
               <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Menu />
-                  </Button>
-                </SheetTrigger>
+                <SheetTrigger asChild><Button variant="ghost" size="icon"><Menu /></Button></SheetTrigger>
                 <SheetContent side="right">
-                  <SheetHeader>
-                    <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-                  </SheetHeader>
+                  <SheetHeader><SheetTitle className="sr-only">Mobile Menu</SheetTitle></SheetHeader>
                   <div className="flex flex-col gap-4 p-4">
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
-                    {user && (
-                        <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
-                    )}
-                    {isAdmin && (
-                      <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>
-                    )}
-                    <div className='pt-4'>
-                      <LoginButton />
-                    </div>
+                    {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
+                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
+                    <div className='pt-4'><LoginButton /></div>
                   </div>
                 </SheetContent>
               </Sheet>
@@ -342,11 +278,7 @@ function AdminDashboard() {
         <div>
             <div className="mb-12">
                 <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <span>Site Settings & Metrics</span>
-                        </CardTitle>
-                    </CardHeader>
+                    <CardHeader><CardTitle className="flex items-center gap-2"><span>Site Settings & Metrics</span></CardTitle></CardHeader>
                     <CardContent className="space-y-6">
                         {countersLoading ? <p>Loading settings...</p> : (
                             <>
@@ -355,184 +287,78 @@ function AdminDashboard() {
                                         <div className={`p-2 rounded-full ${isServerOnline ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
                                             {isServerOnline ? <Server size={20} /> : <ServerOff size={20} />}
                                         </div>
-                                        <div>
-                                            <Label htmlFor="server-status" className="text-base font-bold">Device Check Server</Label>
-                                            <p className="text-sm text-gray-500">Status: <span className={isServerOnline ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}>{isServerOnline ? 'ONLINE' : 'OFFLINE'}</span></p>
-                                        </div>
+                                        <div><Label htmlFor="server-status" className="text-base font-bold">Device Check Server</Label><p className="text-sm text-gray-500">Status: <span className={isServerOnline ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}>{isServerOnline ? 'ONLINE' : 'OFFLINE'}</span></p></div>
                                     </div>
-                                    <Switch 
-                                        id="server-status" 
-                                        checked={isServerOnline} 
-                                        onCheckedChange={handleToggleServer}
-                                    />
+                                    <Switch id="server-status" checked={isServerOnline} onCheckedChange={handleToggleServer} />
                                 </div>
-
                                 <div className='grid gap-4 sm:grid-cols-2'>
-                                    <div className='grid gap-2'>
-                                        <Label htmlFor="registeredUsers">Registered Users</Label>
-                                        <Input 
-                                            id="registeredUsers" 
-                                            type="number" 
-                                            value={registeredUsers} 
-                                            onChange={(e) => setRegisteredUsers(Number(e.target.value))} />
-                                    </div>
-                                    <div className='grid gap-2'>
-                                        <Label htmlFor="unlockedDevices">Unlocked Devices</Label>
-                                        <Input 
-                                            id="unlockedDevices" 
-                                            type="number" 
-                                            value={unlockedDevices} 
-                                            onChange={(e) => setUnlockedDevices(Number(e.target.value))} />
-                                    </div>
+                                    <div className='grid gap-2'><Label htmlFor="registeredUsers">Registered Users</Label><Input id="registeredUsers" type="number" value={registeredUsers} onChange={(e) => setRegisteredUsers(Number(e.target.value))} /></div>
+                                    <div className='grid gap-2'><Label htmlFor="unlockedDevices">Unlocked Devices</Label><Input id="unlockedDevices" type="number" value={unlockedDevices} onChange={(e) => setUnlockedDevices(Number(e.target.value))} /></div>
                                 </div>
-                            </>
-                        )}
+                            </>)}
                     </CardContent>
                     <CardFooter className="flex justify-between flex-wrap gap-2">
                         <Button onClick={handleUpdateMetrics} className="btn-primary text-white">Save All Settings</Button>
                         <div className="flex gap-2">
-                            <Link href="/admin/tickets">
-                                <Button variant="outline" className="border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100">
-                                    <MessageSquare className="mr-2 h-4 w-4" />
-                                    Support Tickets
-                                </Button>
-                            </Link>
-                            <Link href="/admin/users">
-                                <Button variant="outline">
-                                    <Users className="mr-2 h-4 w-4" />
-                                    Manage Users
-                                </Button>
-                            </Link>
-                             <Link href="/admin/banned">
-                                <Button variant="destructive">
-                                    <Ban className="mr-2 h-4 w-4" />
-                                    Banned Users
-                                </Button>
-                            </Link>
+                            <Link href="/admin/tickets"><Button variant="outline" className="border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100"><MessageSquare className="mr-2 h-4 w-4" />Tickets</Button></Link>
+                            <Link href="/admin/users"><Button variant="outline"><Users className="mr-2 h-4 w-4" />Users</Button></Link>
+                            <Link href="/admin/banned"><Button variant="destructive"><Ban className="mr-2 h-4 w-4" />Banned</Button></Link>
                         </div>
                     </CardFooter>
                 </Card>
             </div>
-
-            <h1 className="text-4xl font-bold text-center mb-10">IMEI/SERIAL Submissions</h1>
-            {submissionsLoading && <p>Loading submissions...</p>}
-            {!submissionsLoading && (!sortedSubmissions || sortedSubmissions.length === 0) && (
-                <p className='text-center text-gray-500'>No pending IMEI submissions found.</p>
-            )}
-            <div className="space-y-6">
-              {sortedSubmissions && sortedSubmissions.map(sub => (
-                <Card key={sub.id} className={`bg-white ${sub.status === 'waiting' || sub.status === 'device_found' ? 'border-2 border-primary' : ''}`}>
-                  <CardHeader>
-                    <CardTitle className='flex justify-between items-center'>
-                        <span>{sub.model}</span>
-                        <Badge variant={sub.status === 'waiting' ? 'default' : 'secondary'} className={sub.status === 'waiting' || sub.status === 'device_found' ? 'animate-pulse' : ''}>
-                          {sub.status.replace('_', ' ')}
-                        </Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-gray-600">User ID: {sub.userId}</p>
-                    <p className="text-sm text-gray-600">IMEI/Serial: <strong>{sub.imei}</strong></p>
-                    <p className="text-sm text-gray-600">Price: ${sub.price}</p>
-                    <div className="mt-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Enter Feedback (paste full details):
-                      </label>
-                      <Textarea
-                        value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:') && l !== 'You Have Selected Wrong Device Model').join('\n') || ''}
-                        onChange={(e) => handleFeedbackChange(sub.id, e.target.value)}
-                        className="font-mono"
-                      />
-                    </div>
-                  </CardContent>
-                  <CardFooter className='flex-col items-stretch gap-3'>
-                    {sub.status === 'waiting' && (
-                        <Button onClick={() => handleDeviceFound(sub.id)} className="w-full">Device Found</Button>
-                    )}
-                    <Select onValueChange={(value: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off') => handleStatusChange(sub.id, value)}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select Outcome..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="eligible">Eligible for Unlock</SelectItem>
-                            <SelectItem value="not_supported">Not Supported for Unlock</SelectItem>
-                            <SelectItem value="feedback">Choose correct device model and Check again</SelectItem>
-                            <SelectItem value="find_my_off">Find My: OFF</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <div className='flex justify-end gap-2'>
-                        <Button onClick={() => handleSendFeedback(sub.id)} className="btn-primary text-white">Send Feedback</Button>
-                        <Button onClick={() => handleDelete(sub.id)} variant="destructive">Delete</Button>
-                    </div>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+            <h1 className="text-4xl font-bold text-center mb-10">Submissions</h1>
+            {submissionsLoading ? <p>Loading submissions...</p> : sortedSubmissions?.length === 0 ? <p className='text-center text-gray-500'>None found.</p> : (
+              <div className="space-y-6">
+                {sortedSubmissions?.map(sub => (
+                  <Card key={sub.id} className={`bg-white ${sub.status === 'waiting' || sub.status === 'device_found' ? 'border-2 border-primary' : ''}`}>
+                    <CardHeader><CardTitle className='flex justify-between items-center'><span>{sub.model}</span><Badge variant={sub.status === 'waiting' ? 'default' : 'secondary'} className={sub.status === 'waiting' || sub.status === 'device_found' ? 'animate-pulse' : ''}>{sub.status.replace('_', ' ')}</Badge></CardTitle></CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-600">User ID: {sub.userId}</p>
+                      <p className="text-sm text-gray-600">IMEI/Serial: <strong>{sub.imei}</strong></p>
+                      <p className="text-sm text-gray-600">Price: ${sub.price}</p>
+                      <div className="mt-4"><label className="block text-sm font-medium text-gray-700 mb-1">Feedback:</label><Textarea value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:') && l !== 'You Have Selected Wrong Device Model').join('\n') || ''} onChange={(e) => handleFeedbackChange(sub.id, e.target.value)} className="font-mono" /></div>
+                    </CardContent>
+                    <CardFooter className='flex-col items-stretch gap-3'>
+                      {sub.status === 'waiting' && <Button onClick={() => handleDeviceFound(sub.id)} className="w-full">Device Found</Button>}
+                      <Select onValueChange={(value: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off') => handleStatusChange(sub.id, value)}>
+                          <SelectTrigger><SelectValue placeholder="Select Outcome..." /></SelectTrigger>
+                          <SelectContent>
+                              <SelectItem value="eligible">Eligible for Unlock</SelectItem>
+                              <SelectItem value="not_supported">Not Supported for Unlock</SelectItem>
+                              <SelectItem value="feedback">Wrong Model</SelectItem>
+                              <SelectItem value="find_my_off">Find My: OFF</SelectItem>
+                          </SelectContent>
+                      </Select>
+                      <div className='flex justify-end gap-2'><Button onClick={() => handleSendFeedback(sub.id)} className="btn-primary text-white">Send Feedback</Button><Button onClick={() => handleDelete(sub.id)} variant="destructive">Delete</Button></div>
+                    </CardFooter>
+                  </Card>))}
+              </div>)}
         </div>
-
         <div>
             <h1 className="text-4xl font-bold text-center mb-10">Client Orders</h1>
-            {ordersLoading && <p>Loading orders...</p>}
-            {!ordersLoading && (!orders || orders.length === 0) && (
-                <p className='text-center text-gray-500'>No orders found.</p>
-            )}
-             {orders && orders.length > 0 && (
+            {ordersLoading ? <p>Loading orders...</p> : orders?.length === 0 ? <p className='text-center text-gray-500'>No orders found.</p> : (
                 <Card>
                     <Table>
-                        <TableHeader>
-                        <TableRow>
-                            <TableHead>Order Date</TableHead>
-                            <TableHead>Order ID</TableHead>
-                            <TableHead>Model</TableHead>
-                            <TableHead>IMEI</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Actions</TableHead>
-                        </TableRow>
-                        </TableHeader>
+                        <TableHeader><TableRow><TableHead>Date</TableHead><TableHead>Order ID</TableHead><TableHead>Model</TableHead><TableHead>IMEI</TableHead><TableHead>Status</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
                         <TableBody>
-                        {orders.map(order => (
+                        {orders?.map(order => (
                             <TableRow key={order.id}>
                                 <TableCell>{order.createdAt.toDate().toLocaleDateString()}</TableCell>
                                 <TableCell className="font-mono text-xs">{order.orderId}</TableCell>
                                 <TableCell>{order.model}</TableCell>
                                 <TableCell className="font-mono text-xs">{order.imei}</TableCell>
-                                <TableCell>
-                                    <Badge variant={
-                                        order.status === 'approved' || order.status === 'unlocked' ? 'secondary' : 
-                                        order.status === 'declined' ? 'destructive' : 
-                                        order.status === 'processing' || order.status === 'ready_for_activation_bulk' || order.status === 'ready_for_activation' ? 'default' : 'default'
-                                    } className={order.status === 'confirming_payment' || order.status === 'processing' ? 'animate-pulse' : ''}>
-                                    {order.status.replace(/_/g, ' ')}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>
-                                     <Select value={order.status} onValueChange={(value: Order['status']) => handleOrderStatusChange(order.id, value)}>
-                                        <SelectTrigger className='h-8'>
-                                            <SelectValue placeholder="Update Status" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="confirming_payment">Confirming Payment</SelectItem>
-                                            <SelectItem value="processing">Processing</SelectItem>
-                                            <SelectItem value="approved">Approved</SelectItem>
-                                            <SelectItem value="declined">Declined</SelectItem>
-                                            <SelectItem value="unlocked">Unlocked</SelectItem>
-                                            <SelectItem value="ready_for_activation">Ready for activation</SelectItem>
-                                            <SelectItem value="ready_for_activation_bulk">Ready for activation (bulk)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                                <TableCell><Badge variant={order.status === 'approved' || order.status === 'unlocked' ? 'secondary' : order.status === 'declined' ? 'destructive' : 'default'} className={order.status === 'confirming_payment' || order.status === 'processing' ? 'animate-pulse' : ''}>{order.status.replace(/_/g, ' ')}</Badge></TableCell>
+                                <TableCell><Select value={order.status} onValueChange={(value: Order['status']) => handleOrderStatusChange(order.id, value)}><SelectTrigger className='h-8'><SelectValue placeholder="Update Status" /></SelectTrigger><SelectContent><SelectItem value="confirming_payment">Confirming Payment</SelectItem><SelectItem value="processing">Processing</SelectItem><SelectItem value="approved">Approved</SelectItem><SelectItem value="declined">Declined</SelectItem><SelectItem value="unlocked">Unlocked</SelectItem><SelectItem value="ready_for_activation">Ready for activation</SelectItem><SelectItem value="ready_for_activation_bulk">Ready for activation (bulk)</SelectItem></SelectContent></Select></TableCell>
+                            </TableRow>))}
                         </TableBody>
                     </Table>
-                </Card>
-             )}
+                </Card>)}
         </div>
       </main>
     </div>
   );
 }
-
 
 export default function AdminPage() {
     return <AdminDashboard />

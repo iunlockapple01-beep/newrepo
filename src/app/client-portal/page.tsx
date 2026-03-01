@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -17,7 +18,7 @@ import {
 import { LoginButton } from '@/components/login-button';
 import { PlaceHolderImages, getImage } from '@/lib/placeholder-images';
 import { useUser, useFirebase, useDoc } from '@/firebase';
-import { addDoc, collection, doc, serverTimestamp, runTransaction, query, where, getDocs, limit } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, query, where, getDocs, limit } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
@@ -93,7 +94,7 @@ function VerificationSteps({ steps }: { steps: string[] }) {
         if (revealedStep < steps.length) {
             const timer = setTimeout(() => {
                 setRevealedStep(prev => prev + 1);
-            }, 1500); // 1.5 second delay between steps
+            }, 1500);
             return () => clearTimeout(timer);
         }
     }, [revealedStep, steps.length]);
@@ -167,13 +168,11 @@ function DeviceCheckContent() {
   const [showCachedDataNotification, setShowCachedDataNotification] = useState(false);
   const [isCachedCheck, setIsCachedCheck] = useState(false);
   
-  // Offline simulation state
   const [isOfflineSimulating, setIsOfflineSimulating] = useState(false);
   const [offlineError, setOfflineError] = useState(false);
 
   const formDisabled = isChecking || !!submission || isOfflineSimulating;
   const shouldShowLoader = (isChecking || (submission && submission.status === 'waiting') || isOfflineSimulating) && !offlineError;
-
 
   useEffect(() => {
     if (submission?.status === 'device_found') {
@@ -189,7 +188,6 @@ function DeviceCheckContent() {
     }
   }, [submission?.status, submission?.id]);
 
-
   const feedbackData = useMemo(() => {
     if (!submission?.feedback) return { lines: [], timestamp: null };
     const lines = submission.feedback.filter(line => !line.startsWith('TIMESTAMP:'));
@@ -197,7 +195,6 @@ function DeviceCheckContent() {
     const timestamp = timestampLine ? timestampLine.replace('TIMESTAMP:', '') : null;
     return { lines, timestamp };
   }, [submission?.feedback]);
-
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -213,7 +210,6 @@ function DeviceCheckContent() {
         variant: "destructive",
       });
     }
-
     return () => clearInterval(timer);
   }, [isPaymentModalOpen, timeLeft, toast]);
   
@@ -234,7 +230,6 @@ function DeviceCheckContent() {
     handleClear();
   }, [model]);
 
-
   useEffect(() => {
     if (!userLoading && !user) {
       const redirectPath = `/client-portal?${searchParams.toString()}`;
@@ -245,10 +240,7 @@ function DeviceCheckContent() {
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   const handleSubmitImei = async () => {
-    if (!user) {
-      alert('Please log in to submit an IMEI.');
-      return;
-    }
+    if (!user) return;
     
     if (bannedUser) {
         setValidationError('Maximum Free Checks Reached\n\nYou have submitted multiple IMEI or serial number checks without placing an unlock order. Your free check limit has been reached.\n\nIf you would like to proceed with unlocking a device, please contact the Admin to have your account reset.');
@@ -261,7 +253,6 @@ function DeviceCheckContent() {
     setOfflineError(false);
     
     const trimmedImei = imei.trim();
-    
     const isImeiValid = /^\d{15}$/.test(trimmedImei);
     const isSerialValid = /^[a-zA-Z0-9]{10,13}$/.test(trimmedImei);
     
@@ -274,7 +265,6 @@ function DeviceCheckContent() {
 
     try {
       const submissionsRef = collection(firestore, 'submissions');
-      // Adding userId filter to query to satisfy security rules for non-admin users
       const q = query(
         submissionsRef,
         where('userId', '==', user.uid),
@@ -305,10 +295,7 @@ function DeviceCheckContent() {
              return;
         }
       }
-    } catch (e) {
-        console.error("Error querying existing submissions: ", e);
-        // If it's a permission error, we still want to proceed with creation if it's new
-    }
+    } catch (e) {}
 
     if (!isServerOnline) {
         setIsChecking(false);
@@ -323,7 +310,15 @@ function DeviceCheckContent() {
             feedback: null,
             createdAt: serverTimestamp(),
         };
-        addDoc(collection(firestore, 'submissions'), newOfflineSubmission);
+        addDoc(collection(firestore, 'submissions'), newOfflineSubmission)
+          .catch(async (serverError) => {
+            const permissionError = new FirestorePermissionError({
+              path: 'submissions',
+              operation: 'create',
+              requestResourceData: newOfflineSubmission,
+            });
+            errorEmitter.emit('permission-error', permissionError);
+          });
 
         setTimeout(() => {
             setIsOfflineSimulating(false);
@@ -336,14 +331,10 @@ function DeviceCheckContent() {
     try {
       fetch('/api/telegram', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message }),
       });
-    } catch (error) {
-      console.error("Failed to send Telegram notification:", error);
-    }
+    } catch (error) {}
 
     const newSubmission = {
       userId: user.uid,
@@ -357,20 +348,18 @@ function DeviceCheckContent() {
     };
     
     addDoc(collection(firestore, 'submissions'), newSubmission)
-      .then(async (docRef) => {
+      .then((docRef) => {
         setSubmissionId(docRef.id);
         setIsChecking(false);
       })
       .catch(async (serverError) => {
         setIsChecking(false);
         const permissionError = new FirestorePermissionError({
-          path: `submissions/unknown`,
+          path: 'submissions',
           operation: 'create',
           requestResourceData: newSubmission,
         });
         errorEmitter.emit('permission-error', permissionError);
-        console.error("Error creating submission: ", serverError);
-        alert('Failed to create submission.');
       });
   };
 
@@ -392,9 +381,9 @@ function DeviceCheckContent() {
     }, 2000);
   };
   
-  const handlePaid = async () => {
+  const handlePaid = () => {
     if (isSubmittingOrder) return;
-    if (!submissionId || !submission || !user) return alert('No submission selected.');
+    if (!submissionId || !submission || !user) return;
 
     setIsSubmittingOrder(true);
 
@@ -408,39 +397,36 @@ function DeviceCheckContent() {
     };
     const newOrderId = `#ORD-${generateRandomPart(5)}`;
 
-    try {
-      const newOrderData = {
-        orderId: newOrderId,
-        userId: user.uid,
-        submissionId: submissionId,
-        imei: submission.imei,
-        model: submission.model,
-        price: submission.price,
-        status: 'confirming_payment' as const,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      };
+    const newOrderData = {
+      orderId: newOrderId,
+      userId: user.uid,
+      submissionId: submissionId,
+      imei: submission.imei,
+      model: submission.model,
+      price: submission.price,
+      status: 'confirming_payment' as const,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
 
-      const ordersCollectionRef = collection(firestore, 'orders');
-      await addDoc(ordersCollectionRef, newOrderData);
-
-      setPaymentModalOpen(false);
-      alert(`Payment submitted for confirmation. Your Order ID is: ${newOrderId}. You will be redirected to your account page.`);
-      if (typeof window !== 'undefined') {
-        window.location.assign('/my-account');
-      }
-
-    } catch (e: any) {
-      console.error("Order creation failed: ", e);
-      const permissionError = new FirestorePermissionError({
-        path: 'orders',
-        operation: 'create',
-        requestResourceData: { orderId: newOrderId, note: 'Failed to create order' },
+    const ordersCollectionRef = collection(firestore, 'orders');
+    addDoc(ordersCollectionRef, newOrderData)
+      .then(() => {
+        setPaymentModalOpen(false);
+        alert(`Payment submitted for confirmation. Your Order ID is: ${newOrderId}. You will be redirected to your account page.`);
+        if (typeof window !== 'undefined') {
+          window.location.assign('/my-account');
+        }
+      })
+      .catch(async (serverError) => {
+        setIsSubmittingOrder(false);
+        const permissionError = new FirestorePermissionError({
+          path: 'orders',
+          operation: 'create',
+          requestResourceData: newOrderData,
+        });
+        errorEmitter.emit('permission-error', permissionError);
       });
-      errorEmitter.emit('permission-error', permissionError);
-      alert('Failed to create order. Please try again.');
-      setIsSubmittingOrder(false);
-    }
   };
 
   const formatTime = (seconds: number) => {
@@ -449,8 +435,6 @@ function DeviceCheckContent() {
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  const telegramIcon = getImage('telegram-icon');
-  const whatsappIcon = getImage('whatsapp-icon');
   const usdtImage = getImage('usdt-icon');
   const usdtTrc20Image = getImage('usdt-trc20-icon');
   const bitcoinImage = getImage('bitcoin-icon');
@@ -461,11 +445,7 @@ function DeviceCheckContent() {
   const amountToPay = Math.max(0, price - currentBalance);
 
   if (userLoading || !user || profileLoading || bannedUserLoading) {
-    return (
-        <div className="flex justify-center items-center h-screen">
-            <div>Loading...</div>
-        </div>
-    );
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
   
   const renderContent = () => {
@@ -495,9 +475,7 @@ function DeviceCheckContent() {
         );
     }
     
-    if (shouldShowLoader) {
-      return <VerificationAnimation />;
-    }
+    if (shouldShowLoader) return <VerificationAnimation />;
 
     if (showCachedDataNotification) {
       return (
@@ -538,9 +516,7 @@ function DeviceCheckContent() {
                 </div>
             );
         }
-        if (startVerificationSteps) {
-          return <VerificationSteps steps={verificationStepsList} />;
-        }
+        if (startVerificationSteps) return <VerificationSteps steps={verificationStepsList} />;
     }
 
     if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off'].includes(submission.status)) {
@@ -599,9 +575,7 @@ function DeviceCheckContent() {
                {submission.status === 'find_my_off' && (
                  <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">
                     Find My is OFF. If you need help restoring your device, please contact the {' '}
-                    <a href="https://t.me/Chris_Morgan057" target="_blank" rel="noopener noreferrer" className="underline font-bold">
-                        technician
-                    </a>.
+                    <a href="https://t.me/Chris_Morgan057" target="_blank" rel="noopener noreferrer" className="underline font-bold">technician</a>.
                  </p>
                )}
                {submission.status === 'feedback' && (
@@ -610,7 +584,6 @@ function DeviceCheckContent() {
             </div>
         );
     }
-    
     return null;
   }
 
@@ -627,37 +600,21 @@ function DeviceCheckContent() {
                 <div className="hidden md:flex items-center gap-4">
                     <Link href="/" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</Link>
-                    {user && (
-                        <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>
-                    )}
-                    {isAdmin && (
-                        <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>
-                    )}
+                    {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>}
+                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>}
                     <LoginButton />
                 </div>
                 <div className="md:hidden">
                   <Sheet>
-                    <SheetTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <Menu />
-                      </Button>
-                    </SheetTrigger>
+                    <SheetTrigger asChild><Button variant="ghost" size="icon"><Menu /></Button></SheetTrigger>
                     <SheetContent side="right">
-                      <SheetHeader>
-                        <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-                      </SheetHeader>
+                      <SheetHeader><SheetTitle className="sr-only">Mobile Menu</SheetTitle></SheetHeader>
                       <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
-                        {user && (
-                            <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
-                        )}
-                        {isAdmin && (
-                            <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>
-                        )}
-                        <div className="pt-4">
-                          <LoginButton />
-                        </div>
+                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
+                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>}
+                        <div className="pt-4"><LoginButton /></div>
                       </div>
                     </SheetContent>
                   </Sheet>
@@ -695,9 +652,7 @@ function DeviceCheckContent() {
           </div>
         </div>
 
-        <div className={cn("mt-5 rounded-lg border border-gray-200", 
-            shouldShowLoader ? "bg-white overflow-hidden" : "p-4 bg-gray-50 min-h-[120px] flex items-center justify-center flex-col text-center"
-        )}>
+        <div className={cn("mt-5 rounded-lg border border-gray-200", shouldShowLoader ? "bg-white overflow-hidden" : "p-4 bg-gray-50 min-h-[120px] flex items-center justify-center flex-col text-center")}>
           {renderContent()}
         </div>
       </main>
@@ -706,9 +661,7 @@ function DeviceCheckContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                    <div className="mb-4 flex items-center gap-2">
-                      <Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} />
-                    </div>
+                    <div className="mb-4 flex items-center gap-2"><Image src="https://i.postimg.cc/9MCd4HJx/icloud-unlocks-logo.png" alt="iCloud Unlocks Logo" width={90} height={24} /></div>
                     <p className="text-gray-400">Professional Apple device unlocking service</p>
                 </div>
                 <div>
@@ -726,36 +679,8 @@ function DeviceCheckContent() {
                 <div>
                     <h4 className="font-semibold mb-4">Contact Us</h4>
                     <ul className="space-y-2 text-gray-400">
-                        <li className='block'>
-                            <a href="https://t.me/iUnlock_Apple1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
-                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
-                                Telegram Channel
-                            </a>
-                        </li>
-                        <li className='block'>
-                            <a href="https://t.me/iCloudUnlocks_2023" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
-                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
-                                Support 1
-                            </a>
-                        </li>
-                        <li className='block'>
-                            <a href="https://t.me/iUnlock_Apple" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
-                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
-                                Support 2
-                            </a>
-                        </li>
-                        <li className='block'>
-                            <a href="https://t.me/Chris_Morgan057" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
-                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
-                                Technician
-                            </a>
-                        </li>
-                        <li className='block'>
-                           <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
-                                {whatsappIcon && <Image src={whatsappIcon.imageUrl} alt="WhatsApp" width={18} height={18} className="mr-2" />}
-                                WhatsApp
-                            </a>
-                        </li>
+                        <li><a href="https://t.me/iUnlock_Apple1" target="_blank" className="hover:text-white inline-flex items-center">{telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}Telegram Channel</a></li>
+                        <li><a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" className="hover:text-white inline-flex items-center">{whatsappIcon && <Image src={whatsappIcon.imageUrl} alt="WhatsApp" width={18} height={18} className="mr-2" />}WhatsApp</a></li>
                     </ul>
                 </div>
                  <div>
@@ -770,14 +695,7 @@ function DeviceCheckContent() {
                 </div>
             </div>
             <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                 <p>
-                    <Link href="/terms">Terms & Conditions</Link> |
-                    <Link href="/privacy">Privacy Policy</Link> |
-                    <a href="/reviews">Reviews</a> |
-                    <Link href="/contact">Contact Us</Link> |
-                    <Link href="/faq">FAQ</Link>
-                </p>
-                <p className="mt-4">&copy; 2023 iCloud Unlocks. All rights reserved.</p>
+                <p>&copy; 2023 iCloud Unlocks. All rights reserved.</p>
             </div>
         </div>
       </footer>
@@ -787,209 +705,58 @@ function DeviceCheckContent() {
             <DialogHeader className="p-4 pb-2">
                 <DialogTitle className='flex justify-between items-center text-base sm:text-lg'>
                     <span>Pay with Crypto</span>
-                    {timeLeft > 0 && (
-                        <span className="text-sm font-mono bg-blue-100 text-blue-800 rounded-md px-2 py-0.5">
-                            {formatTime(timeLeft)}
-                        </span>
-                    )}
+                    {timeLeft > 0 && <span className="text-sm font-mono bg-blue-100 text-blue-800 rounded-md px-2 py-0.5">{formatTime(timeLeft)}</span>}
                 </DialogTitle>
-                <DialogDescription className="text-sm">
-                   Pay unlock fees for this device. Send the exact crypto amount.
-                </DialogDescription>
-                 {submission && (
-                    <div className="text-xs bg-gray-100 p-2 rounded-md text-gray-600 mt-1">
-                        <p><strong>Model:</strong> {submission.model} | <strong>IMEI/Serial:</strong> {submission.imei}</p>
-                    </div>
-                )}
+                <DialogDescription className="text-sm">Pay unlock fees for this device. Send the exact crypto amount.</DialogDescription>
+                 {submission && <div className="text-xs bg-gray-100 p-2 rounded-md text-gray-600 mt-1"><p><strong>Model:</strong> {submission.model} | <strong>IMEI/Serial:</strong> {submission.imei}</p></div>}
             </DialogHeader>
              <ScrollArea className="flex-1 px-4">
                 <div className="space-y-4 animate-fade-in pt-2 pb-44">
-                    <Alert variant="default" className="bg-blue-50 border-blue-200 py-2">
-                      <AlertDescription className="text-xs">
-                        For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
-                      </AlertDescription>
-                    </Alert>
-                    
+                    <Alert variant="default" className="bg-blue-50 border-blue-200 py-2"><AlertDescription className="text-xs">For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.</AlertDescription></Alert>
                     <div className="space-y-2">
                         <div className="grid grid-cols-2 gap-4 text-center">
-                            <div>
-                                <p className="text-gray-500 text-xs uppercase tracking-wider">Service Cost</p>
-                                <p className="text-base font-semibold">${price.toFixed(2)}</p>
-                            </div>
-                            <div>
-                                <p className="text-gray-500 text-xs uppercase tracking-wider">Your Balance</p>
-                                <p className="text-base font-semibold text-green-600">-${currentBalance.toFixed(2)}</p>
-                            </div>
+                            <div><p className="text-gray-500 text-xs uppercase tracking-wider">Service Cost</p><p className="text-base font-semibold">${price.toFixed(2)}</p></div>
+                            <div><p className="text-gray-500 text-xs uppercase tracking-wider">Your Balance</p><p className="text-base font-semibold text-green-600">-${currentBalance.toFixed(2)}</p></div>
                         </div>
-                        <Separator className="my-1" />
-                        <div className="text-center">
-                            <p className="text-gray-500 text-xs uppercase tracking-wider">Amount to Pay</p>
-                            <p className="text-2xl font-bold">${amountToPay.toFixed(2)}</p>
-                        </div>
+                        <Separator className="my-1" /><div className="text-center"><p className="text-gray-500 text-xs uppercase tracking-wider">Amount to Pay</p><p className="text-2xl font-bold">${amountToPay.toFixed(2)}</p></div>
                     </div>
-
                     {amountToPay > 0 && (
                         <>
-                            {/* USDT BEP20 */}
                             <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
-                                <div className="flex items-center gap-3">
-                                    {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT BEP20" width={32} height={32} className="rounded-full" data-ai-hint="usdt logo" />}
-                                    <div>
-                                        <p className="font-semibold text-sm">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p>
-                                        <p className="text-xs text-gray-500 leading-tight">Use Binance Smart Chain for low fees.</p>
-                                    </div>
-                                </div>
-                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
-                                    <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
-                                        <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                    </CopyToClipboard>
-                                </div>
+                                <div className="flex items-center gap-3">{usdtImage && <Image src={usdtImage.imageUrl} alt="USDT" width={32} height={32} className="rounded-full" />}<div><p className="font-semibold text-sm">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p><p className="text-xs text-gray-500 leading-tight">Use Binance Smart Chain for low fees.</p></div></div>
+                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between"><span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span><CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3"><Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/></CopyToClipboard></div>
                             </div>
-
-                            {!showOtherPayments ? (
-                                <Button 
-                                    variant="outline" 
-                                    className="w-full text-xs h-8 text-gray-500 flex items-center justify-center gap-2" 
-                                    onClick={() => setShowOtherPayments(true)}
-                                >
-                                    <span>Show Other Payment Methods</span>
-                                    <ChevronDown size={14} />
-                                </Button>
-                            ) : (
+                            {!showOtherPayments ? (<Button variant="outline" className="w-full text-xs h-8 text-gray-500 flex items-center justify-center gap-2" onClick={() => setShowOtherPayments(true)}><span>Show Other Payment Methods</span><ChevronDown size={14} /></Button>) : (
                                 <div className="space-y-4 animate-fade-in pb-2">
-                                    <div className="flex items-center justify-between px-1">
-                                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Alternative Methods</p>
-                                        <Button variant="ghost" className="h-6 px-2 text-xs" onClick={() => setShowOtherPayments(false)}>
-                                            <ChevronUp size={12} className="mr-1" /> Hide
-                                        </Button>
-                                    </div>
-                                    
-                                    <div className="text-xs text-blue-600 font-medium mb-1 px-1 flex items-center justify-between">
-                                        <span>More payment options below:</span>
-                                        <span className="animate-bounce">↓</span>
-                                    </div>
+                                    <div className="flex items-center justify-between px-1"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Alternative Methods</p><Button variant="ghost" className="h-6 px-2 text-xs" onClick={() => setShowOtherPayments(false)}><ChevronUp size={12} className="mr-1" /> Hide</Button></div>
+                                    <div className="text-xs text-blue-600 font-medium mb-1 px-1 flex items-center justify-between"><span>More payment options below:</span><span className="animate-bounce">↓</span></div>
                                     <div className="max-h-[320px] overflow-y-auto space-y-3 p-2 pb-24 border rounded-md bg-gray-50/50 relative">
-                                        {/* USDT TRC20 */}
-                                        <div className="p-3 border rounded-lg bg-white space-y-2">
-                                            <div className="flex items-center gap-3">
-                                                {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
-                                                <div>
-                                                    <p className="font-semibold text-sm">USDT (TRC20 Network)</p>
-                                                    <p className="text-xs text-gray-500">Contact admin before sending.</p>
-                                                </div>
-                                            </div>
-                                            <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                                <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
-                                                <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
-                                                    <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                                </CopyToClipboard>
-                                            </div>
-                                        </div>
-
-                                        {/* USDC ERC20 */}
-                                        <div className="p-3 border rounded-lg bg-white space-y-2">
-                                            <div className="flex items-center gap-3">
-                                                {usdcImage && <Image src={usdcImage.imageUrl} alt="USDC ERC20" width={32} height={32} className="rounded-full" />}
-                                                <div>
-                                                    <p className="font-semibold text-sm">USDC (ERC20 Network)</p>
-                                                    <p className="text-xs text-gray-500">Fast & Secure Ethereum network.</p>
-                                                </div>
-                                            </div>
-                                            <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                                <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
-                                                <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
-                                                    <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                                </CopyToClipboard>
-                                            </div>
-                                        </div>
-
-                                        {/* Ethereum ERC20 */}
-                                        <div className="p-3 border rounded-lg bg-white space-y-2">
-                                            <div className="flex items-center gap-3">
-                                                {ethImage && <Image src={ethImage.imageUrl} alt="Ethereum ERC20" width={32} height={32} className="rounded-full" />}
-                                                <div>
-                                                    <p className="font-semibold text-sm">Ethereum (ERC20 Network)</p>
-                                                    <p className="text-xs text-gray-500">Official Ethereum mainnet.</p>
-                                                </div>
-                                            </div>
-                                            <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                                <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
-                                                <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
-                                                    <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                                </CopyToClipboard>
-                                            </div>
-                                        </div>
-
-                                        {/* Bitcoin */}
-                                        <div className="p-3 border rounded-lg bg-white space-y-2">
-                                            <div className="flex items-center gap-3">
-                                                {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}
-                                                <div>
-                                                    <p className="font-semibold text-sm">Bitcoin</p>
-                                                    <p className="text-xs text-gray-500">Contact admin before sending.</p>
-                                                </div>
-                                            </div>
-                                            <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                                <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
-                                                <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
-                                                    <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                                </CopyToClipboard>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="h-20" aria-hidden="true" /> {/* Bottom spacer for better mobile scrolling */}
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="text-xs text-center text-gray-500 bg-yellow-100 text-yellow-800 p-2 rounded-md">
-                                Payments made within the timer will be automatically applied.
-                            </div>
-                        </>
-                    )}
-                     {amountToPay <= 0 && (
-                        <div className="text-center p-3 bg-green-100 text-green-800 rounded-lg">
-                            <p className="font-semibold text-sm">Your balance covers the full amount!</p>
-                            <p className="text-xs">Click "Confirm" to use your balance for this unlock.</p>
-                        </div>
-                    )}
+                                        <div className="p-3 border rounded-lg bg-white space-y-2"><div className="flex items-center gap-3">{usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}<div><p className="font-semibold text-sm">USDT (TRC20 Network)</p><p className="text-xs text-gray-500">Contact admin before sending.</p></div></div><div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between"><span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span><CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw"><Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/></CopyToClipboard></div></div>
+                                        <div className="p-3 border rounded-lg bg-white space-y-2"><div className="flex items-center gap-3">{usdcImage && <Image src={usdcImage.imageUrl} alt="USDC ERC20" width={32} height={32} className="rounded-full" />}<div><p className="font-semibold text-sm">USDC (ERC20 Network)</p><p className="text-xs text-gray-500">Fast & Secure Ethereum network.</p></div></div><div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between"><span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span><CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3"><Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/></CopyToClipboard></div></div>
+                                        <div className="p-3 border rounded-lg bg-white space-y-2"><div className="flex items-center gap-3">{ethImage && <Image src={ethImage.imageUrl} alt="Ethereum" width={32} height={32} className="rounded-full" />}<div><p className="font-semibold text-sm">Ethereum (ERC20 Network)</p><p className="text-xs text-gray-500">Official Ethereum mainnet.</p></div></div><div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between"><span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span><CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3"><Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/></CopyToClipboard></div></div>
+                                        <div className="p-3 border rounded-lg bg-white space-y-2"><div className="flex items-center gap-3">{bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}<div><p className="font-semibold text-sm">Bitcoin</p><p className="text-xs text-gray-500">Contact admin before sending.</p></div></div><div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between"><span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span><CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h"><Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/></CopyToClipboard></div></div>
+                                        <div className="h-20" aria-hidden="true" /></div></div>)}
+                            <div className="text-xs text-center text-gray-500 bg-yellow-100 text-yellow-800 p-2 rounded-md">Payments made within the timer will be automatically applied.</div>
+                        </>)}
+                     {amountToPay <= 0 && <div className="text-center p-3 bg-green-100 text-green-800 rounded-lg"><p className="font-semibold text-sm">Your balance covers the full amount!</p><p className="text-xs">Click "Confirm" to use your balance for this unlock.</p></div>}
                 </div>
             </ScrollArea>
             <DialogFooter className="p-4 pt-2 border-t mt-auto">
                 <div className="flex flex-row justify-end gap-3 w-full">
                     <Button variant="outline" className="flex-1 h-10 text-sm" onClick={() => setPaymentModalOpen(false)}>Cancel</Button>
                     <Button onClick={handlePaid} className="btn-primary text-white flex-1 h-10 text-sm" disabled={isSubmittingOrder}>
-                        {isSubmittingOrder ? (
-                            <>
-                                <Loader className="mr-2 h-4 w-4 animate-spin" />
-                                Processing...
-                            </>
-                        ) : (
-                            amountToPay > 0 ? 'I Paid' : 'Confirm'
-                        )}
+                        {isSubmittingOrder ? <><Loader className="mr-2 h-4 w-4 animate-spin" />Processing...</> : (amountToPay > 0 ? 'I Paid' : 'Confirm')}
                     </Button>
                 </div>
             </DialogFooter>
         </DialogContent>
       </Dialog>
       
-      {isLoading && (
-        <div className="fixed inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center z-50">
-           <div className="spinner w-16 h-16 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-           <p className="font-semibold text-gray-600">{loadingMessage}</p>
-        </div>
-      )}
-
+      {isLoading && <div className="fixed inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center z-50"><div className="spinner w-16 h-16 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-4"></div><p className="font-semibold text-gray-600">{loadingMessage}</p></div>}
     </div>
   );
 }
 
-
 export default function ClientPortalPage() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <DeviceCheckContent />
-        </Suspense>
-    )
+    return (<Suspense fallback={<div>Loading...</div>}><DeviceCheckContent /></Suspense>)
 }
