@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import Link from 'next/link';
@@ -10,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { LoginButton } from '@/components/login-button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Clock } from 'lucide-react';
+import { Menu, Clock, ChevronRight } from 'lucide-react';
 
 const paymentMethods = [
     { name: 'USDT', imageUrl: 'https://i.postimg.cc/ZRTpmnTk/download_(4).png' },
@@ -225,9 +223,19 @@ export default function ServicesPage() {
                             <tbody>
                             {iphoneModels.map(device => (
                                 <tr key={device.name} className="border-b">
-                                <td>{device.name}</td>
-                                <td>${device.price}</td>
-                                <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock</Button></td>
+                                <td className="p-2">{device.name}</td>
+                                <td className="p-2">${device.price}</td>
+                                <td className="p-2">
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline" 
+                                    className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-semibold" 
+                                    onClick={() => handleUnlockClick(device)}
+                                  >
+                                    Unlock
+                                    <ChevronRight className="ml-1 h-4 w-4" />
+                                  </Button>
+                                </td>
                                 </tr>
                             ))}
                             </tbody>
@@ -249,9 +257,19 @@ export default function ServicesPage() {
                             <tbody>
                             {macbookModels.map(device => (
                                 <tr key={device.name} className="border-b">
-                                <td>{device.name}</td>
-                                <td>${device.price}</td>
-                                <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock</Button></td>
+                                <td className="p-2">{device.name}</td>
+                                <td className="p-2">${device.price}</td>
+                                <td className="p-2">
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline" 
+                                    className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-semibold" 
+                                    onClick={() => handleUnlockClick(device)}
+                                  >
+                                    Unlock
+                                    <ChevronRight className="ml-1 h-4 w-4" />
+                                  </Button>
+                                </td>
                                 </tr>
                             ))}
                             </tbody>
@@ -273,9 +291,19 @@ export default function ServicesPage() {
                             <tbody>
                             {watchModels.map(device => (
                                 <tr key={device.name} className="border-b">
-                                <td>{device.name}</td>
-                                <td>${device.price}</td>
-                                <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock</Button></td>
+                                <td className="p-2">{device.name}</td>
+                                <td className="p-2">${device.price}</td>
+                                <td className="p-2">
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline" 
+                                    className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-semibold" 
+                                    onClick={() => handleUnlockClick(device)}
+                                  >
+                                    Unlock
+                                    <ChevronRight className="ml-1 h-4 w-4" />
+                                  </Button>
+                                </td>
                                 </tr>
                             ))}
                             </tbody>
@@ -297,9 +325,19 @@ export default function ServicesPage() {
                             <tbody>
                             {ipadModels.map(device => (
                                 <tr key={device.name} className="border-b">
-                                <td>{device.name}</td>
-                                <td>${device.price}</td>
-                                <td><Button size="sm" className="btn-primary text-white" onClick={() => handleUnlockClick(device)}>Unlock</Button></td>
+                                <td className="p-2">{device.name}</td>
+                                <td className="p-2">${device.price}</td>
+                                <td className="p-2">
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline" 
+                                    className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-semibold" 
+                                    onClick={() => handleUnlockClick(device)}
+                                  >
+                                    Unlock
+                                    <ChevronRight className="ml-1 h-4 w-4" />
+                                  </Button>
+                                </td>
                                 </tr>
                             ))}
                             </tbody>

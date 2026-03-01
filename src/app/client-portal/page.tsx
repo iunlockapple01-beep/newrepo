@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -22,7 +21,7 @@ import { addDoc, collection, serverTimestamp, query, where, getDocs, limit } fro
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu, Loader, CheckCircle2, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Copy, Menu, Loader, CheckCircle2, AlertTriangle, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -170,6 +169,9 @@ function DeviceCheckContent() {
   
   const [isOfflineSimulating, setIsOfflineSimulating] = useState(false);
   const [offlineError, setOfflineError] = useState(false);
+
+  const telegramIcon = getImage('telegram-icon');
+  const whatsappIcon = getImage('whatsapp-icon');
 
   const formDisabled = isChecking || !!submission || isOfflineSimulating;
   const shouldShowLoader = (isChecking || (submission && submission.status === 'waiting') || isOfflineSimulating) && !offlineError;
@@ -440,8 +442,6 @@ function DeviceCheckContent() {
   const bitcoinImage = getImage('bitcoin-icon');
   const usdcImage = getImage('usdc-icon');
   const ethImage = getImage('eth-icon');
-  const telegramIcon = getImage('telegram-icon');
-  const whatsappIcon = getImage('whatsapp-icon');
   
   const currentBalance = userProfile?.balance || 0;
   const amountToPay = Math.max(0, price - currentBalance);
@@ -568,7 +568,14 @@ function DeviceCheckContent() {
               {submission.status === 'eligible' && (
                 <div className="mt-4 text-right flex items-center justify-end gap-4 animate-fade-in">
                   <p className="bg-green-100 text-green-800 font-semibold p-2 px-3 rounded-lg">✅ This device is eligible for iCloud Unlock</p>
-                  <Button onClick={openPaymentModal} className="btn-primary text-white">Proceed with Unlock</Button>
+                  <Button 
+                    onClick={openPaymentModal} 
+                    variant="outline" 
+                    className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-semibold"
+                  >
+                    Proceed with Unlock
+                    <ChevronRight className="ml-1 h-4 w-4" />
+                  </Button>
                 </div>
               )}
                {submission.status === 'not_supported' && (
@@ -614,8 +621,8 @@ function DeviceCheckContent() {
                       <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
-                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
-                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>}
+                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
+                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>}
                         <div className="pt-4"><LoginButton /></div>
                       </div>
                     </SheetContent>
