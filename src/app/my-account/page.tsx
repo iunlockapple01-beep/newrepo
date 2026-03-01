@@ -22,7 +22,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu, RefreshCw, AlertCircle, Loader, ChevronDown, ChevronUp, MessageSquare, Ticket } from 'lucide-react';
+import { Copy, Menu, RefreshCw, AlertCircle, Loader, ChevronDown, ChevronUp, MessageSquare, Ticket, ChevronRight } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -387,7 +387,10 @@ function MyAccountContent() {
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-3xl font-bold">My Support Tickets</h2>
                 <Link href="/my-account/tickets/new">
-                    <Button variant="outline" size="sm">New Ticket</Button>
+                    <Button variant="outline" size="sm" className="bg-white border-blue-200 text-blue-600 hover:bg-blue-50">
+                        <Ticket className="mr-2 h-4 w-4" />
+                        New Ticket
+                    </Button>
                 </Link>
             </div>
             {ticketsLoading ? (
@@ -402,7 +405,7 @@ function MyAccountContent() {
                                 <TableHead>Category</TableHead>
                                 <TableHead>Subject</TableHead>
                                 <TableHead>Status</TableHead>
-                                <TableHead>Action</TableHead>
+                                <TableHead className="text-right">Action</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -417,9 +420,12 @@ function MyAccountContent() {
                                             {ticket.status.replace('_', ' ')}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className="text-right">
                                         <Link href={`/my-account/tickets/${ticket.id}`}>
-                                            <Button size="sm" variant="ghost">View Details</Button>
+                                            <Button size="sm" variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-semibold">
+                                                View Details
+                                                <ChevronRight className="ml-1 h-4 w-4" />
+                                            </Button>
                                         </Link>
                                     </TableCell>
                                 </TableRow>
