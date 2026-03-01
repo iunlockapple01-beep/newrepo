@@ -157,6 +157,7 @@ function DeviceCheckContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('Processing payment...');
   const [isChecking, setIsChecking] = useState(false);
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(20 * 60);
   
@@ -230,8 +231,6 @@ function DeviceCheckContent() {
   };
 
   useEffect(() => {
-    // When the model from URL changes, we should clear everything
-    // to avoid showing a submission for a different device.
     handleClear();
   }, [model]);
 
@@ -273,7 +272,6 @@ function DeviceCheckContent() {
 
     setIsChecking(true);
 
-    // 1. Check for existing submission FIRST (This works regardless of server status)
     try {
       const submissionsRef = collection(firestore, 'submissions');
       const q = query(
@@ -289,7 +287,6 @@ function DeviceCheckContent() {
         const existingData = existingDoc.data() as Submission;
 
         if (existingData.model === model) {
-            // Cached data flow - used even if server is offline
             setIsCachedCheck(true);
             setTimeout(() => {
                 setIsChecking(false);
@@ -297,8 +294,8 @@ function DeviceCheckContent() {
                 setTimeout(() => {
                     setShowCachedDataNotification(false);
                     setSubmissionId(existingDoc.id);
-                }, 3000); // show notification for 3 seconds
-            }, 4000); // show checking animation for 4 seconds
+                }, 3000); 
+            }, 4000); 
             return;
         } else {
              setIsChecking(false);
@@ -310,11 +307,9 @@ function DeviceCheckContent() {
         console.error("Error querying existing submissions: ", e);
     }
 
-    // 2. IF NO CACHED DATA FOUND, check server status for new submission
     if (!isServerOnline) {
         setIsChecking(false);
         setIsOfflineSimulating(true);
-        // Still log the submission so admin can see it
         const newOfflineSubmission = {
             userId: user.uid,
             model,
@@ -327,7 +322,6 @@ function DeviceCheckContent() {
         };
         addDoc(collection(firestore, 'submissions'), newOfflineSubmission);
 
-        // Simulate 10 second delay
         setTimeout(() => {
             setIsOfflineSimulating(false);
             setOfflineError(true);
@@ -335,7 +329,6 @@ function DeviceCheckContent() {
         return;
     }
     
-    // 3. PROCEED WITH NEW SUBMISSION (Server is Online)
     const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
     try {
       fetch('/api/telegram', {
@@ -396,7 +389,10 @@ function DeviceCheckContent() {
   };
   
   const handlePaid = async () => {
+    if (isSubmittingOrder) return;
     if (!submissionId || !submission || !user) return alert('No submission selected.');
+
+    setIsSubmittingOrder(true);
 
     const generateRandomPart = (length: number) => {
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -439,6 +435,7 @@ function DeviceCheckContent() {
       });
       errorEmitter.emit('permission-error', permissionError);
       alert('Failed to create order. Please try again.');
+      setIsSubmittingOrder(false);
     }
   };
 
@@ -885,8 +882,15 @@ function DeviceCheckContent() {
             </ScrollArea>
             <DialogFooter className="mt-4">
                 <Button variant="outline" onClick={() => setPaymentModalOpen(false)}>Cancel</Button>
-                <Button onClick={handlePaid} className="btn-primary text-white">
-                    {amountToPay > 0 ? 'I Paid' : 'Confirm'}
+                <Button onClick={handlePaid} className="btn-primary text-white" disabled={isSubmittingOrder}>
+                    {isSubmittingOrder ? (
+                        <>
+                            <Loader className="mr-2 h-4 w-4 animate-spin" />
+                            Processing...
+                        </>
+                    ) : (
+                        amountToPay > 0 ? 'I Paid' : 'Confirm'
+                    )}
                 </Button>
             </DialogFooter>
         </DialogContent>

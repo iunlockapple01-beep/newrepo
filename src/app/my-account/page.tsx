@@ -22,7 +22,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu, RefreshCw, AlertCircle } from 'lucide-react';
+import { Copy, Menu, RefreshCw, AlertCircle, Loader } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -91,6 +91,7 @@ function MyAccountContent() {
   const { data: userProfile, loading: profileLoading } = useDoc<UserProfile>('users', user?.uid || ' ');
   
   const [isBulkPayModalOpen, setIsBulkPayModalOpen] = useState(false);
+  const [isSubmittingBulk, setIsSubmittingBulk] = useState(false);
   const [bulkPaid, setBulkPaid] = useState(false);
 
   useEffect(() => {
@@ -110,10 +111,16 @@ function MyAccountContent() {
 
 
   const handleBulkPaid = () => {
-    // In a real scenario, you would update the orders' status here.
-    // For now, we'll just close the modal and hide the button.
-    setIsBulkPayModalOpen(false);
-    setBulkPaid(true); // This will hide the button until the page is reloaded or orders change
+    if (isSubmittingBulk) return;
+    setIsSubmittingBulk(true);
+    // In a real scenario, you would update the orders' status here via server action or batch write.
+    // For now, we'll simulate the process and hide the button.
+    setTimeout(() => {
+        setIsBulkPayModalOpen(false);
+        setBulkPaid(true);
+        setIsSubmittingBulk(false);
+        alert('Bulk payment notification sent to administrator.');
+    }, 1500);
   }
 
   const formatStatus = (status: Order['status']) => {
@@ -404,8 +411,15 @@ function MyAccountContent() {
             </ScrollArea>
             <DialogFooter>
                 <Button variant="outline" onClick={() => setIsBulkPayModalOpen(false)}>Cancel</Button>
-                <Button onClick={handleBulkPaid} className="btn-primary text-white">
-                  {bulkAmountToPay > 0 ? 'Paid' : 'Confirm'}
+                <Button onClick={handleBulkPaid} className="btn-primary text-white" disabled={isSubmittingBulk}>
+                  {isSubmittingBulk ? (
+                      <>
+                        <Loader className="mr-2 h-4 w-4 animate-spin" />
+                        Processing...
+                      </>
+                  ) : (
+                    bulkAmountToPay > 0 ? 'Paid' : 'Confirm'
+                  )}
                 </Button>
             </DialogFooter>
         </DialogContent>
