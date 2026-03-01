@@ -327,11 +327,11 @@ function DeviceCheckContent() {
         };
         addDoc(collection(firestore, 'submissions'), newOfflineSubmission);
 
-        // Simulate 60 second delay
+        // Simulate 10 second delay (changed from 60 seconds)
         setTimeout(() => {
             setIsOfflineSimulating(false);
             setOfflineError(true);
-        }, 60000);
+        }, 10000);
         return;
     }
     
