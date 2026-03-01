@@ -17,6 +17,8 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface Reply {
   message: string;
