@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
@@ -76,6 +77,7 @@ const CopyToClipboard = ({ text, children }: { text: string; children: React.Rea
 function MyAccountContent() {
   const { data: user, loading: userLoading } = useUser();
   const router = useRouter();
+  const { toast } = useToast();
   
   const orderConstraints = useMemo(() => {
     if (!user) return undefined;
@@ -92,12 +94,36 @@ function MyAccountContent() {
   const [isBulkPayModalOpen, setIsBulkPayModalOpen] = useState(false);
   const [isSubmittingBulk, setIsSubmittingBulk] = useState(false);
   const [bulkPaid, setBulkPaid] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(20 * 60);
 
   useEffect(() => {
     if (!userLoading && !user) {
       router.push('/login?redirect=/my-account');
     }
   }, [user, userLoading, router]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isBulkPayModalOpen && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prevTime => prevTime - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && isBulkPayModalOpen) {
+      setIsBulkPayModalOpen(false);
+      toast({
+        title: "Payment window expired",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    }
+
+    return () => clearInterval(timer);
+  }, [isBulkPayModalOpen, timeLeft, toast]);
+
+  const handleOpenBulkModal = () => {
+    setTimeLeft(20 * 60);
+    setIsBulkPayModalOpen(true);
+  };
   
   const ordersForBulkPay = orders?.filter(order => order.status === 'confirming_payment') || [];
   const canPayBulk = ordersForBulkPay.length > 1 && !bulkPaid;
@@ -120,7 +146,13 @@ function MyAccountContent() {
         setIsSubmittingBulk(false);
         alert('Bulk payment notification sent to administrator.');
     }, 1500);
-  }
+  };
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+  };
 
   const formatStatus = (status: Order['status']) => {
     if (status === 'ready_for_activation_bulk') {
@@ -247,7 +279,7 @@ function MyAccountContent() {
             <h2 className="text-3xl font-bold">Order History</h2>
             <div className="flex items-center gap-4">
                  {canPayBulk && (
-                    <Button onClick={() => { setIsBulkPayModalOpen(true); }} className="btn-primary text-white">
+                    <Button onClick={handleOpenBulkModal} className="btn-primary text-white">
                         Pay Bulk ({ordersForBulkPay.length} items)
                     </Button>
                 )}
@@ -311,7 +343,14 @@ function MyAccountContent() {
       <Dialog open={isBulkPayModalOpen} onOpenChange={setIsBulkPayModalOpen}>
         <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col p-0 overflow-hidden">
             <DialogHeader className="p-4 pb-1">
-                <DialogTitle className="text-base sm:text-lg">Bulk Payment (20% Off)</DialogTitle>
+                <DialogTitle className="text-base sm:text-lg flex justify-between items-center">
+                    <span>Bulk Payment (20% Off)</span>
+                    {timeLeft > 0 && (
+                        <span className="text-sm font-mono bg-blue-100 text-blue-800 rounded-md px-2 py-0.5">
+                            {formatTime(timeLeft)}
+                        </span>
+                    )}
+                </DialogTitle>
                 <DialogDescription className="text-sm">
                     Pay for multiple orders at once and receive a discount. Send the exact amount.
                 </DialogDescription>
@@ -385,7 +424,7 @@ function MyAccountContent() {
                   )}
 
                   <div className="text-xs text-center text-gray-500 bg-yellow-100 text-yellow-800 p-2 rounded-md">
-                      If your payment status does not update within 10 minutes, please contact the admin.
+                      Payments made within the timer will be automatically applied.
                   </div>
               </div>
             </ScrollArea>
