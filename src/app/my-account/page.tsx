@@ -309,37 +309,37 @@ function MyAccountContent() {
       </main>
       
       <Dialog open={isBulkPayModalOpen} onOpenChange={setIsBulkPayModalOpen}>
-        <DialogContent className="sm:max-w-md">
-            <DialogHeader>
+        <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col p-0 overflow-hidden">
+            <DialogHeader className="p-6 pb-2">
                 <DialogTitle>Bulk Payment (20% Off)</DialogTitle>
                 <DialogDescription>
-                    Pay for multiple orders at once and receive a discount. Send the exact amount to the recommended address below.
+                    Pay for multiple orders at once and receive a discount. Send the exact amount.
                 </DialogDescription>
-                 <div className="text-sm bg-gray-100 p-3 rounded-md text-gray-600 space-y-2">
+                 <div className="text-sm bg-gray-100 p-3 rounded-md text-gray-600 space-y-2 mt-2">
                     <p className="font-semibold">Unlocking {ordersForBulkPay.length} devices:</p>
-                    <ul className="list-disc list-inside text-xs">
+                    <ul className="list-disc list-inside text-[10px]">
                         {ordersForBulkPay.map(order => (
                             <li key={order.id}>{order.model} - <span className='font-mono'>{order.imei}</span></li>
                         ))}
                     </ul>
                 </div>
             </DialogHeader>
-            <ScrollArea className="max-h-[70vh]">
-              <div className="space-y-4 py-4 pr-6">
+            <ScrollArea className="flex-1 px-6">
+              <div className="space-y-4 py-4 pr-2">
                   <Alert variant="default" className="bg-blue-50 border-blue-200">
                     <AlertDescription>
                       For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
                     </AlertDescription>
                   </Alert>
                   <div className="text-center">
-                      <p className="text-gray-500">Original Total ({ordersForBulkPay.length} items)</p>
+                      <p className="text-gray-500 text-xs uppercase tracking-wider">Original Total ({ordersForBulkPay.length} items)</p>
                       <p className="line-through text-lg">${bulkTotal.toFixed(2)}</p>
-                      <p className="text-gray-500">Bulk Discount (20%)</p>
+                      <p className="text-gray-500 text-xs uppercase tracking-wider">Bulk Discount (20%)</p>
                       <p className="text-lg text-green-600">-${bulkDiscount.toFixed(2)}</p>
-                      <p className="text-gray-500 mt-1">Your Balance</p>
+                      <p className="text-gray-500 mt-1 text-xs uppercase tracking-wider">Your Balance</p>
                       <p className="text-lg text-green-600">-${currentBalance.toFixed(2)}</p>
                       <Separator className="my-2" />
-                      <p className="text-gray-500">Amount to Pay</p>
+                      <p className="text-gray-500 text-xs uppercase tracking-wider">Amount to Pay</p>
                       <p className="text-3xl font-bold">${bulkAmountToPay.toFixed(2)}</p>
                   </div>
                   
@@ -350,11 +350,11 @@ function MyAccountContent() {
                           <div className="flex items-center gap-3">
                               {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT BEP20" width={40} height={40} className="rounded-full" data-ai-hint="usdt logo" />}
                               <div>
-                                  <p className="font-semibold">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p>
+                                  <p className="font-semibold text-sm">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p>
                                   <p className="text-xs text-gray-500">Use Binance Smart Chain for low fees.</p>
                               </div>
                           </div>
-                          <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                          <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-[10px] sm:text-xs flex items-center justify-between">
                             <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
                               <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
                                   <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
@@ -372,11 +372,11 @@ function MyAccountContent() {
                             <ChevronDown size={14} />
                         </Button>
                       ) : (
-                        <div className="space-y-4 animate-fade-in">
+                        <div className="space-y-4 animate-fade-in pb-4">
                             <div className="flex items-center justify-between px-1">
-                                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Alternative Methods</p>
-                                <Button variant="ghost" className="h-6 px-2 text-xs" onClick={() => setShowOtherBulkOptions(false)}>
-                                    <ChevronUp size={14} className="mr-1" /> Hide
+                                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Alternative Methods</p>
+                                <Button variant="ghost" className="h-6 px-2 text-[10px]" onClick={() => setShowOtherBulkOptions(false)}>
+                                    <ChevronUp size={12} className="mr-1" /> Hide
                                 </Button>
                             </div>
 
@@ -385,11 +385,11 @@ function MyAccountContent() {
                                 <div className="flex items-center gap-3">
                                     {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={40} height={40} className="rounded-full" />}
                                     <div>
-                                        <p className="font-semibold">USDT (TRC20 Network)</p>
+                                        <p className="font-semibold text-sm">USDT (TRC20 Network)</p>
                                         <p className="text-xs text-gray-500">Contact admin before sending.</p>
                                     </div>
                                 </div>
-                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-[10px] sm:text-xs flex items-center justify-between">
                                     <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
                                     <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
                                         <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
@@ -402,11 +402,11 @@ function MyAccountContent() {
                                 <div className="flex items-center gap-3">
                                     {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={40} height={40} className="rounded-full" />}
                                     <div>
-                                        <p className="font-semibold">Bitcoin</p>
+                                        <p className="font-semibold text-sm">Bitcoin</p>
                                         <p className="text-xs text-gray-500">Contact admin before sending.</p>
                                     </div>
                                 </div>
-                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-[10px] sm:text-xs flex items-center justify-between">
                                     <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
                                     <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
                                         <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
@@ -425,23 +425,25 @@ function MyAccountContent() {
                     </div>
                   )}
 
-                  <div className="text-xs text-center text-gray-500 bg-yellow-100 text-yellow-800 p-2 rounded-md">
-                      If your payment status does not update within 10 minutes, please contact the admin with your payment details.
+                  <div className="text-[10px] text-center text-gray-500 bg-yellow-100 text-yellow-800 p-2 rounded-md">
+                      If your payment status does not update within 10 minutes, please contact the admin.
                   </div>
               </div>
             </ScrollArea>
-            <DialogFooter>
-                <Button variant="outline" onClick={() => setIsBulkPayModalOpen(false)}>Cancel</Button>
-                <Button onClick={handleBulkPaid} className="btn-primary text-white" disabled={isSubmittingBulk}>
-                  {isSubmittingBulk ? (
-                      <>
-                        <Loader className="mr-2 h-4 w-4 animate-spin" />
-                        Processing...
-                      </>
-                  ) : (
-                    bulkAmountToPay > 0 ? 'Paid' : 'Confirm'
-                  )}
-                </Button>
+            <DialogFooter className="p-6 pt-2 border-t mt-auto">
+                <div className="flex flex-row justify-end gap-3 w-full">
+                    <Button variant="outline" className="flex-1" onClick={() => setIsBulkPayModalOpen(false)}>Cancel</Button>
+                    <Button onClick={handleBulkPaid} className="btn-primary text-white flex-1" disabled={isSubmittingBulk}>
+                      {isSubmittingBulk ? (
+                          <>
+                            <Loader className="mr-2 h-4 w-4 animate-spin" />
+                            Processing...
+                          </>
+                      ) : (
+                        bulkAmountToPay > 0 ? 'Paid' : 'Confirm'
+                      )}
+                    </Button>
+                </div>
             </DialogFooter>
         </DialogContent>
       </Dialog>
