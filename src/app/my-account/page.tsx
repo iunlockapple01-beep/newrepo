@@ -90,7 +90,6 @@ function MyAccountContent() {
   const { data: userProfile, loading: profileLoading } = useDoc<UserProfile>('users', user?.uid || ' ');
   
   const [isBulkPayModalOpen, setIsBulkPayModalOpen] = useState(false);
-  const [showOtherBulkOptions, setShowOtherBulkOptions] = useState(false);
   const [isSubmittingBulk, setIsSubmittingBulk] = useState(false);
   const [bulkPaid, setBulkPaid] = useState(false);
 
@@ -248,7 +247,7 @@ function MyAccountContent() {
             <h2 className="text-3xl font-bold">Order History</h2>
             <div className="flex items-center gap-4">
                  {canPayBulk && (
-                    <Button onClick={() => { setShowOtherBulkOptions(false); setIsBulkPayModalOpen(true); }} className="btn-primary text-white">
+                    <Button onClick={() => { setIsBulkPayModalOpen(true); }} className="btn-primary text-white">
                         Pay Bulk ({ordersForBulkPay.length} items)
                     </Button>
                 )}
@@ -326,7 +325,7 @@ function MyAccountContent() {
                 </div>
             </DialogHeader>
             <ScrollArea className="flex-1 px-4">
-              <div className="space-y-4 pt-2 pb-44 pr-2">
+              <div className="space-y-4 pt-2 pb-12 pr-2">
                   <Alert variant="default" className="bg-blue-50 border-blue-200 py-2">
                     <AlertDescription className="text-xs">
                       For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
@@ -350,7 +349,7 @@ function MyAccountContent() {
                               <p className="text-base font-semibold text-green-600">-${currentBalance.toFixed(2)}</p>
                           </div>
                           <div>
-                              {/* Placeholder to keep alignment if needed */}
+                              {/* Placeholder to keep alignment */}
                           </div>
                       </div>
                       <Separator className="my-1" />
@@ -361,120 +360,21 @@ function MyAccountContent() {
                   </div>
                   
                   {bulkAmountToPay > 0 && (
-                    <>
-                      {/* USDT BEP20 */}
-                      <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
-                          <div className="flex items-center gap-3">
-                              {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT BEP20" width={32} height={32} className="rounded-full" data-ai-hint="usdt logo" />}
-                              <div>
-                                  <p className="font-semibold text-sm">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p>
-                                  <p className="text-xs text-gray-500 leading-tight">Use Binance Smart Chain for low fees.</p>
-                              </div>
-                          </div>
-                          <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                            <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
-                              <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
-                                  <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                              </CopyToClipboard>
-                          </div>
-                      </div>
-
-                      {!showOtherBulkOptions ? (
-                        <Button 
-                            variant="outline" 
-                            className="w-full text-xs h-8 text-gray-500 flex items-center justify-center gap-2" 
-                            onClick={() => setShowOtherBulkOptions(true)}
-                        >
-                            <span>Show Other Payment Methods</span>
-                            <ChevronDown size={14} />
-                        </Button>
-                      ) : (
-                        <div className="space-y-4 animate-fade-in pb-2">
-                            <div className="flex items-center justify-between px-1">
-                                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Alternative Methods</p>
-                                <Button variant="ghost" className="h-6 px-2 text-xs" onClick={() => setShowOtherBulkOptions(false)}>
-                                    <ChevronUp size={12} className="mr-1" /> Hide
-                                </Button>
-                            </div>
-
-                            <div className="text-xs text-blue-600 font-medium mb-1 px-1 flex items-center justify-between">
-                                <span>More payment options below:</span>
-                                <span className="animate-bounce">↓</span>
-                            </div>
-                            <div className="max-h-[320px] overflow-y-auto space-y-3 p-2 pb-24 border rounded-md bg-gray-50/50 relative">
-                                {/* USDT TRC20 */}
-                                <div className="p-3 border rounded-lg bg-white space-y-2">
-                                    <div className="flex items-center gap-3">
-                                        {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
-                                        <div>
-                                            <p className="font-semibold text-sm">USDT (TRC20 Network)</p>
-                                            <p className="text-xs text-gray-500">Contact admin before sending.</p>
-                                        </div>
-                                    </div>
-                                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                        <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
-                                        <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
-                                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                        </CopyToClipboard>
-                                    </div>
-                                </div>
-
-                                {/* USDC ERC20 */}
-                                <div className="p-3 border rounded-lg bg-white space-y-2">
-                                    <div className="flex items-center gap-3">
-                                        {usdcImage && <Image src={usdcImage.imageUrl} alt="USDC ERC20" width={32} height={32} className="rounded-full" />}
-                                        <div>
-                                            <p className="font-semibold text-sm">USDC (ERC20 Network)</p>
-                                            <p className="text-xs text-gray-500">Reliable Ethereum chain transaction.</p>
-                                        </div>
-                                    </div>
-                                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                        <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
-                                        <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
-                                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                        </CopyToClipboard>
-                                    </div>
-                                </div>
-
-                                {/* Ethereum ERC20 */}
-                                <div className="p-3 border rounded-lg bg-white space-y-2">
-                                    <div className="flex items-center gap-3">
-                                        {ethImage && <Image src={ethImage.imageUrl} alt="Ethereum ERC20" width={32} height={32} className="rounded-full" />}
-                                        <div>
-                                            <p className="font-semibold text-sm">Ethereum (ERC20 Network)</p>
-                                            <p className="text-xs text-gray-500">Official Ethereum mainnet.</p>
-                                        </div>
-                                    </div>
-                                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                        <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
-                                        <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
-                                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                        </CopyToClipboard>
-                                    </div>
-                                </div>
-
-                                {/* Bitcoin */}
-                                <div className="p-3 border rounded-lg bg-white space-y-2">
-                                    <div className="flex items-center gap-3">
-                                        {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}
-                                        <div>
-                                            <p className="font-semibold text-sm">Bitcoin</p>
-                                            <p className="text-xs text-gray-500">Contact admin before sending.</p>
-                                        </div>
-                                    </div>
-                                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                        <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
-                                        <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
-                                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                        </CopyToClipboard>
-                                    </div>
-                                </div>
-                                
-                                <div className="h-20" aria-hidden="true" /> {/* Spacer for better mobile scrolling */}
+                    <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
+                        <div className="flex items-center gap-3">
+                            {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT BEP20" width={32} height={32} className="rounded-full" data-ai-hint="usdt logo" />}
+                            <div>
+                                <p className="font-semibold text-sm">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p>
+                                <p className="text-xs text-gray-500 leading-tight">Use Binance Smart Chain for low fees.</p>
                             </div>
                         </div>
-                      )}
-                    </>
+                        <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                          <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                            <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                                <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                            </CopyToClipboard>
+                        </div>
+                    </div>
                   )}
 
                   {bulkAmountToPay <= 0 && (
