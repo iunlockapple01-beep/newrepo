@@ -281,9 +281,14 @@ function MyAccountContent() {
                                     data-ai-hint="usdt logo"
                                  />
                                )}
-                               <div>
+                               <div className="flex-1">
                                  <p className="text-sm">USDT BEP20 Address:</p>
-                                 <p className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all">0x04bF65223Aa01924691773101FF250E4Fc6903c3</p>
+                                 <div className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all flex items-center justify-between">
+                                    <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                    <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                                        <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                    </CopyToClipboard>
+                                 </div>
                                </div>
                             </div>
                         </div>
