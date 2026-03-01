@@ -22,7 +22,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu, RefreshCw, AlertCircle, Loader, ChevronDown, ChevronUp } from 'lucide-react';
+import { Copy, Menu, RefreshCw, AlertCircle, Loader, ChevronDown, ChevronUp, MessageSquare, Ticket } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -41,6 +41,14 @@ interface Order {
 interface UserProfile {
     id: string;
     balance?: number;
+}
+
+interface SupportTicket {
+  id: string;
+  subject: string;
+  category: string;
+  status: 'open' | 'in_review' | 'replied' | 'resolved' | 'closed';
+  createdAt: { toDate: () => Date };
 }
 
 const paymentMethods = [
@@ -87,6 +95,16 @@ function MyAccountContent() {
   const { data: orders, loading: ordersLoading } = useCollection<Order>(
     'orders',
     { constraints: orderConstraints }
+  );
+
+  const ticketConstraints = useMemo(() => {
+    if (!user) return undefined;
+    return [where('userId', '==', user.uid)];
+  }, [user]);
+
+  const { data: tickets, loading: ticketsLoading } = useCollection<SupportTicket>(
+    'tickets',
+    { constraints: ticketConstraints }
   );
   
   const { data: userProfile, loading: profileLoading } = useDoc<UserProfile>('users', user?.uid || ' ');
@@ -138,8 +156,6 @@ function MyAccountContent() {
   const handleBulkPaid = () => {
     if (isSubmittingBulk) return;
     setIsSubmittingBulk(true);
-    // In a real scenario, you would update the orders' status here via server action or batch write.
-    // For now, we'll simulate the process and hide the button.
     setTimeout(() => {
         setIsBulkPayModalOpen(false);
         setBulkPaid(true);
@@ -154,23 +170,31 @@ function MyAccountContent() {
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  const formatStatus = (status: Order['status']) => {
-    if (status === 'ready_for_activation_bulk') {
-        return 'Ready for activation (bulk)';
-    }
-    if (status === 'ready_for_activation') {
-        return 'Ready for activation';
-    }
+  const formatStatus = (status: string) => {
+    if (status === 'ready_for_activation_bulk') return 'Ready for activation (bulk)';
+    if (status === 'ready_for_activation') return 'Ready for activation';
     return status.replace(/_/g, ' ');
+  };
+
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case 'resolved':
+      case 'approved':
+      case 'unlocked':
+        return 'secondary';
+      case 'declined':
+      case 'closed':
+        return 'destructive';
+      case 'replied':
+        return 'default';
+      default:
+        return 'outline';
+    }
   };
 
   const usdtImage = getImage('usdt-icon');
   const telegramIcon = getImage('telegram-icon');
   const whatsappIcon = getImage('whatsapp-icon');
-  const usdtTrc20Image = getImage('usdt-trc20-icon');
-  const bitcoinImage = getImage('bitcoin-icon');
-  const usdcImage = getImage('usdc-icon');
-  const ethImage = getImage('eth-icon');
   
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
@@ -233,38 +257,58 @@ function MyAccountContent() {
       <main className="flex-grow max-w-7xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8 w-full">
         <h1 className="text-4xl font-bold text-center mb-10">Your Account</h1>
         
-        <Card className="mb-8">
-            <CardHeader>
-                <CardTitle className="text-2xl text-blue-600">Account Summary</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <p><strong>Current Balance:</strong> ${userProfile?.balance?.toFixed(2) || '0.00'}</p>
-                        <p><strong>Total Orders:</strong> {orders ? orders.length : 0}</p>
-                    </div>
-                    <div>
-                        <p><strong>Deposit via Crypto:</strong></p>
-                        <div className="flex items-center gap-3 mt-2">
-                           {usdtImage && (
-                             <Image 
-                                src={usdtImage.imageUrl} 
-                                alt="USDT" 
-                                width={42} 
-                                height={42} 
-                                className="rounded-full"
-                                data-ai-hint="usdt logo"
-                             />
-                           )}
-                           <div>
-                             <p className="text-sm">USDT BEP20 Address:</p>
-                             <p className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all">0x04bF65223Aa01924691773101FF250E4Fc6903c3</p>
-                           </div>
+        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+            <Card className="lg:col-span-2">
+                <CardHeader>
+                    <CardTitle className="text-2xl text-blue-600">Account Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <p><strong>Current Balance:</strong> ${userProfile?.balance?.toFixed(2) || '0.00'}</p>
+                            <p><strong>Total Orders:</strong> {orders ? orders.length : 0}</p>
+                        </div>
+                        <div>
+                            <p><strong>Deposit via Crypto:</strong></p>
+                            <div className="flex items-center gap-3 mt-2">
+                               {usdtImage && (
+                                 <Image 
+                                    src={usdtImage.imageUrl} 
+                                    alt="USDT" 
+                                    width={42} 
+                                    height={42} 
+                                    className="rounded-full"
+                                    data-ai-hint="usdt logo"
+                                 />
+                               )}
+                               <div>
+                                 <p className="text-sm">USDT BEP20 Address:</p>
+                                 <p className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all">0x04bF65223Aa01924691773101FF250E4Fc6903c3</p>
+                               </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-xl flex items-center gap-2">
+                        <MessageSquare className="text-blue-600" />
+                        Need Help?
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-gray-600 mb-4">If you have any issues with your order, payment, or activation, please submit a support ticket.</p>
+                    <Link href="/my-account/tickets/new" className="w-full">
+                        <Button className="w-full btn-primary text-white">
+                            <Ticket className="mr-2 h-4 w-4" />
+                            Submit Support Ticket
+                        </Button>
+                    </Link>
+                </CardContent>
+            </Card>
+        </div>
 
         <Alert className="mb-12">
             <AlertCircle className="h-4 w-4" />
@@ -274,7 +318,7 @@ function MyAccountContent() {
             </AlertDescription>
         </Alert>
 
-        <section>
+        <section className="mb-12">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">Order History</h2>
             <div className="flex items-center gap-4">
@@ -338,6 +382,58 @@ function MyAccountContent() {
             </div>
           )}
         </section>
+
+        <section>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-3xl font-bold">My Support Tickets</h2>
+                <Link href="/my-account/tickets/new">
+                    <Button variant="outline" size="sm">New Ticket</Button>
+                </Link>
+            </div>
+            {ticketsLoading ? (
+                <p>Loading tickets...</p>
+            ) : tickets && tickets.length > 0 ? (
+                <Card>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Date</TableHead>
+                                <TableHead>Ticket ID</TableHead>
+                                <TableHead>Category</TableHead>
+                                <TableHead>Subject</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead>Action</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {tickets.sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime()).map(ticket => (
+                                <TableRow key={ticket.id}>
+                                    <TableCell>{ticket.createdAt.toDate().toLocaleDateString()}</TableCell>
+                                    <TableCell className="font-mono text-xs uppercase">{ticket.id.slice(0, 8)}</TableCell>
+                                    <TableCell>{ticket.category}</TableCell>
+                                    <TableCell className="font-medium">{ticket.subject}</TableCell>
+                                    <TableCell>
+                                        <Badge variant={getStatusVariant(ticket.status)}>
+                                            {ticket.status.replace('_', ' ')}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Link href={`/my-account/tickets/${ticket.id}`}>
+                                            <Button size="sm" variant="ghost">View Details</Button>
+                                        </Link>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </Card>
+            ) : (
+                <div className="text-center py-12 px-6 bg-white rounded-2xl shadow-lg border border-dashed">
+                    <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">You haven't submitted any support tickets yet.</p>
+                </div>
+            )}
+        </section>
       </main>
       
       <Dialog open={isBulkPayModalOpen} onOpenChange={setIsBulkPayModalOpen}>
@@ -388,7 +484,6 @@ function MyAccountContent() {
                               <p className="text-base font-semibold text-green-600">-${currentBalance.toFixed(2)}</p>
                           </div>
                           <div>
-                              {/* Placeholder to keep alignment */}
                           </div>
                       </div>
                       <Separator className="my-1" />

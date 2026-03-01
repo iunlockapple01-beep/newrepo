@@ -31,7 +31,7 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Ban, Menu, Users, Server, ServerOff } from 'lucide-react';
+import { Ban, Menu, Users, Server, ServerOff, MessageSquare } from 'lucide-react';
 import { format } from 'date-fns';
 import { Switch } from '@/components/ui/switch';
 
@@ -84,7 +84,7 @@ function AdminDashboard() {
 
   useEffect(() => {
     if (userLoading) {
-      return; // Wait until user status is determined
+      return;
     }
     if (!user) {
       router.push('/login?redirect=/admin');
@@ -163,7 +163,7 @@ function AdminDashboard() {
     }
     
     if (status === 'eligible' || status === 'find_my_off') {
-        const timestamp = format(new Date(), "PPpp"); // e.g., Jun 21, 2024, 2:30:00 PM
+        const timestamp = format(new Date(), "PPpp"); 
         lines.push(`TIMESTAMP:${timestamp}`);
     }
 
@@ -376,6 +376,12 @@ function AdminDashboard() {
                     <CardFooter className="flex justify-between flex-wrap gap-2">
                         <Button onClick={handleUpdateMetrics} className="btn-primary text-white">Save All Settings</Button>
                         <div className="flex gap-2">
+                            <Link href="/admin/tickets">
+                                <Button variant="outline" className="border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100">
+                                    <MessageSquare className="mr-2 h-4 w-4" />
+                                    Support Tickets
+                                </Button>
+                            </Link>
                             <Link href="/admin/users">
                                 <Button variant="outline">
                                     <Users className="mr-2 h-4 w-4" />

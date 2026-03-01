@@ -123,6 +123,42 @@
       },
       "required": ["orderId", "userId", "submissionId", "imei", "model", "price", "status", "createdAt"]
     },
+    "ticket": {
+      "title": "Support Ticket",
+      "description": "A support request from a user",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "userName": { "type": "string" },
+        "orderId": { "type": "string", "description": "Optional related Order ID" },
+        "category": {
+          "type": "string",
+          "enum": ["Refund Request", "Order Issue", "Activation Delay", "Payment Inquiry", "Other"]
+        },
+        "subject": { "type": "string" },
+        "message": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["open", "in_review", "replied", "resolved", "closed"]
+        },
+        "replies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "message": { "type": "string" },
+              "sender": { "type": "string", "enum": ["client", "admin"] },
+              "createdAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "internalNotes": { "type": "string", "description": "Admin only notes" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "category", "subject", "message", "status", "createdAt"]
+    },
     "counters": {
       "title": "Counters",
       "description": "Site-wide counters for display",
@@ -182,6 +218,12 @@
         "$ref": "#/backend/entities/order"
       },
       "description": "Confirmed unlock orders from users"
+    },
+    "/tickets/{ticketId}": {
+      "schema": {
+        "$ref": "#/backend/entities/ticket"
+      },
+      "description": "Support tickets for customer service"
     },
     "/counters/metrics": {
       "schema": {
