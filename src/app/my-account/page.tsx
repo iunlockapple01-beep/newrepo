@@ -22,7 +22,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu, RefreshCw, AlertCircle, Loader } from 'lucide-react';
+import { Copy, Menu, RefreshCw, AlertCircle, Loader, ChevronDown, ChevronUp } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -91,6 +91,7 @@ function MyAccountContent() {
   const { data: userProfile, loading: profileLoading } = useDoc<UserProfile>('users', user?.uid || ' ');
   
   const [isBulkPayModalOpen, setIsBulkPayModalOpen] = useState(false);
+  const [showOtherBulkOptions, setShowOtherBulkOptions] = useState(false);
   const [isSubmittingBulk, setIsSubmittingBulk] = useState(false);
   const [bulkPaid, setBulkPaid] = useState(false);
 
@@ -246,7 +247,7 @@ function MyAccountContent() {
             <h2 className="text-3xl font-bold">Order History</h2>
             <div className="flex items-center gap-4">
                  {canPayBulk && (
-                    <Button onClick={() => setIsBulkPayModalOpen(true)} className="btn-primary text-white">
+                    <Button onClick={() => { setShowOtherBulkOptions(false); setIsBulkPayModalOpen(true); }} className="btn-primary text-white">
                         Pay Bulk ({ordersForBulkPay.length} items)
                     </Button>
                 )}
@@ -312,7 +313,7 @@ function MyAccountContent() {
             <DialogHeader>
                 <DialogTitle>Bulk Payment (20% Off)</DialogTitle>
                 <DialogDescription>
-                    Pay for multiple orders at once and receive a discount. Send the exact amount to one of the addresses below.
+                    Pay for multiple orders at once and receive a discount. Send the exact amount to the recommended address below.
                 </DialogDescription>
                  <div className="text-sm bg-gray-100 p-3 rounded-md text-gray-600 space-y-2">
                     <p className="font-semibold">Unlocking {ordersForBulkPay.length} devices:</p>
@@ -361,39 +362,59 @@ function MyAccountContent() {
                           </div>
                       </div>
 
-                      {/* USDT TRC20 */}
-                      <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
-                          <div className="flex items-center gap-3">
-                              {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={40} height={40} className="rounded-full" />}
-                              <div>
-                                  <p className="font-semibold">USDT (TRC20 Network)</p>
-                                  <p className="text-xs text-gray-500">Contact admin before sending.</p>
-                              </div>
-                          </div>
-                          <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                              <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
-                              <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
-                                  <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                              </CopyToClipboard>
-                          </div>
-                      </div>
+                      {!showOtherBulkOptions ? (
+                        <Button 
+                            variant="outline" 
+                            className="w-full text-xs h-8 text-gray-500 flex items-center justify-center gap-2" 
+                            onClick={() => setShowOtherBulkOptions(true)}
+                        >
+                            <span>Show Other Payment Methods</span>
+                            <ChevronDown size={14} />
+                        </Button>
+                      ) : (
+                        <div className="space-y-4 animate-fade-in">
+                            <div className="flex items-center justify-between px-1">
+                                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Alternative Methods</p>
+                                <Button variant="ghost" className="h-6 px-2 text-xs" onClick={() => setShowOtherBulkOptions(false)}>
+                                    <ChevronUp size={14} className="mr-1" /> Hide
+                                </Button>
+                            </div>
 
-                      {/* Bitcoin */}
-                      <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
-                          <div className="flex items-center gap-3">
-                              {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={40} height={40} className="rounded-full" />}
-                              <div>
-                                  <p className="font-semibold">Bitcoin</p>
-                                  <p className="text-xs text-gray-500">Contact admin before sending.</p>
-                              </div>
-                          </div>
-                          <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                              <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
-                              <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
-                                  <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                              </CopyToClipboard>
-                          </div>
-                      </div>
+                            {/* USDT TRC20 */}
+                            <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
+                                <div className="flex items-center gap-3">
+                                    {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={40} height={40} className="rounded-full" />}
+                                    <div>
+                                        <p className="font-semibold">USDT (TRC20 Network)</p>
+                                        <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                                    </div>
+                                </div>
+                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                    <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
+                                    <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
+                                        <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                    </CopyToClipboard>
+                                </div>
+                            </div>
+
+                            {/* Bitcoin */}
+                            <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
+                                <div className="flex items-center gap-3">
+                                    {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={40} height={40} className="rounded-full" />}
+                                    <div>
+                                        <p className="font-semibold">Bitcoin</p>
+                                        <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                                    </div>
+                                </div>
+                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                    <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
+                                    <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
+                                        <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                    </CopyToClipboard>
+                                </div>
+                            </div>
+                        </div>
+                      )}
                     </>
                   )}
 

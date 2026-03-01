@@ -22,7 +22,7 @@ import { addDoc, collection, doc, serverTimestamp, runTransaction, query, where,
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu, Loader, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Copy, Menu, Loader, CheckCircle2, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -154,6 +154,7 @@ function DeviceCheckContent() {
   const isServerOnline = counters?.isServerOnline !== false;
 
   const [isPaymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [showOtherPayments, setShowOtherPayments] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('Processing payment...');
   const [isChecking, setIsChecking] = useState(false);
@@ -375,6 +376,7 @@ function DeviceCheckContent() {
     setTimeLeft(20 * 60);
     setIsLoading(true);
     setLoadingMessage('Processing payment...');
+    setShowOtherPayments(false);
 
     setTimeout(() => {
       setLoadingMessage('Checking account balance...');
@@ -788,7 +790,7 @@ function DeviceCheckContent() {
                     )}
                 </DialogTitle>
                 <DialogDescription>
-                   Pay unlock fees for this device. Send the exact crypto amount to one of the addresses below.
+                   Pay unlock fees for this device. Send the exact crypto amount to the recommended address or show other options.
                 </DialogDescription>
                  {submission && (
                     <div className="text-sm bg-gray-100 p-3 rounded-md text-gray-600">
@@ -833,39 +835,59 @@ function DeviceCheckContent() {
                                 </div>
                             </div>
 
-                            {/* USDT TRC20 */}
-                            <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
-                                <div className="flex items-center gap-3">
-                                    {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={40} height={40} className="rounded-full" />}
-                                    <div>
-                                        <p className="font-semibold">USDT (TRC20 Network)</p>
-                                        <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                            {!showOtherPayments ? (
+                                <Button 
+                                    variant="outline" 
+                                    className="w-full text-xs h-8 text-gray-500 flex items-center justify-center gap-2" 
+                                    onClick={() => setShowOtherPayments(true)}
+                                >
+                                    <span>Show Other Payment Methods</span>
+                                    <ChevronDown size={14} />
+                                </Button>
+                            ) : (
+                                <div className="space-y-4 animate-fade-in">
+                                    <div className="flex items-center justify-between px-1">
+                                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Alternative Methods</p>
+                                        <Button variant="ghost" className="h-6 px-2 text-xs" onClick={() => setShowOtherPayments(false)}>
+                                            <ChevronUp size={14} className="mr-1" /> Hide
+                                        </Button>
                                     </div>
-                                </div>
-                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                    <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
-                                    <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
-                                        <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                    </CopyToClipboard>
-                                </div>
-                            </div>
+                                    
+                                    {/* USDT TRC20 */}
+                                    <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
+                                        <div className="flex items-center gap-3">
+                                            {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={40} height={40} className="rounded-full" />}
+                                            <div>
+                                                <p className="font-semibold">USDT (TRC20 Network)</p>
+                                                <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                                            </div>
+                                        </div>
+                                        <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                            <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
+                                            <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
+                                                <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                            </CopyToClipboard>
+                                        </div>
+                                    </div>
 
-                            {/* Bitcoin */}
-                            <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
-                                <div className="flex items-center gap-3">
-                                    {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={40} height={40} className="rounded-full" />}
-                                    <div>
-                                        <p className="font-semibold">Bitcoin</p>
-                                        <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                                    {/* Bitcoin */}
+                                    <div className="p-4 border rounded-lg bg-gray-50 space-y-2">
+                                        <div className="flex items-center gap-3">
+                                            {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={40} height={40} className="rounded-full" />}
+                                            <div>
+                                                <p className="font-semibold">Bitcoin</p>
+                                                <p className="text-xs text-gray-500">Contact admin before sending.</p>
+                                            </div>
+                                        </div>
+                                        <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                            <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
+                                            <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
+                                                <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                            </CopyToClipboard>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                                    <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
-                                    <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
-                                        <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                                    </CopyToClipboard>
-                                </div>
-                            </div>
+                            )}
 
                             <div className="text-xs text-center text-gray-500 bg-yellow-100 text-yellow-800 p-2 rounded-md">
                                 Payments made within the timer will be automatically applied. For any issues or for payments via other methods, please contact the admin.
