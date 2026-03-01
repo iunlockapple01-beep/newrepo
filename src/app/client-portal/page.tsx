@@ -453,6 +453,7 @@ function DeviceCheckContent() {
   const usdtTrc20Image = getImage('usdt-trc20-icon');
   const bitcoinImage = getImage('bitcoin-icon');
   const usdcImage = getImage('usdc-icon');
+  const ethImage = getImage('eth-icon');
   
   const currentBalance = userProfile?.balance || 0;
   const amountToPay = Math.max(0, price - currentBalance);
@@ -800,7 +801,7 @@ function DeviceCheckContent() {
                 )}
             </DialogHeader>
              <ScrollArea className="flex-1 px-4">
-                <div className="space-y-4 animate-fade-in pt-2 pb-10">
+                <div className="space-y-4 animate-fade-in pt-2 pb-32">
                     <Alert variant="default" className="bg-blue-50 border-blue-200 py-2">
                       <AlertDescription className="text-xs">
                         For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
@@ -863,7 +864,7 @@ function DeviceCheckContent() {
                                     </div>
                                     
                                     <div className="text-xs text-blue-600 font-medium mb-1 px-1">More payment options below:</div>
-                                    <div className="max-h-[200px] overflow-y-auto space-y-3 p-2 border rounded-md bg-gray-50/50">
+                                    <div className="max-h-[280px] overflow-y-auto space-y-3 p-2 border rounded-md bg-gray-50/50">
                                         {/* USDT TRC20 */}
                                         <div className="p-3 border rounded-lg bg-white space-y-2">
                                             <div className="flex items-center gap-3">
@@ -888,6 +889,23 @@ function DeviceCheckContent() {
                                                 <div>
                                                     <p className="font-semibold text-sm">USDC (ERC20 Network)</p>
                                                     <p className="text-xs text-gray-500">Fast & Secure Ethereum network.</p>
+                                                </div>
+                                            </div>
+                                            <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                                <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                                <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                                                    <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                                </CopyToClipboard>
+                                            </div>
+                                        </div>
+
+                                        {/* Ethereum ERC20 */}
+                                        <div className="p-3 border rounded-lg bg-white space-y-2">
+                                            <div className="flex items-center gap-3">
+                                                {ethImage && <Image src={ethImage.imageUrl} alt="Ethereum ERC20" width={32} height={32} className="rounded-full" />}
+                                                <div>
+                                                    <p className="font-semibold text-sm">Ethereum (ERC20 Network)</p>
+                                                    <p className="text-xs text-gray-500">Official Ethereum mainnet.</p>
                                                 </div>
                                             </div>
                                             <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">

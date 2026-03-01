@@ -47,6 +47,12 @@
       "description": "USD Coin (USDC) cryptocurrency coin",
       "imageUrl": "https://i.postimg.cc/0y48G2WY/download_(3).png",
       "imageHint": "usdc coin"
+    },
+    {
+      "id": "eth-icon",
+      "description": "Ethereum cryptocurrency coin",
+      "imageUrl": "https://i.postimg.cc/0y48G2WY/download_(3).png",
+      "imageHint": "ethereum logo"
     }
   ]
 }
