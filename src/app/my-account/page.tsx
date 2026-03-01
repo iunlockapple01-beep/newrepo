@@ -325,7 +325,7 @@ function MyAccountContent() {
                 </div>
             </DialogHeader>
             <ScrollArea className="flex-1 px-4">
-              <div className="space-y-4 py-2 pr-2">
+              <div className="space-y-4 pt-2 pb-10 pr-2">
                   <Alert variant="default" className="bg-blue-50 border-blue-200 py-2">
                     <AlertDescription className="text-xs">
                       For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
