@@ -327,7 +327,7 @@ function MyAccountContent() {
                 </div>
             </DialogHeader>
             <ScrollArea className="flex-1 px-4">
-              <div className="space-y-4 pt-2 pb-32 pr-2">
+              <div className="space-y-4 pt-2 pb-44 pr-2">
                   <Alert variant="default" className="bg-blue-50 border-blue-200 py-2">
                     <AlertDescription className="text-xs">
                       For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
@@ -398,8 +398,11 @@ function MyAccountContent() {
                                 </Button>
                             </div>
 
-                            <div className="text-xs text-blue-600 font-medium mb-1 px-1">More payment options below:</div>
-                            <div className="max-h-[280px] overflow-y-auto space-y-3 p-2 border rounded-md bg-gray-50/50">
+                            <div className="text-xs text-blue-600 font-medium mb-1 px-1 flex items-center justify-between">
+                                <span>More payment options below:</span>
+                                <span className="animate-bounce">↓</span>
+                            </div>
+                            <div className="max-h-[320px] overflow-y-auto space-y-3 p-2 pb-12 border rounded-md bg-gray-50/50 relative">
                                 {/* USDT TRC20 */}
                                 <div className="p-3 border rounded-lg bg-white space-y-2">
                                     <div className="flex items-center gap-3">
@@ -467,6 +470,8 @@ function MyAccountContent() {
                                         </CopyToClipboard>
                                     </div>
                                 </div>
+                                
+                                <div className="h-10" aria-hidden="true" /> {/* Spacer for better mobile scrolling */}
                             </div>
                         </div>
                       )}
