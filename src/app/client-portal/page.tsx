@@ -297,7 +297,7 @@ function DeviceCheckContent() {
                 setTimeout(() => {
                     setShowCachedDataNotification(false);
                     setSubmissionId(existingDoc.id);
-                }, 2000); // show notification for 2 seconds
+                }, 3000); // show notification for 3 seconds
             }, 4000); // show checking animation for 4 seconds
             return;
         } else {
@@ -327,7 +327,7 @@ function DeviceCheckContent() {
         };
         addDoc(collection(firestore, 'submissions'), newOfflineSubmission);
 
-        // Simulate 10 second delay (changed from 60 seconds)
+        // Simulate 10 second delay
         setTimeout(() => {
             setIsOfflineSimulating(false);
             setOfflineError(true);
@@ -501,7 +501,10 @@ function DeviceCheckContent() {
         <div className="flex flex-col items-center justify-center h-full animate-pop-in">
           <CheckCircle2 className="w-24 h-24 text-blue-500 mb-4" />
           <h2 className="text-3xl font-bold text-gray-800 text-center px-4">Device data already in the database</h2>
-          <p className="text-lg text-gray-600 mt-2">Loading existing information...</p>
+          <div className="flex items-center gap-3 mt-4">
+            <Loader className="h-6 w-6 animate-spin text-blue-500" />
+            <p className="text-lg text-gray-600">Loading existing information...</p>
+          </div>
         </div>
       );
     }
