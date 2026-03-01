@@ -440,6 +440,8 @@ function DeviceCheckContent() {
   const bitcoinImage = getImage('bitcoin-icon');
   const usdcImage = getImage('usdc-icon');
   const ethImage = getImage('eth-icon');
+  const telegramIcon = getImage('telegram-icon');
+  const whatsappIcon = getImage('whatsapp-icon');
   
   const currentBalance = userProfile?.balance || 0;
   const amountToPay = Math.max(0, price - currentBalance);
