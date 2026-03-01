@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
@@ -402,7 +401,7 @@ function MyAccountContent() {
                                 <span>More payment options below:</span>
                                 <span className="animate-bounce">↓</span>
                             </div>
-                            <div className="max-h-[320px] overflow-y-auto space-y-3 p-2 pb-12 border rounded-md bg-gray-50/50 relative">
+                            <div className="max-h-[320px] overflow-y-auto space-y-3 p-2 pb-24 border rounded-md bg-gray-50/50 relative">
                                 {/* USDT TRC20 */}
                                 <div className="p-3 border rounded-lg bg-white space-y-2">
                                     <div className="flex items-center gap-3">
@@ -471,7 +470,7 @@ function MyAccountContent() {
                                     </div>
                                 </div>
                                 
-                                <div className="h-10" aria-hidden="true" /> {/* Spacer for better mobile scrolling */}
+                                <div className="h-20" aria-hidden="true" /> {/* Spacer for better mobile scrolling */}
                             </div>
                         </div>
                       )}

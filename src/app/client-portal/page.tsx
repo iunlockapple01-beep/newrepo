@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -648,7 +647,7 @@ function DeviceCheckContent() {
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
                         {user && (
-                            <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
+                            <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
                         )}
                         {isAdmin && (
                             <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>
@@ -867,7 +866,7 @@ function DeviceCheckContent() {
                                         <span>More payment options below:</span>
                                         <span className="animate-bounce">↓</span>
                                     </div>
-                                    <div className="max-h-[320px] overflow-y-auto space-y-3 p-2 pb-12 border rounded-md bg-gray-50/50 relative">
+                                    <div className="max-h-[320px] overflow-y-auto space-y-3 p-2 pb-24 border rounded-md bg-gray-50/50 relative">
                                         {/* USDT TRC20 */}
                                         <div className="p-3 border rounded-lg bg-white space-y-2">
                                             <div className="flex items-center gap-3">
@@ -936,7 +935,7 @@ function DeviceCheckContent() {
                                             </div>
                                         </div>
                                         
-                                        <div className="h-10" aria-hidden="true" /> {/* Bottom spacer for better mobile scrolling */}
+                                        <div className="h-20" aria-hidden="true" /> {/* Bottom spacer for better mobile scrolling */}
                                     </div>
                                 </div>
                             )}
