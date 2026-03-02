@@ -778,59 +778,61 @@ function DeviceCheckContent() {
                             </Button>
 
                             {showOtherPayments && (
-                                <div className="space-y-3 animate-fade-in pb-4">
-                                    <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
-                                        <div className="flex items-center gap-3">
-                                            {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
-                                            <div>
-                                                <p className="font-bold text-sm">USDT (TRC20 Network)</p>
-                                                <p className="text-[10px] text-gray-500">Standard Tether network.</p>
+                                <ScrollArea className="h-[240px] pr-4 mt-2">
+                                    <div className="space-y-3 animate-fade-in pb-4">
+                                        <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
+                                            <div className="flex items-center gap-3">
+                                                {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
+                                                <div>
+                                                    <p className="font-bold text-sm">USDT (TRC20 Network)</p>
+                                                    <p className="text-[10px] text-gray-500">Standard Tether network.</p>
+                                                </div>
+                                            </div>
+                                            <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
+                                                <span>TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X</span>
+                                                <CopyToClipboard text="TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X">
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                                                        <Copy className="w-4 h-4 text-gray-500"/>
+                                                    </Button>
+                                                </CopyToClipboard>
                                             </div>
                                         </div>
-                                        <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                            <span>TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X</span>
-                                            <CopyToClipboard text="TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X">
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
-                                                    <Copy className="w-4 h-4 text-gray-500"/>
-                                                </Button>
-                                            </CopyToClipboard>
-                                        </div>
-                                    </div>
-                                    <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
-                                        <div className="flex items-center gap-3">
-                                            {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}
-                                            <div>
-                                                <p className="font-bold text-sm">Bitcoin (BTC)</p>
-                                                <p className="text-[10px] text-gray-500">Traditional network confirmation.</p>
+                                        <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
+                                            <div className="flex items-center gap-3">
+                                                {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}
+                                                <div>
+                                                    <p className="font-bold text-sm">Bitcoin (BTC)</p>
+                                                    <p className="text-[10px] text-gray-500">Traditional network confirmation.</p>
+                                                </div>
+                                            </div>
+                                            <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
+                                                <span>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</span>
+                                                <CopyToClipboard text="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa">
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                                                        <Copy className="w-4 h-4 text-gray-500"/>
+                                                    </Button>
+                                                </CopyToClipboard>
                                             </div>
                                         </div>
-                                        <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                            <span>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</span>
-                                            <CopyToClipboard text="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa">
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
-                                                    <Copy className="w-4 h-4 text-gray-500"/>
-                                                </Button>
-                                            </CopyToClipboard>
-                                        </div>
-                                    </div>
-                                    <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
-                                        <div className="flex items-center gap-3">
-                                            {ethereumImage && <Image src={ethereumImage.imageUrl} alt="Ethereum" width={32} height={32} className="rounded-full" />}
-                                            <div>
-                                                <p className="font-bold text-sm">Ethereum (ERC20)</p>
-                                                <p className="text-[10px] text-gray-500">Fast and secure smart contract network.</p>
+                                        <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
+                                            <div className="flex items-center gap-3">
+                                                {ethereumImage && <Image src={ethereumImage.imageUrl} alt="Ethereum" width={32} height={32} className="rounded-full" />}
+                                                <div>
+                                                    <p className="font-bold text-sm">Ethereum (ERC20)</p>
+                                                    <p className="text-[10px] text-gray-500">Fast and secure smart contract network.</p>
+                                                </div>
+                                            </div>
+                                            <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
+                                                <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                                <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                                                        <Copy className="w-4 h-4 text-gray-500"/>
+                                                    </Button>
+                                                </CopyToClipboard>
                                             </div>
                                         </div>
-                                        <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                            <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
-                                            <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
-                                                    <Copy className="w-4 h-4 text-gray-500"/>
-                                                </Button>
-                                            </CopyToClipboard>
-                                        </div>
                                     </div>
-                                </div>
+                                </ScrollArea>
                             )}
 
                             <Alert className="bg-yellow-50 border-yellow-100 py-3 rounded-xl">
