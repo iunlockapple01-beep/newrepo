@@ -170,16 +170,6 @@ function AdminDashboard() {
     updateDoc(submissionRef, updatedData)
       .then(() => {
         alert('Feedback sent!');
-        // If status is 'feedback' (Wrong Model), delete the submission to free up the IMEI
-        if (status === 'feedback') {
-            deleteDoc(submissionRef).catch(async (serverError) => {
-                const permissionError = new FirestorePermissionError({
-                    path: submissionRef.path,
-                    operation: 'delete',
-                });
-                errorEmitter.emit('permission-error', permissionError);
-            });
-        }
       })
       .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({

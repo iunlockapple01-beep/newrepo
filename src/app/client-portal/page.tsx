@@ -272,27 +272,31 @@ function DeviceCheckContent() {
       // Check all submissions globally from all users
       const q = query(
         submissionsRef,
-        where('imei', '==', trimmedImei),
-        limit(1)
+        where('imei', '==', trimmedImei)
       );
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
-        const existingDoc = querySnapshot.docs[0];
-        const existingData = existingDoc.data() as Submission;
-
-        if (existingData.model === model) {
+        const existingDocs = querySnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as Submission) }));
+        
+        // 1. Check for exact model match (prioritize even if it's 'feedback')
+        const match = existingDocs.find(s => s.model === model);
+        if (match) {
             setIsCachedCheck(true);
             setTimeout(() => {
                 setIsChecking(false);
                 setShowCachedDataNotification(true);
                 setTimeout(() => {
                     setShowCachedDataNotification(false);
-                    setSubmissionId(existingDoc.id);
+                    setSubmissionId(match.id);
                 }, 3000); 
             }, 4000); 
             return;
-        } else {
+        }
+
+        // 2. Check for conflict (different model AND status is NOT 'feedback')
+        const conflict = existingDocs.find(s => s.model !== model && s.status !== 'feedback');
+        if (conflict) {
              // Add a delay before showing the error to let the animation run
              setTimeout(() => {
                  setIsChecking(false);
@@ -300,9 +304,11 @@ function DeviceCheckContent() {
              }, 3500); 
              return;
         }
+        
+        // 3. If only 'feedback' records exist for other models, fall through to create a new submission
       }
     } catch (e) {
-        // Handle potential permission errors if rules were restricted
+        // Handle potential permission errors
         if (e instanceof Error && e.message.includes('permission')) {
             const permissionError = new FirestorePermissionError({
                 path: 'submissions',
@@ -638,7 +644,7 @@ function DeviceCheckContent() {
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
                         {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>}
-                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>}
+                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>}
                         <div className="pt-4"><LoginButton /></div>
                       </div>
                     </SheetContent>
