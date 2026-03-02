@@ -26,6 +26,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 interface Order {
   id: string;
@@ -242,7 +243,7 @@ function MyAccountContent() {
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
                     {user && (
-                        <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
+                        <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
                     )}
                     {isAdmin && (
                       <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>
@@ -534,7 +535,7 @@ function MyAccountContent() {
                             onClick={() => setShowOtherPayments(!showOtherPayments)}
                         >
                             <span className="text-sm font-medium">Show Other Payment Methods</span>
-                            {showOtherPayments ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                            <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", showOtherPayments && "rotate-180")} />
                         </Button>
 
                         {showOtherPayments && (
