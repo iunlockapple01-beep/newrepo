@@ -149,15 +149,15 @@ function AdminDashboard() {
     const feedbackText = feedbackValues[submissionId] || '';
     const status = feedbackStatus[submissionId];
     if (!status) return alert('Select an outcome.');
-    if (feedbackText.trim() === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback') return alert('Enter feedback.');
+    if (feedbackText.trim() === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported') return alert('Enter feedback.');
 
     const lines = feedbackText.split('\n').filter(l => l.trim() && !l.startsWith('TIMESTAMP:'));
     if (status === 'eligible') lines.push('FIND_MY_ON_STATUS');
     if (status === 'find_my_off') lines.push('FIND_MY_OFF_STATUS');
-    if (status === 'eligible' || status === 'find_my_off') {
-        const timestamp = format(new Date(), "PPpp"); 
-        lines.push(`TIMESTAMP:${timestamp}`);
-    }
+    
+    // Always add timestamp for fresh feedback
+    const timestamp = format(new Date(), "PPpp"); 
+    lines.push(`TIMESTAMP:${timestamp}`);
 
     const submissionRef = doc(firestore, 'submissions', submissionId);
     const updatedData = {
@@ -317,7 +317,7 @@ function AdminDashboard() {
                       <p className="text-sm text-gray-600">User ID: {sub.userId}</p>
                       <p className="text-sm text-gray-600">IMEI/Serial: <strong>{sub.imei}</strong></p>
                       <p className="text-sm text-gray-600">Price: ${sub.price}</p>
-                      <div className="mt-4"><label className="block text-sm font-medium text-gray-700 mb-1">Feedback:</label><Textarea value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:') && !l.includes('Wrong Model:')).join('\n') || ''} onChange={(e) => handleFeedbackChange(sub.id, e.target.value)} className="font-mono" /></div>
+                      <div className="mt-4"><label className="block text-sm font-medium text-gray-700 mb-1">Feedback:</label><Textarea value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:')).join('\n') || ''} onChange={(e) => handleFeedbackChange(sub.id, e.target.value)} className="font-mono" /></div>
                     </CardContent>
                     <CardFooter className='flex-col items-stretch gap-3'>
                       {sub.status === 'waiting' && <Button onClick={() => handleDeviceFound(sub.id)} className="w-full">Device Found</Button>}

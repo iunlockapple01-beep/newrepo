@@ -545,7 +545,7 @@ function DeviceCheckContent() {
                 {specialStatusLines.map((line, index) => {
                   if (line === 'FIND_MY_ON_STATUS') {
                     return (
-                      <div key={`special-${index}`} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
+                      <div key={`special-${index}`} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2 animate-fade-in">
                         <span>Find My:</span>
                         <span className="bg-red-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">ON</span>
                       </div>
@@ -553,7 +553,7 @@ function DeviceCheckContent() {
                   }
                   if (line === 'FIND_MY_OFF_STATUS') {
                     return (
-                      <div key={`special-${index}`} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
+                      <div key={`special-${index}`} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2 animate-fade-in">
                         <span>Find My:</span>
                         <span className="bg-green-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">OFF</span>
                       </div>
@@ -564,7 +564,7 @@ function DeviceCheckContent() {
 
                 {feedbackText && (
                   isCachedCheck ? (
-                    <div className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono whitespace-pre-wrap">
+                    <div className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono whitespace-pre-wrap animate-fade-in">
                       {feedbackText}
                     </div>
                   ) : (
@@ -593,16 +593,16 @@ function DeviceCheckContent() {
                 </div>
               )}
                {submission.status === 'not_supported' && (
-                 <p className="bg-red-100 text-red-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">❌ Unable to proceed with the unlock.</p>
+                 <p className="bg-red-100 text-red-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center animate-fade-in">❌ Unable to proceed with the unlock.</p>
                )}
                {submission.status === 'find_my_off' && (
-                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">
+                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center animate-fade-in">
                     Find My is OFF. If you need help restoring your device, please contact the {' '}
                     <a href="https://t.me/Chris_Morgan057" target="_blank" rel="noopener noreferrer" className="underline font-bold">technician</a>.
                  </p>
                )}
                {submission.status === 'feedback' && (
-                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">ℹ️ Select the above device model and check again.</p>
+                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center animate-fade-in">ℹ️ Select the above device model and check again.</p>
                )}
             </div>
         );
