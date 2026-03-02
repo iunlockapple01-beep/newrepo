@@ -455,7 +455,7 @@ function MyAccountContent() {
       </main>
       
       <Dialog open={isBulkPayModalOpen} onOpenChange={setIsBulkPayModalOpen}>
-        <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
+        <DialogContent className={cn("sm:max-w-[500px] max-h-[90vh] flex flex-col p-0 overflow-hidden transition-all duration-300", showOtherPayments && "lg:max-w-[950px]")}>
             <DialogHeader className="px-5 py-2.5 border-b bg-white">
                 <DialogTitle className="text-base sm:text-lg flex items-center gap-3 pr-12">
                     {timeLeft > 0 && (
@@ -478,69 +478,69 @@ function MyAccountContent() {
                 </div>
             </DialogHeader>
             <ScrollArea className="flex-1 px-5">
-              <div className="space-y-3 pt-1 pb-4 animate-fade-in">
-                  <Alert variant="default" className="bg-blue-50 border-blue-200 py-1.5 mt-2">
-                    <AlertDescription className="text-[11px] text-center">
-                      For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
-                    </AlertDescription>
-                  </Alert>
-                  
-                  <div className="space-y-3">
-                      <div className="grid grid-cols-2 gap-4 text-center">
-                          <div>
-                              <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Original Total</p>
-                              <p className="line-through text-base font-medium opacity-60">${bulkTotal.toFixed(2)}</p>
+              <div className={cn("grid grid-cols-1 gap-4 pt-1 pb-4", showOtherPayments && "lg:grid-cols-2 lg:gap-8")}>
+                  <div className="space-y-3 animate-fade-in">
+                      <Alert variant="default" className="bg-blue-50 border-blue-200 py-1.5 mt-2">
+                        <AlertDescription className="text-[11px] text-center">
+                          For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
+                        </AlertDescription>
+                      </Alert>
+                      
+                      <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-4 text-center">
+                              <div>
+                                  <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Original Total</p>
+                                  <p className="line-through text-base font-medium opacity-60">${bulkTotal.toFixed(2)}</p>
+                              </div>
+                              <div>
+                                  <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Bulk Discount (20%)</p>
+                                  <p className="text-base font-bold text-green-600">-${bulkDiscount.toFixed(2)}</p>
+                              </div>
                           </div>
-                          <div>
-                              <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Bulk Discount (20%)</p>
-                              <p className="text-base font-bold text-green-600">-${bulkDiscount.toFixed(2)}</p>
+                          <div className="grid grid-cols-2 gap-4 text-center">
+                              <div>
+                                  <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Your Balance</p>
+                                  <p className="text-base font-bold text-green-600">-${currentBalance.toFixed(2)}</p>
+                              </div>
+                              <div></div>
+                          </div>
+                          <div className="text-center bg-gray-50 py-2 rounded-xl border border-dashed">
+                              <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Amount to Pay</p>
+                              <p className="text-3xl font-black">${bulkAmountToPay.toFixed(2)}</p>
                           </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4 text-center">
-                          <div>
-                              <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Your Balance</p>
-                              <p className="text-base font-bold text-green-600">-${currentBalance.toFixed(2)}</p>
-                          </div>
-                          <div></div>
-                      </div>
-                      <div className="text-center bg-gray-50 py-2 rounded-xl border border-dashed">
-                          <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Amount to Pay</p>
-                          <p className="text-3xl font-black">${bulkAmountToPay.toFixed(2)}</p>
-                      </div>
-                  </div>
-                  
-                  {bulkAmountToPay > 0 && (
-                    <>
-                        <div className="px-4 py-3 border rounded-2xl bg-white shadow-sm space-y-2">
-                            <div className="flex items-center gap-3">
-                                {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT BEP20" width={32} height={32} className="rounded-full" data-ai-hint="usdt logo" />}
-                                <div>
-                                    <p className="font-bold text-sm">USDT (BEP20 Network) - <span className="text-green-600">Recommended</span></p>
-                                    <p className="text-[10px] text-gray-500">Use Binance Smart Chain for low fees.</p>
+                      
+                      {bulkAmountToPay > 0 && (
+                        <>
+                            <div className="px-4 py-3 border rounded-2xl bg-white shadow-sm space-y-2">
+                                <div className="flex items-center gap-3">
+                                    {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT BEP20" width={32} height={32} className="rounded-full" data-ai-hint="usdt logo" />}
+                                    <div>
+                                        <p className="font-bold text-sm">USDT (BEP20 Network) - <span className="text-green-600">Recommended</span></p>
+                                        <p className="text-[10px] text-gray-500">Use Binance Smart Chain for low fees.</p>
+                                    </div>
+                                </div>
+                                <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
+                                    <span className="font-medium">0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                    <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 ml-2 hover:bg-gray-200">
+                                            <Copy className="w-4 h-4 text-gray-500"/>
+                                        </Button>
+                                    </CopyToClipboard>
                                 </div>
                             </div>
-                            <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                <span className="font-medium">0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
-                                <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 ml-2 hover:bg-gray-200">
-                                        <Copy className="w-4 h-4 text-gray-500"/>
-                                    </Button>
-                                </CopyToClipboard>
-                            </div>
-                        </div>
 
-                        <Button 
-                            variant="outline" 
-                            className="w-full h-10 text-gray-700 bg-gray-50 hover:bg-gray-100 hover:text-gray-700 flex items-center justify-center gap-2 border border-gray-200 rounded-xl transition-all font-semibold shadow-none"
-                            onClick={() => setShowOtherPayments(!showOtherPayments)}
-                        >
-                            <span className="text-sm">Show Other Payment Methods</span>
-                            <ChevronDown className={cn("h-4 w-4 transition-transform duration-200 text-gray-500", showOtherPayments && "rotate-180")} />
-                        </Button>
+                            <Button 
+                                variant="outline" 
+                                className="w-full h-10 text-gray-700 bg-gray-50 hover:bg-gray-100 hover:text-gray-700 flex items-center justify-center gap-2 border border-gray-200 rounded-xl transition-all font-semibold shadow-none"
+                                onClick={() => setShowOtherPayments(!showOtherPayments)}
+                            >
+                                <span className="text-sm">Show Other Payment Methods</span>
+                                <ChevronDown className={cn("h-4 w-4 transition-transform duration-200 text-gray-500", showOtherPayments && "rotate-180")} />
+                            </Button>
 
-                        {showOtherPayments && (
-                            <ScrollArea className="h-[200px] pr-4 mt-1 border rounded-xl bg-gray-50/30">
-                                <div className="space-y-3 animate-fade-in p-3 pb-[120px] lg:pb-8">
+                            {showOtherPayments && (
+                                <div className="lg:hidden space-y-3 mt-1 pb-[120px]">
                                     <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                         <div className="flex items-center gap-3">
                                             {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
@@ -593,23 +593,83 @@ function MyAccountContent() {
                                         </div>
                                     </div>
                                 </div>
-                                <ScrollBar orientation="vertical" />
-                            </ScrollArea>
-                        )}
+                            )}
 
-                        <Alert className="bg-yellow-50 border-yellow-100 py-2 rounded-xl">
-                            <AlertDescription className="text-[10px] text-center text-yellow-800 font-medium">
-                                Payments made within the timer will be automatically applied.
-                            </AlertDescription>
-                        </Alert>
-                    </>
-                  )}
+                            <Alert className="bg-yellow-50 border-yellow-100 py-2 rounded-xl">
+                                <AlertDescription className="text-[10px] text-center text-yellow-800 font-medium">
+                                    Payments made within the timer will be automatically applied.
+                                </AlertDescription>
+                            </Alert>
+                        </>
+                      )}
 
-                  {bulkAmountToPay <= 0 && (
-                    <div className="text-center p-6 bg-green-50 border border-green-100 text-green-800 rounded-2xl animate-fade-in">
-                        <CheckCircle2 className="h-10 w-10 mx-auto mb-3 text-green-500"/>
-                        <p className="font-bold text-base">Your balance covers the full amount!</p>
-                        <p className="text-xs opacity-80">Click "Confirm" to use your balance for this bulk order.</p>
+                      {bulkAmountToPay <= 0 && (
+                        <div className="text-center p-6 bg-green-50 border border-green-100 text-green-800 rounded-2xl animate-fade-in">
+                            <CheckCircle2 className="h-10 w-10 mx-auto mb-3 text-green-500"/><p className="font-bold text-base">Your balance covers the full amount!</p><p className="text-xs opacity-80">Click "Confirm" to use your balance for this bulk order.</p>
+                        </div>
+                      )}
+                  </div>
+
+                  {/* Desktop/Landscape Wide View Sidebar */}
+                  {showOtherPayments && (
+                    <div className="hidden lg:block space-y-3 animate-fade-in border-l pl-8">
+                        <h4 className="font-bold text-sm text-gray-500 uppercase tracking-wider mb-2">Other Networks</h4>
+                        <ScrollArea className="h-[400px] pr-4">
+                            <div className="space-y-3 pb-8">
+                                <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
+                                    <div className="flex items-center gap-3">
+                                        {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
+                                        <div>
+                                            <p className="font-bold text-sm">USDT (TRC20 Network)</p>
+                                            <p className="text-[10px] text-gray-500">Standard network confirmation.</p>
+                                        </div>
+                                    </div>
+                                    <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
+                                        <span>TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X</span>
+                                        <CopyToClipboard text="TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X">
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                                                <Copy className="w-4 h-4 text-gray-500"/>
+                                            </Button>
+                                        </CopyToClipboard>
+                                    </div>
+                                </div>
+                                <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
+                                    <div className="flex items-center gap-3">
+                                        {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}
+                                        <div>
+                                            <p className="font-bold text-sm">Bitcoin (BTC)</p>
+                                            <p className="text-[10px] text-gray-500">Standard network confirmation.</p>
+                                        </div>
+                                    </div>
+                                    <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
+                                        <span>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</span>
+                                        <CopyToClipboard text="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa">
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                                                <Copy className="w-4 h-4 text-gray-500"/>
+                                            </Button>
+                                        </CopyToClipboard>
+                                    </div>
+                                </div>
+                                <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
+                                    <div className="flex items-center gap-3">
+                                        {ethereumImage && <Image src={ethereumImage.imageUrl} alt="Ethereum" width={32} height={32} className="rounded-full" />}
+                                        <div>
+                                            <p className="font-bold text-sm">Ethereum (ERC20)</p>
+                                            <p className="text-[10px] text-gray-500">Fast and secure network.</p>
+                                        </div>
+                                    </div>
+                                    <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
+                                        <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                        <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                                                <Copy className="w-4 h-4 text-gray-500"/>
+                                            </Button>
+                                        </CopyToClipboard>
+                                    </div>
+                                </div>
+                            </div>
+                            <ScrollBar orientation="vertical" />
+                        </ScrollArea>
                     </div>
                   )}
               </div>
