@@ -723,8 +723,8 @@ function DeviceCheckContent() {
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
             <DialogHeader className="px-5 py-2.5 border-b bg-white">
                 <DialogTitle className='flex items-center gap-3 text-base sm:text-lg pr-12'>
-                    <span>Pay with Crypto</span>
                     {timeLeft > 0 && <span className="text-xs sm:text-sm font-mono bg-blue-100 text-blue-800 rounded-md px-2 py-0.5">{formatTime(timeLeft)}</span>}
+                    <span>Pay with Crypto</span>
                 </DialogTitle>
                 <DialogDescription className="text-sm">Pay unlock fees for this device. Send the exact crypto amount.</DialogDescription>
                  {submission && <div className="text-xs bg-gray-100 p-2 rounded-md text-gray-600 mt-1"><p><strong>Model:</strong> {submission.model} | <strong>IMEI/Serial:</strong> {submission.imei}</p></div>}
@@ -779,7 +779,7 @@ function DeviceCheckContent() {
 
                             {showOtherPayments && (
                                 <ScrollArea className="h-[200px] pr-4 mt-1 border rounded-xl bg-gray-50/30">
-                                    <div className="space-y-3 animate-fade-in p-3 pb-40 lg:pb-6">
+                                    <div className="space-y-3 animate-fade-in p-3 pb-64 lg:pb-8">
                                         <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                             <div className="flex items-center gap-3">
                                                 {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}

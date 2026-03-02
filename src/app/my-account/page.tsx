@@ -66,7 +66,7 @@ const paymentMethods = [
 
 const CopyToClipboard = ({ text, children }: { text: string; children: React.ReactNode }) => {
   const { toast } = useToast();
-  handleCopy = () => {
+  const handleCopy = () => {
     navigator.clipboard.writeText(text);
     toast({
       title: "Copied to clipboard!",
@@ -458,12 +458,12 @@ function MyAccountContent() {
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
             <DialogHeader className="px-5 py-2.5 border-b bg-white">
                 <DialogTitle className="text-base sm:text-lg flex items-center gap-3 pr-12">
-                    <span>Bulk Payment (20% Off)</span>
                     {timeLeft > 0 && (
                         <span className="text-xs sm:text-sm font-mono bg-blue-100 text-blue-800 rounded-md px-2 py-0.5">
                             {formatTime(timeLeft)}
                         </span>
                     )}
+                    <span>Bulk Payment (20% Off)</span>
                 </DialogTitle>
                 <DialogDescription className="text-sm">
                     Pay for multiple orders at once and receive a discount. Send the exact amount.
@@ -540,7 +540,7 @@ function MyAccountContent() {
 
                         {showOtherPayments && (
                             <ScrollArea className="h-[200px] pr-4 mt-1 border rounded-xl bg-gray-50/30">
-                                <div className="space-y-3 animate-fade-in p-3 pb-40 lg:pb-6">
+                                <div className="space-y-3 animate-fade-in p-3 pb-64 lg:pb-8">
                                     <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                         <div className="flex items-center gap-3">
                                             {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
