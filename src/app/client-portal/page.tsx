@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -603,7 +602,7 @@ function DeviceCheckContent() {
                  </p>
                )}
                {submission.status === 'feedback' && (
-                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">ℹ️ Select the correct device model, and check again.</p>
+                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center">ℹ️ Select the above device model and check again.</p>
                )}
             </div>
         );

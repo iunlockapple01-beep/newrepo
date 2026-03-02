@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -265,7 +264,7 @@ function AdminDashboard() {
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
                     {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
-                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
+                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
                     <div className='pt-4'><LoginButton /></div>
                   </div>
                 </SheetContent>
@@ -327,7 +326,7 @@ function AdminDashboard() {
                           <SelectContent>
                               <SelectItem value="eligible">Eligible for Unlock</SelectItem>
                               <SelectItem value="not_supported">Not Supported for Unlock</SelectItem>
-                              <SelectItem value="feedback">Wrong Model: Choose correct device model and check again</SelectItem>
+                              <SelectItem value="feedback">Select the above device model and check again</SelectItem>
                               <SelectItem value="find_my_off">Find My: OFF</SelectItem>
                           </SelectContent>
                       </Select>
