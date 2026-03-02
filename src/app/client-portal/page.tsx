@@ -23,7 +23,7 @@ import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
 import { Copy, Menu, Loader, CheckCircle2, AlertTriangle, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { VerificationAnimation } from '@/components/ui/verification-animation';
@@ -720,8 +720,8 @@ function DeviceCheckContent() {
       </footer>
       
       <Dialog open={isPaymentModalOpen} onOpenChange={setPaymentModalOpen}>
-        <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col p-0 overflow-hidden">
-            <DialogHeader className="p-4 pb-2">
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
+            <DialogHeader className="px-5 py-3 border-b bg-white">
                 <DialogTitle className='flex justify-between items-center text-base sm:text-lg'>
                     <span>Pay with Crypto</span>
                     {timeLeft > 0 && <span className="text-sm font-mono bg-blue-100 text-blue-800 rounded-md px-2 py-0.5">{formatTime(timeLeft)}</span>}
@@ -729,20 +729,20 @@ function DeviceCheckContent() {
                 <DialogDescription className="text-sm">Pay unlock fees for this device. Send the exact crypto amount.</DialogDescription>
                  {submission && <div className="text-xs bg-gray-100 p-2 rounded-md text-gray-600 mt-1"><p><strong>Model:</strong> {submission.model} | <strong>IMEI/Serial:</strong> {submission.imei}</p></div>}
             </DialogHeader>
-             <ScrollArea className="flex-1 px-4">
-                <div className="space-y-4 animate-fade-in pt-2 pb-8">
-                    <Alert variant="default" className="bg-blue-50 border-blue-200 py-2">
-                        <AlertDescription className="text-xs text-center">
+             <ScrollArea className="flex-1 px-5">
+                <div className="space-y-3 animate-fade-in pt-1 pb-4">
+                    <Alert variant="default" className="bg-blue-50 border-blue-200 py-1.5 mt-2">
+                        <AlertDescription className="text-[11px] text-center">
                             For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
                         </AlertDescription>
                     </Alert>
                     
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         <div className="grid grid-cols-2 gap-4 text-center">
                             <div><p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Service Cost</p><p className="text-lg font-bold">${price.toFixed(2)}</p></div>
                             <div><p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Your Balance</p><p className="text-lg font-bold text-green-600">-${currentBalance.toFixed(2)}</p></div>
                         </div>
-                        <div className="text-center bg-gray-50 py-3 rounded-xl border border-dashed">
+                        <div className="text-center bg-gray-50 py-2.5 rounded-xl border border-dashed">
                             <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Amount to Pay</p>
                             <p className="text-3xl font-black">${amountToPay.toFixed(2)}</p>
                         </div>
@@ -750,7 +750,7 @@ function DeviceCheckContent() {
 
                     {amountToPay > 0 && (
                         <>
-                            <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
+                            <div className="px-4 py-3 border rounded-2xl bg-white shadow-sm space-y-2">
                                 <div className="flex items-center gap-3">
                                     {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT" width={32} height={32} className="rounded-full" />}
                                     <div>
@@ -770,7 +770,7 @@ function DeviceCheckContent() {
 
                             <Button 
                                 variant="outline" 
-                                className="w-full h-12 text-gray-700 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 flex items-center justify-center gap-2 border border-gray-200 rounded-xl transition-all font-semibold shadow-none"
+                                className="w-full h-10 text-gray-700 bg-gray-50 hover:bg-gray-100 hover:text-gray-700 flex items-center justify-center gap-2 border border-gray-200 rounded-xl transition-all font-semibold shadow-none"
                                 onClick={() => setShowOtherPayments(!showOtherPayments)}
                             >
                                 <span className="text-sm">Show Other Payment Methods</span>
@@ -778,8 +778,8 @@ function DeviceCheckContent() {
                             </Button>
 
                             {showOtherPayments && (
-                                <ScrollArea className="h-[240px] pr-4 mt-2">
-                                    <div className="space-y-3 animate-fade-in pb-32">
+                                <ScrollArea className="h-[200px] pr-4 mt-1 border rounded-xl bg-gray-50/30">
+                                    <div className="space-y-3 animate-fade-in p-3 pb-32 sm:pb-6">
                                         <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                             <div className="flex items-center gap-3">
                                                 {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
@@ -832,11 +832,12 @@ function DeviceCheckContent() {
                                             </div>
                                         </div>
                                     </div>
+                                    <ScrollBar orientation="vertical" />
                                 </ScrollArea>
                             )}
 
-                            <Alert className="bg-yellow-50 border-yellow-100 py-3 rounded-xl">
-                                <AlertDescription className="text-[11px] text-center text-yellow-800 font-medium">
+                            <Alert className="bg-yellow-50 border-yellow-100 py-2 rounded-xl">
+                                <AlertDescription className="text-[10px] text-center text-yellow-800 font-medium">
                                     Payments made within the timer will be automatically applied.
                                 </AlertDescription>
                             </Alert>
@@ -845,8 +846,8 @@ function DeviceCheckContent() {
                 </div>
             </ScrollArea>
             <DialogFooter className="p-4 border-t flex flex-row gap-3 mt-auto bg-gray-50">
-                <Button variant="outline" className="flex-1 h-12 rounded-xl text-sm font-bold shadow-sm" onClick={() => setPaymentModalOpen(false)}>Cancel</Button>
-                <Button onClick={handlePaid} className="btn-primary text-white flex-1 h-12 rounded-xl text-sm font-bold shadow-md" disabled={isSubmittingOrder}>
+                <Button variant="outline" className="flex-1 h-11 rounded-xl text-sm font-bold shadow-sm" onClick={() => setPaymentModalOpen(false)}>Cancel</Button>
+                <Button onClick={handlePaid} className="btn-primary text-white flex-1 h-11 rounded-xl text-sm font-bold shadow-md" disabled={isSubmittingOrder}>
                     {isSubmittingOrder ? <><Loader className="mr-2 h-4 w-4 animate-spin" />Processing...</> : (amountToPay > 0 ? 'I Paid' : 'Confirm')}
                 </Button>
             </DialogFooter>

@@ -24,7 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Copy, Menu, RefreshCw, AlertCircle, Loader, ChevronDown, ChevronUp, MessageSquare, Ticket, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
@@ -455,8 +455,8 @@ function MyAccountContent() {
       </main>
       
       <Dialog open={isBulkPayModalOpen} onOpenChange={setIsBulkPayModalOpen}>
-        <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col p-0 overflow-hidden">
-            <DialogHeader className="p-4 pb-1">
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
+            <DialogHeader className="px-5 py-3 border-b bg-white">
                 <DialogTitle className="text-base sm:text-lg flex justify-between items-center">
                     <span>Bulk Payment (20% Off)</span>
                     {timeLeft > 0 && (
@@ -477,15 +477,15 @@ function MyAccountContent() {
                     </ul>
                 </div>
             </DialogHeader>
-            <ScrollArea className="flex-1 px-4">
-              <div className="space-y-4 pt-2 pb-8 animate-fade-in">
-                  <Alert variant="default" className="bg-blue-50 border-blue-200 py-2">
-                    <AlertDescription className="text-xs text-center">
+            <ScrollArea className="flex-1 px-5">
+              <div className="space-y-3 pt-1 pb-4 animate-fade-in">
+                  <Alert variant="default" className="bg-blue-50 border-blue-200 py-1.5 mt-2">
+                    <AlertDescription className="text-[11px] text-center">
                       For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
                     </AlertDescription>
                   </Alert>
                   
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                       <div className="grid grid-cols-2 gap-4 text-center">
                           <div>
                               <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Original Total</p>
@@ -503,7 +503,7 @@ function MyAccountContent() {
                           </div>
                           <div></div>
                       </div>
-                      <div className="text-center bg-gray-50 py-3 rounded-xl border border-dashed">
+                      <div className="text-center bg-gray-50 py-2.5 rounded-xl border border-dashed">
                           <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Amount to Pay</p>
                           <p className="text-3xl font-black">${bulkAmountToPay.toFixed(2)}</p>
                       </div>
@@ -511,7 +511,7 @@ function MyAccountContent() {
                   
                   {bulkAmountToPay > 0 && (
                     <>
-                        <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
+                        <div className="px-4 py-3 border rounded-2xl bg-white shadow-sm space-y-2">
                             <div className="flex items-center gap-3">
                                 {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT BEP20" width={32} height={32} className="rounded-full" data-ai-hint="usdt logo" />}
                                 <div>
@@ -531,7 +531,7 @@ function MyAccountContent() {
 
                         <Button 
                             variant="outline" 
-                            className="w-full h-12 text-gray-700 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 flex items-center justify-center gap-2 border border-gray-200 rounded-xl transition-all font-semibold shadow-none"
+                            className="w-full h-10 text-gray-700 bg-gray-50 hover:bg-gray-100 hover:text-gray-700 flex items-center justify-center gap-2 border border-gray-200 rounded-xl transition-all font-semibold shadow-none"
                             onClick={() => setShowOtherPayments(!showOtherPayments)}
                         >
                             <span className="text-sm">Show Other Payment Methods</span>
@@ -539,8 +539,8 @@ function MyAccountContent() {
                         </Button>
 
                         {showOtherPayments && (
-                            <ScrollArea className="h-[240px] pr-4 mt-2">
-                                <div className="space-y-3 animate-fade-in pb-32">
+                            <ScrollArea className="h-[200px] pr-4 mt-1 border rounded-xl bg-gray-50/30">
+                                <div className="space-y-3 animate-fade-in p-3 pb-32 sm:pb-6">
                                     <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                         <div className="flex items-center gap-3">
                                             {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
@@ -593,11 +593,12 @@ function MyAccountContent() {
                                         </div>
                                     </div>
                                 </div>
+                                <ScrollBar orientation="vertical" />
                             </ScrollArea>
                         )}
 
-                        <Alert className="bg-yellow-50 border-yellow-100 py-3 rounded-xl">
-                            <AlertDescription className="text-[11px] text-center text-yellow-800 font-medium">
+                        <Alert className="bg-yellow-50 border-yellow-100 py-2 rounded-xl">
+                            <AlertDescription className="text-[10px] text-center text-yellow-800 font-medium">
                                 Payments made within the timer will be automatically applied.
                             </AlertDescription>
                         </Alert>
@@ -614,8 +615,8 @@ function MyAccountContent() {
               </div>
             </ScrollArea>
             <DialogFooter className="p-4 border-t flex flex-row gap-3 mt-auto bg-gray-50">
-                <Button variant="outline" className="flex-1 h-12 rounded-xl text-sm font-bold shadow-sm" onClick={() => setIsBulkPayModalOpen(false)}>Cancel</Button>
-                <Button onClick={handleBulkPaid} className="btn-primary text-white flex-1 h-12 rounded-xl text-sm font-bold shadow-md" disabled={isSubmittingBulk}>
+                <Button variant="outline" className="flex-1 h-11 rounded-xl text-sm font-bold shadow-sm" onClick={() => setIsBulkPayModalOpen(false)}>Cancel</Button>
+                <Button onClick={handleBulkPaid} className="btn-primary text-white flex-1 h-11 rounded-xl text-sm font-bold shadow-md" disabled={isSubmittingBulk}>
                   {isSubmittingBulk ? (
                       <>
                         <Loader className="mr-2 h-4 w-4 animate-spin" />
