@@ -33,6 +33,7 @@ import { TypingAnimation } from '@/components/ui/typing-animation';
 // Define the structure for a submission
 interface Submission {
   id: string;
+  userId: string;
   model: string;
   price: number;
   image: string;
@@ -267,9 +268,9 @@ function DeviceCheckContent() {
 
     try {
       const submissionsRef = collection(firestore, 'submissions');
+      // Check all submissions globally from all users
       const q = query(
         submissionsRef,
-        where('userId', '==', user.uid),
         where('imei', '==', trimmedImei),
         where('status', 'in', ['eligible', 'find_my_off', 'not_supported', 'paid', 'feedback', 'device_found']),
         limit(1)
@@ -297,7 +298,16 @@ function DeviceCheckContent() {
              return;
         }
       }
-    } catch (e) {}
+    } catch (e) {
+        // Handle potential permission errors if rules were restricted
+        if (e instanceof Error && e.message.includes('permission')) {
+            const permissionError = new FirestorePermissionError({
+                path: 'submissions',
+                operation: 'list',
+            });
+            errorEmitter.emit('permission-error', permissionError);
+        }
+    }
 
     if (!isServerOnline) {
         setIsChecking(false);
@@ -621,7 +631,7 @@ function DeviceCheckContent() {
                       <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
-                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
+                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
                         {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>}
                         <div className="pt-4"><LoginButton /></div>
                       </div>
