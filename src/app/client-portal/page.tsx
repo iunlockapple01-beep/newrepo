@@ -177,6 +177,7 @@ function DeviceCheckContent() {
   const usdtTrc20Image = getImage('usdt-trc20-icon');
   const bitcoinImage = getImage('bitcoin-icon');
   const ethereumImage = getImage('eth-icon');
+  const usdcImage = getImage('usdc-icon');
 
   const formDisabled = isChecking || !!submission || isOfflineSimulating;
   const shouldShowLoader = (isChecking || (submission && submission.status === 'waiting') || isOfflineSimulating) && !offlineError;
@@ -834,6 +835,23 @@ function DeviceCheckContent() {
                                                         </CopyToClipboard>
                                                     </div>
                                                 </div>
+                                                <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
+                                                    <div className="flex items-center gap-3">
+                                                        {usdcImage && <Image src={usdcImage.imageUrl} alt="USDC ERC20" width={32} height={32} className="rounded-full" />}
+                                                        <div>
+                                                            <p className="font-bold text-sm">USDC (ERC20 Network)</p>
+                                                            <p className="text-[10px] text-gray-500">Fast USD stablecoin.</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
+                                                        <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                                        <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                                                            <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                                                                <Copy className="w-4 h-4 text-gray-500"/>
+                                                            </Button>
+                                                        </CopyToClipboard>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <ScrollBar orientation="vertical" />
                                         </ScrollArea>
@@ -895,6 +913,23 @@ function DeviceCheckContent() {
                                             <div>
                                                 <p className="font-bold text-sm">Ethereum (ERC20)</p>
                                                 <p className="text-[10px] text-gray-500">Fast and secure network.</p>
+                                            </div>
+                                        </div>
+                                        <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
+                                            <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                            <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                                                    <Copy className="w-4 h-4 text-gray-500"/>
+                                                </Button>
+                                            </CopyToClipboard>
+                                        </div>
+                                    </div>
+                                    <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
+                                        <div className="flex items-center gap-3">
+                                            {usdcImage && <Image src={usdcImage.imageUrl} alt="USDC ERC20" width={32} height={32} className="rounded-full" />}
+                                            <div>
+                                                <p className="font-bold text-sm">USDC (ERC20 Network)</p>
+                                                <p className="text-[10px] text-gray-500">Fast USD stablecoin.</p>
                                             </div>
                                         </div>
                                         <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
