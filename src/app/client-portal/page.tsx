@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -135,7 +136,7 @@ const CopyToClipboard = ({ text, children }: { text: string; children: React.Rea
 
 function DeviceCheckContent() {
   const { data: user, loading: userLoading } = useUser();
-  const { firestore } = useFirebase();
+  const { firestore, auth } = useFirebase();
   const router = useRouter();
   const searchParams = useSearchParams();
   const model = searchParams.get('model') || 'Unknown Model';
@@ -450,10 +451,6 @@ function DeviceCheckContent() {
   };
 
   const usdtImage = getImage('usdt-icon');
-  const usdtTrc20Image = getImage('usdt-trc20-icon');
-  const bitcoinImage = getImage('bitcoin-icon');
-  const usdcImage = getImage('usdc-icon');
-  const ethImage = getImage('eth-icon');
   
   const currentBalance = userProfile?.balance || 0;
   const amountToPay = Math.max(0, price - currentBalance);
@@ -534,7 +531,7 @@ function DeviceCheckContent() {
     }
 
     if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off'].includes(submission.status)) {
-        const specialStatusLines = feedbackData.lines.filter(line => line === 'FIND_MY_ON_STATUS' || line === 'FIND_MY_OFF_STATUS');
+        const specialStatusLines = feedbackData.lines.filter(line => line === 'FIND_MY_ON_STATUS' || line === 'FIND_MY_OFF_STATUS' || line === 'Wrong Model: Choose correct device model and check again');
         const feedbackText = feedbackData.lines.filter(line => !specialStatusLines.includes(line)).join('\n');
         
         return (
@@ -554,6 +551,13 @@ function DeviceCheckContent() {
                       <div key={`special-${index}`} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
                         <span>Find My:</span>
                         <span className="bg-green-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">OFF</span>
+                      </div>
+                    )
+                  }
+                  if (line === 'Wrong Model: Choose correct device model and check again') {
+                    return (
+                      <div key={`special-${index}`} className="p-2 px-3 rounded-md bg-red-100 border border-red-200 text-sm font-bold text-red-800 flex items-center gap-2">
+                        <span>⚠️ Wrong Model: Choose correct device model and check again</span>
                       </div>
                     )
                   }
@@ -633,8 +637,8 @@ function DeviceCheckContent() {
                       <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
-                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>}
-                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>}
+                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>}
+                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>}
                         <div className="pt-4"><LoginButton /></div>
                       </div>
                     </SheetContent>
@@ -747,16 +751,6 @@ function DeviceCheckContent() {
                                 <div className="flex items-center gap-3">{usdtImage && <Image src={usdtImage.imageUrl} alt="USDT" width={32} height={32} className="rounded-full" />}<div><p className="font-semibold text-sm">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p><p className="text-xs text-gray-500 leading-tight">Use Binance Smart Chain for low fees.</p></div></div>
                                 <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between"><span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span><CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3"><Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/></CopyToClipboard></div>
                             </div>
-                            {!showOtherPayments ? (<Button variant="outline" className="w-full text-xs h-8 text-gray-500 flex items-center justify-center gap-2" onClick={() => setShowOtherPayments(true)}><span>Show Other Payment Methods</span><ChevronDown size={14} /></Button>) : (
-                                <div className="space-y-4 animate-fade-in pb-2">
-                                    <div className="flex items-center justify-between px-1"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Alternative Methods</p><Button variant="ghost" className="h-6 px-2 text-xs" onClick={() => setShowOtherPayments(false)}><ChevronUp size={12} className="mr-1" /> Hide</Button></div>
-                                    <div className="text-xs text-blue-600 font-medium mb-1 px-1 flex items-center justify-between"><span>More payment options below:</span><span className="animate-bounce">↓</span></div>
-                                    <div className="max-h-[320px] overflow-y-auto space-y-3 p-2 pb-24 border rounded-md bg-gray-50/50 relative">
-                                        <div className="p-3 border rounded-lg bg-white space-y-2"><div className="flex items-center gap-3">{usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}<div><p className="font-semibold text-sm">USDT (TRC20 Network)</p><p className="text-xs text-gray-500">Contact admin before sending.</p></div></div><div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between"><span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span><CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw"><Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/></CopyToClipboard></div></div>
-                                        <div className="p-3 border rounded-lg bg-white space-y-2"><div className="flex items-center gap-3">{usdcImage && <Image src={usdcImage.imageUrl} alt="USDC ERC20" width={32} height={32} className="rounded-full" />}<div><p className="font-semibold text-sm">USDC (ERC20 Network)</p><p className="text-xs text-gray-500">Fast & Secure Ethereum network.</p></div></div><div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between"><span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span><CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3"><Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/></CopyToClipboard></div></div>
-                                        <div className="p-3 border rounded-lg bg-white space-y-2"><div className="flex items-center gap-3">{ethImage && <Image src={ethImage.imageUrl} alt="Ethereum" width={32} height={32} className="rounded-full" />}<div><p className="font-semibold text-sm">Ethereum (ERC20 Network)</p><p className="text-xs text-gray-500">Official Ethereum mainnet.</p></div></div><div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between"><span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span><CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3"><Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/></CopyToClipboard></div></div>
-                                        <div className="p-3 border rounded-lg bg-white space-y-2"><div className="flex items-center gap-3">{bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}<div><p className="font-semibold text-sm">Bitcoin</p><p className="text-xs text-gray-500">Contact admin before sending.</p></div></div><div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between"><span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span><CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h"><Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/></CopyToClipboard></div></div>
-                                        <div className="h-20" aria-hidden="true" /></div></div>)}
                             <div className="text-xs text-center text-gray-500 bg-yellow-100 text-yellow-800 p-2 rounded-md">Payments made within the timer will be automatically applied.</div>
                         </>)}
                      {amountToPay <= 0 && <div className="text-center p-3 bg-green-100 text-green-800 rounded-lg"><p className="font-semibold text-sm">Your balance covers the full amount!</p><p className="text-xs">Click "Confirm" to use your balance for this unlock.</p></div>}

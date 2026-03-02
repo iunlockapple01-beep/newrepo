@@ -150,7 +150,7 @@ function AdminDashboard() {
     const feedbackText = feedbackValues[submissionId] || '';
     const status = feedbackStatus[submissionId];
     if (!status) return alert('Select an outcome.');
-    if (feedbackText.trim() === '' && status !== 'eligible' && status !== 'find_my_off') return alert('Enter feedback.');
+    if (feedbackText.trim() === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback') return alert('Enter feedback.');
 
     const lines = feedbackText.split('\n').filter(l => l.trim() && !l.startsWith('TIMESTAMP:'));
     if (status === 'eligible') lines.push('FIND_MY_ON_STATUS');
@@ -159,7 +159,7 @@ function AdminDashboard() {
         const timestamp = format(new Date(), "PPpp"); 
         lines.push(`TIMESTAMP:${timestamp}`);
     }
-    if (status === 'feedback') lines.push('You Have Selected Wrong Device Model');
+    if (status === 'feedback') lines.push('Wrong Model: Choose correct device model and check again');
 
     const submissionRef = doc(firestore, 'submissions', submissionId);
     const updatedData = {
@@ -168,7 +168,19 @@ function AdminDashboard() {
       updatedAt: serverTimestamp(),
     };
     updateDoc(submissionRef, updatedData)
-      .then(() => alert('Feedback sent!'))
+      .then(() => {
+        alert('Feedback sent!');
+        // If status is 'feedback' (Wrong Model), delete the submission to free up the IMEI
+        if (status === 'feedback') {
+            deleteDoc(submissionRef).catch(async (serverError) => {
+                const permissionError = new FirestorePermissionError({
+                    path: submissionRef.path,
+                    operation: 'delete',
+                });
+                errorEmitter.emit('permission-error', permissionError);
+            });
+        }
+      })
       .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
             path: submissionRef.path,
@@ -317,7 +329,7 @@ function AdminDashboard() {
                       <p className="text-sm text-gray-600">User ID: {sub.userId}</p>
                       <p className="text-sm text-gray-600">IMEI/Serial: <strong>{sub.imei}</strong></p>
                       <p className="text-sm text-gray-600">Price: ${sub.price}</p>
-                      <div className="mt-4"><label className="block text-sm font-medium text-gray-700 mb-1">Feedback:</label><Textarea value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:') && l !== 'You Have Selected Wrong Device Model').join('\n') || ''} onChange={(e) => handleFeedbackChange(sub.id, e.target.value)} className="font-mono" /></div>
+                      <div className="mt-4"><label className="block text-sm font-medium text-gray-700 mb-1">Feedback:</label><Textarea value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:') && l !== 'Wrong Model: Choose correct device model and check again').join('\n') || ''} onChange={(e) => handleFeedbackChange(sub.id, e.target.value)} className="font-mono" /></div>
                     </CardContent>
                     <CardFooter className='flex-col items-stretch gap-3'>
                       {sub.status === 'waiting' && <Button onClick={() => handleDeviceFound(sub.id)} className="w-full">Device Found</Button>}
@@ -326,7 +338,7 @@ function AdminDashboard() {
                           <SelectContent>
                               <SelectItem value="eligible">Eligible for Unlock</SelectItem>
                               <SelectItem value="not_supported">Not Supported for Unlock</SelectItem>
-                              <SelectItem value="feedback">Wrong Model</SelectItem>
+                              <SelectItem value="feedback">Wrong Model: Choose correct device model and check again</SelectItem>
                               <SelectItem value="find_my_off">Find My: OFF</SelectItem>
                           </SelectContent>
                       </Select>
