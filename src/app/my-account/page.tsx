@@ -540,7 +540,7 @@ function MyAccountContent() {
 
                         {showOtherPayments && (
                             <ScrollArea className="h-[200px] pr-4 mt-1 border rounded-xl bg-gray-50/30">
-                                <div className="space-y-3 animate-fade-in p-3 pb-[300px] lg:pb-8">
+                                <div className="space-y-3 animate-fade-in p-3 pb-[500px] lg:pb-8">
                                     <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                         <div className="flex items-center gap-3">
                                             {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
