@@ -578,7 +578,7 @@ function DeviceCheckContent() {
                 )}
               </div>
               {feedbackData.timestamp && (
-                <p className="text-xs text-gray-500 mt-2 text-right">Feedback received: {feedbackData.timestamp}</p>
+                <p className="text-xs text-gray-500 mt-2 text-right animate-fade-in">Feedback received: {feedbackData.timestamp}</p>
               )}
               {submission.status === 'eligible' && (
                 <div className="mt-4 text-right flex items-center justify-end gap-4 animate-fade-in">
@@ -632,7 +632,9 @@ function DeviceCheckContent() {
                   <Sheet>
                     <SheetTrigger asChild><Button variant="ghost" size="icon"><Menu /></Button></SheetTrigger>
                     <SheetContent side="right">
-                      <SheetHeader><SheetTitle className="sr-only">Mobile Menu</SheetTitle></SheetHeader>
+                      <SheetHeader>
+                        <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                      </SheetHeader>
                       <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
@@ -735,7 +737,7 @@ function DeviceCheckContent() {
                  {submission && <div className="text-xs bg-gray-100 p-2 rounded-md text-gray-600 mt-1"><p><strong>Model:</strong> {submission.model} | <strong>IMEI/Serial:</strong> {submission.imei}</p></div>}
             </DialogHeader>
              <ScrollArea className="flex-1 px-4">
-                <div className="space-y-4 animate-fade-in pt-2 pb-44">
+                <div className="space-y-4 animate-fade-in pt-2 pb-8">
                     <Alert variant="default" className="bg-blue-50 border-blue-200 py-2"><AlertDescription className="text-xs">For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.</AlertDescription></Alert>
                     <div className="space-y-2">
                         <div className="grid grid-cols-2 gap-4 text-center">
@@ -762,7 +764,7 @@ function DeviceCheckContent() {
                             </Button>
 
                             {showOtherPayments && (
-                                <div className="space-y-3 animate-fade-in">
+                                <div className="space-y-3 animate-fade-in pb-4">
                                     <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
                                         <div className="flex items-center gap-3">
                                             {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
