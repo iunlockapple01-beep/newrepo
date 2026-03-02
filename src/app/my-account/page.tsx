@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
@@ -113,6 +112,7 @@ function MyAccountContent() {
   const [isSubmittingBulk, setIsSubmittingBulk] = useState(false);
   const [bulkPaid, setBulkPaid] = useState(false);
   const [timeLeft, setTimeLeft] = useState(20 * 60);
+  const [showOtherPayments, setShowOtherPayments] = useState(false);
 
   useEffect(() => {
     if (!userLoading && !user) {
@@ -140,6 +140,7 @@ function MyAccountContent() {
 
   const handleOpenBulkModal = () => {
     setTimeLeft(20 * 60);
+    setShowOtherPayments(false);
     setIsBulkPayModalOpen(true);
   };
   
@@ -193,6 +194,8 @@ function MyAccountContent() {
   };
 
   const usdtImage = getImage('usdt-icon');
+  const usdtTrc20Image = getImage('usdt-trc20-icon');
+  const bitcoinImage = getImage('bitcoin-icon');
   const telegramIcon = getImage('telegram-icon');
   const whatsappIcon = getImage('whatsapp-icon');
   
@@ -505,21 +508,68 @@ function MyAccountContent() {
                   </div>
                   
                   {bulkAmountToPay > 0 && (
-                    <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
-                        <div className="flex items-center gap-3">
-                            {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT BEP20" width={32} height={32} className="rounded-full" data-ai-hint="usdt logo" />}
-                            <div>
-                                <p className="font-semibold text-sm">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p>
-                                <p className="text-xs text-gray-500 leading-tight">Use Binance Smart Chain for low fees.</p>
+                    <>
+                        <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
+                            <div className="flex items-center gap-3">
+                                {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT BEP20" width={32} height={32} className="rounded-full" data-ai-hint="usdt logo" />}
+                                <div>
+                                    <p className="font-semibold text-sm">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p>
+                                    <p className="text-xs text-gray-500 leading-tight">Use Binance Smart Chain for low fees.</p>
+                                </div>
+                            </div>
+                            <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                            <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                                    <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                </CopyToClipboard>
                             </div>
                         </div>
-                        <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
-                          <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
-                            <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
-                                <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
-                            </CopyToClipboard>
-                        </div>
-                    </div>
+
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="w-full text-blue-600 flex items-center justify-center gap-1"
+                            onClick={() => setShowOtherPayments(!showOtherPayments)}
+                        >
+                            {showOtherPayments ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                            {showOtherPayments ? "Show Less" : "Other Payment Methods"}
+                        </Button>
+
+                        {showOtherPayments && (
+                            <div className="space-y-3 animate-fade-in">
+                                <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
+                                    <div className="flex items-center gap-3">
+                                        {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
+                                        <div>
+                                            <p className="font-semibold text-sm">USDT (TRC20 Network)</p>
+                                            <p className="text-xs text-gray-500">Fast transaction speed.</p>
+                                        </div>
+                                    </div>
+                                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                        <span>TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X</span>
+                                        <CopyToClipboard text="TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X">
+                                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                        </CopyToClipboard>
+                                    </div>
+                                </div>
+                                <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
+                                    <div className="flex items-center gap-3">
+                                        {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}
+                                        <div>
+                                            <p className="font-semibold text-sm">Bitcoin (BTC)</p>
+                                            <p className="text-xs text-gray-500">Standard network confirmation.</p>
+                                        </div>
+                                    </div>
+                                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                        <span>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</span>
+                                        <CopyToClipboard text="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa">
+                                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                        </CopyToClipboard>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </>
                   )}
 
                   {bulkAmountToPay <= 0 && (
