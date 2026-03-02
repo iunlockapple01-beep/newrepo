@@ -66,7 +66,7 @@ const paymentMethods = [
 
 const CopyToClipboard = ({ text, children }: { text: string; children: React.ReactNode }) => {
   const { toast } = useToast();
-  handleCopy = () => {
+  const handleCopy = () => {
     navigator.clipboard.writeText(text);
     toast({
       title: "Copied to clipboard!",
@@ -531,16 +531,16 @@ function MyAccountContent() {
 
                         <Button 
                             variant="outline" 
-                            className="w-full h-12 text-gray-700 bg-gray-50 flex items-center justify-center gap-2 border rounded-xl hover:bg-gray-100 transition-all font-semibold"
+                            className="w-full h-12 text-gray-700 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 flex items-center justify-center gap-2 border border-gray-200 rounded-xl transition-all font-semibold shadow-none"
                             onClick={() => setShowOtherPayments(!showOtherPayments)}
                         >
                             <span className="text-sm">Show Other Payment Methods</span>
-                            <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", showOtherPayments && "rotate-180")} />
+                            <ChevronDown className={cn("h-4 w-4 transition-transform duration-200 text-gray-500", showOtherPayments && "rotate-180")} />
                         </Button>
 
                         {showOtherPayments && (
                             <ScrollArea className="h-[240px] pr-4 mt-2">
-                                <div className="space-y-3 animate-fade-in pb-10">
+                                <div className="space-y-3 animate-fade-in pb-24">
                                     <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                         <div className="flex items-center gap-3">
                                             {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
