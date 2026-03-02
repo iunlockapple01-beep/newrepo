@@ -66,7 +66,7 @@ const paymentMethods = [
 
 const CopyToClipboard = ({ text, children }: { text: string; children: React.ReactNode }) => {
   const { toast } = useToast();
-  const handleCopy = () => {
+  handleCopy = () => {
     navigator.clipboard.writeText(text);
     toast({
       title: "Copied to clipboard!",
@@ -456,7 +456,7 @@ function MyAccountContent() {
       
       <Dialog open={isBulkPayModalOpen} onOpenChange={setIsBulkPayModalOpen}>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
-            <DialogHeader className="px-5 py-3 border-b bg-white">
+            <DialogHeader className="px-5 py-2.5 border-b bg-white">
                 <DialogTitle className="text-base sm:text-lg flex items-center gap-3 pr-12">
                     <span>Bulk Payment (20% Off)</span>
                     {timeLeft > 0 && (
@@ -503,7 +503,7 @@ function MyAccountContent() {
                           </div>
                           <div></div>
                       </div>
-                      <div className="text-center bg-gray-50 py-2.5 rounded-xl border border-dashed">
+                      <div className="text-center bg-gray-50 py-2 rounded-xl border border-dashed">
                           <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Amount to Pay</p>
                           <p className="text-3xl font-black">${bulkAmountToPay.toFixed(2)}</p>
                       </div>
@@ -540,7 +540,7 @@ function MyAccountContent() {
 
                         {showOtherPayments && (
                             <ScrollArea className="h-[200px] pr-4 mt-1 border rounded-xl bg-gray-50/30">
-                                <div className="space-y-3 animate-fade-in p-3 pb-32 sm:pb-6">
+                                <div className="space-y-3 animate-fade-in p-3 pb-40 lg:pb-6">
                                     <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                         <div className="flex items-center gap-3">
                                             {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
@@ -614,7 +614,7 @@ function MyAccountContent() {
                   )}
               </div>
             </ScrollArea>
-            <DialogFooter className="p-4 border-t flex flex-row gap-3 mt-auto bg-gray-50">
+            <DialogFooter className="p-3 border-t flex flex-row gap-3 mt-auto bg-gray-50">
                 <Button variant="outline" className="flex-1 h-11 rounded-xl text-sm font-bold shadow-sm" onClick={() => setIsBulkPayModalOpen(false)}>Cancel</Button>
                 <Button onClick={handleBulkPaid} className="btn-primary text-white flex-1 h-11 rounded-xl text-sm font-bold shadow-md" disabled={isSubmittingBulk}>
                   {isSubmittingBulk ? (

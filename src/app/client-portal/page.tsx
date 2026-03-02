@@ -721,7 +721,7 @@ function DeviceCheckContent() {
       
       <Dialog open={isPaymentModalOpen} onOpenChange={setPaymentModalOpen}>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
-            <DialogHeader className="px-5 py-3 border-b bg-white">
+            <DialogHeader className="px-5 py-2.5 border-b bg-white">
                 <DialogTitle className='flex items-center gap-3 text-base sm:text-lg pr-12'>
                     <span>Pay with Crypto</span>
                     {timeLeft > 0 && <span className="text-xs sm:text-sm font-mono bg-blue-100 text-blue-800 rounded-md px-2 py-0.5">{formatTime(timeLeft)}</span>}
@@ -742,7 +742,7 @@ function DeviceCheckContent() {
                             <div><p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Service Cost</p><p className="text-lg font-bold">${price.toFixed(2)}</p></div>
                             <div><p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Your Balance</p><p className="text-lg font-bold text-green-600">-${currentBalance.toFixed(2)}</p></div>
                         </div>
-                        <div className="text-center bg-gray-50 py-2.5 rounded-xl border border-dashed">
+                        <div className="text-center bg-gray-50 py-2 rounded-xl border border-dashed">
                             <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Amount to Pay</p>
                             <p className="text-3xl font-black">${amountToPay.toFixed(2)}</p>
                         </div>
@@ -779,7 +779,7 @@ function DeviceCheckContent() {
 
                             {showOtherPayments && (
                                 <ScrollArea className="h-[200px] pr-4 mt-1 border rounded-xl bg-gray-50/30">
-                                    <div className="space-y-3 animate-fade-in p-3 pb-32 sm:pb-6">
+                                    <div className="space-y-3 animate-fade-in p-3 pb-40 lg:pb-6">
                                         <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                             <div className="flex items-center gap-3">
                                                 {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
@@ -845,7 +845,7 @@ function DeviceCheckContent() {
                      {amountToPay <= 0 && <div className="text-center p-6 bg-green-50 border border-green-100 text-green-800 rounded-2xl animate-fade-in"><CheckCircle2 className="h-10 w-10 mx-auto mb-3 text-green-500"/><p className="font-bold text-base">Your balance covers the full amount!</p><p className="text-xs opacity-80">Click "Confirm" to use your balance for this unlock.</p></div>}
                 </div>
             </ScrollArea>
-            <DialogFooter className="p-4 border-t flex flex-row gap-3 mt-auto bg-gray-50">
+            <DialogFooter className="p-3 border-t flex flex-row gap-3 mt-auto bg-gray-50">
                 <Button variant="outline" className="flex-1 h-11 rounded-xl text-sm font-bold shadow-sm" onClick={() => setPaymentModalOpen(false)}>Cancel</Button>
                 <Button onClick={handlePaid} className="btn-primary text-white flex-1 h-11 rounded-xl text-sm font-bold shadow-md" disabled={isSubmittingOrder}>
                     {isSubmittingOrder ? <><Loader className="mr-2 h-4 w-4 animate-spin" />Processing...</> : (amountToPay > 0 ? 'I Paid' : 'Confirm')}
