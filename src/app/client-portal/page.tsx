@@ -176,6 +176,7 @@ function DeviceCheckContent() {
   const usdtImage = getImage('usdt-icon');
   const usdtTrc20Image = getImage('usdt-trc20-icon');
   const bitcoinImage = getImage('bitcoin-icon');
+  const ethereumImage = getImage('eth-icon');
 
   const formDisabled = isChecking || !!submission || isOfflineSimulating;
   const shouldShowLoader = (isChecking || (submission && submission.status === 'waiting') || isOfflineSimulating) && !offlineError;
@@ -791,6 +792,21 @@ function DeviceCheckContent() {
                                         <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
                                             <span>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</span>
                                             <CopyToClipboard text="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa">
+                                                <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                            </CopyToClipboard>
+                                        </div>
+                                    </div>
+                                    <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
+                                        <div className="flex items-center gap-3">
+                                            {ethereumImage && <Image src={ethereumImage.imageUrl} alt="Ethereum" width={32} height={32} className="rounded-full" />}
+                                            <div>
+                                                <p className="font-semibold text-sm">Ethereum (ERC20)</p>
+                                                <p className="text-xs text-gray-500">Fast and secure network.</p>
+                                            </div>
+                                        </div>
+                                        <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                            <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                            <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
                                                 <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
                                             </CopyToClipboard>
                                         </div>

@@ -196,6 +196,7 @@ function MyAccountContent() {
   const usdtImage = getImage('usdt-icon');
   const usdtTrc20Image = getImage('usdt-trc20-icon');
   const bitcoinImage = getImage('bitcoin-icon');
+  const ethereumImage = getImage('eth-icon');
   const telegramIcon = getImage('telegram-icon');
   const whatsappIcon = getImage('whatsapp-icon');
   
@@ -241,7 +242,7 @@ function MyAccountContent() {
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
                     {user && (
-                        <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
+                        <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
                     )}
                     {isAdmin && (
                       <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>
@@ -346,7 +347,7 @@ function MyAccountContent() {
           </div>
           {ordersLoading ? (
             <div className="text-center py-16 px-6 bg-white rounded-2xl shadow-lg">
-                <p className="text-gray-600">Loading orders...</p>
+                <p className="text-center text-gray-600">Loading orders...</p>
             </div>
           ) : orders && orders.length > 0 ? (
             <Card>
@@ -563,6 +564,21 @@ function MyAccountContent() {
                                     <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
                                         <span>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</span>
                                         <CopyToClipboard text="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa">
+                                            <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                        </CopyToClipboard>
+                                    </div>
+                                </div>
+                                <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
+                                    <div className="flex items-center gap-3">
+                                        {ethereumImage && <Image src={ethereumImage.imageUrl} alt="Ethereum" width={32} height={32} className="rounded-full" />}
+                                        <div>
+                                            <p className="font-semibold text-sm">Ethereum (ERC20)</p>
+                                            <p className="text-xs text-gray-500">Fast and secure network.</p>
+                                        </div>
+                                    </div>
+                                    <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                        <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                        <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
                                             <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
                                         </CopyToClipboard>
                                     </div>
