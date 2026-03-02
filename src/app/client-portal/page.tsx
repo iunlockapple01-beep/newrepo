@@ -616,7 +616,7 @@ function DeviceCheckContent() {
                 </div>
                 <div className="hidden md:flex items-center gap-4">
                     <Link href="/" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</Link>
-                    <Link href="/services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</Link>
+                    <Link href="/services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors ring-1 ring-inset ring-primary">Services</Link>
                     {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>}
                     {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>}
                     <LoginButton />
@@ -779,7 +779,7 @@ function DeviceCheckContent() {
 
                             {showOtherPayments && (
                                 <ScrollArea className="h-[200px] pr-4 mt-1 border rounded-xl bg-gray-50/30">
-                                    <div className="space-y-3 animate-fade-in p-3 pb-64 lg:pb-8">
+                                    <div className="space-y-3 animate-fade-in p-3 pb-[300px] lg:pb-8">
                                         <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                             <div className="flex items-center gap-3">
                                                 {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
