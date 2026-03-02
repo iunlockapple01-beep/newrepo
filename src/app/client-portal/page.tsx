@@ -792,8 +792,8 @@ function DeviceCheckContent() {
                                                         </div>
                                                     </div>
                                                     <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                                        <span>TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X</span>
-                                                        <CopyToClipboard text="TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X">
+                                                        <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
+                                                        <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
                                                             <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
                                                                 <Copy className="w-4 h-4 text-gray-500"/>
                                                             </Button>
@@ -809,8 +809,8 @@ function DeviceCheckContent() {
                                                         </div>
                                                     </div>
                                                     <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                                        <span>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</span>
-                                                        <CopyToClipboard text="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa">
+                                                        <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
+                                                        <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
                                                             <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
                                                                 <Copy className="w-4 h-4 text-gray-500"/>
                                                             </Button>
@@ -864,8 +864,8 @@ function DeviceCheckContent() {
                                             </div>
                                         </div>
                                         <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                            <span>TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X</span>
-                                            <CopyToClipboard text="TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X">
+                                            <span>TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw</span>
+                                            <CopyToClipboard text="TL5qvz8Jb82QvMMfKkNXDwMu6SrZfKg1kw">
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
                                                     <Copy className="w-4 h-4 text-gray-500"/>
                                                 </Button>
@@ -881,8 +881,8 @@ function DeviceCheckContent() {
                                             </div>
                                         </div>
                                         <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                            <span>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</span>
-                                            <CopyToClipboard text="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa">
+                                            <span>bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h</span>
+                                            <CopyToClipboard text="bc1qtluc3xw76uwa0wf0klmvuvf5plwe6vxas0es2h">
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
                                                     <Copy className="w-4 h-4 text-gray-500"/>
                                                 </Button>
