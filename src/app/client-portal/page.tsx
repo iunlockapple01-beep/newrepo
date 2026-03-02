@@ -272,7 +272,6 @@ function DeviceCheckContent() {
       const q = query(
         submissionsRef,
         where('imei', '==', trimmedImei),
-        where('status', 'in', ['eligible', 'find_my_off', 'not_supported', 'paid', 'feedback', 'device_found']),
         limit(1)
       );
       const querySnapshot = await getDocs(q);
@@ -293,8 +292,11 @@ function DeviceCheckContent() {
             }, 4000); 
             return;
         } else {
-             setIsChecking(false);
-             setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
+             // Add a delay before showing the error to let the animation run
+             setTimeout(() => {
+                 setIsChecking(false);
+                 setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
+             }, 3500); 
              return;
         }
       }
@@ -631,8 +633,8 @@ function DeviceCheckContent() {
                       <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
-                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
-                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>}
+                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>}
+                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>}
                         <div className="pt-4"><LoginButton /></div>
                       </div>
                     </SheetContent>
