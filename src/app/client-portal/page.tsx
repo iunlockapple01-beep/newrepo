@@ -272,7 +272,6 @@ function DeviceCheckContent() {
 
     try {
       const submissionsRef = collection(firestore, 'submissions');
-      // Check all submissions globally from all users
       const q = query(
         submissionsRef,
         where('imei', '==', trimmedImei)
@@ -281,8 +280,6 @@ function DeviceCheckContent() {
 
       if (!querySnapshot.empty) {
         const existingDocs = querySnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as Submission) }));
-        
-        // 1. Check for exact model match (prioritize even if it's 'feedback')
         const match = existingDocs.find(s => s.model === model);
         if (match) {
             setIsCachedCheck(true);
@@ -297,21 +294,16 @@ function DeviceCheckContent() {
             return;
         }
 
-        // 2. Check for conflict (different model AND status is NOT 'feedback')
         const conflict = existingDocs.find(s => s.model !== model && s.status !== 'feedback');
         if (conflict) {
-             // Add a delay before showing the error to let the animation run
              setTimeout(() => {
                  setIsChecking(false);
                  setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
              }, 3500); 
              return;
         }
-        
-        // 3. If only 'feedback' records exist for other models, fall through to create a new submission
       }
     } catch (e) {
-        // Handle potential permission errors
         if (e instanceof Error && e.message.includes('permission')) {
             const permissionError = new FirestorePermissionError({
                 path: 'submissions',
@@ -470,7 +462,7 @@ function DeviceCheckContent() {
     if (validationError) {
       return (
           <div className="w-full text-left p-4">
-              <div className="p-2 px-3 rounded-md bg-red-100 border border-red-200 text-sm whitespace-pre-wrap font-mono text-red-800">
+              <div className="p-2 px-3 rounded-md bg-red-100 border border-red-200 text-sm whitespace-pre-wrap font-mono text-red-800 animate-fade-in">
                 {validationError}
               </div>
           </div>
@@ -510,7 +502,7 @@ function DeviceCheckContent() {
 
     if (!submissionId) {
         return (
-            <div className="flex flex-col items-center justify-center h-full">
+            <div className="flex flex-col items-center justify-center h-full animate-fade-in">
               <p className="font-semibold text-gray-700">No IMEI submitted yet.</p>
               <p className="text-sm text-gray-500">Submit your IMEI or serial number to check if unlock is supported.</p>
             </div>
@@ -518,7 +510,7 @@ function DeviceCheckContent() {
     }
     if (!submission && submissionId && !submissionLoading) {
         return (
-            <div className="flex flex-col items-center justify-center h-full">
+            <div className="flex flex-col items-center justify-center h-full animate-fade-in">
               <p className="font-semibold text-destructive">This submission was not found.</p>
               <p className="text-sm text-gray-500">It may have been deleted by an administrator. Please clear and try again.</p>
             </div>
@@ -739,93 +731,122 @@ function DeviceCheckContent() {
             </DialogHeader>
              <ScrollArea className="flex-1 px-4">
                 <div className="space-y-4 animate-fade-in pt-2 pb-8">
-                    <Alert variant="default" className="bg-blue-50 border-blue-200 py-2"><AlertDescription className="text-xs">For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.</AlertDescription></Alert>
-                    <div className="space-y-2">
+                    <Alert variant="default" className="bg-blue-50 border-blue-200 py-2">
+                        <AlertDescription className="text-xs text-center">
+                            For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
+                        </AlertDescription>
+                    </Alert>
+                    
+                    <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-4 text-center">
-                            <div><p className="text-gray-500 text-xs uppercase tracking-wider">Service Cost</p><p className="text-base font-semibold">${price.toFixed(2)}</p></div>
-                            <div><p className="text-gray-500 text-xs uppercase tracking-wider">Your Balance</p><p className="text-base font-semibold text-green-600">-${currentBalance.toFixed(2)}</p></div>
+                            <div><p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Service Cost</p><p className="text-lg font-bold">${price.toFixed(2)}</p></div>
+                            <div><p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Your Balance</p><p className="text-lg font-bold text-green-600">-${currentBalance.toFixed(2)}</p></div>
                         </div>
-                        <Separator className="my-1" /><div className="text-center"><p className="text-gray-500 text-xs uppercase tracking-wider">Amount to Pay</p><p className="text-2xl font-bold">${amountToPay.toFixed(2)}</p></div>
+                        <div className="text-center bg-gray-50 py-3 rounded-xl border border-dashed">
+                            <p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Amount to Pay</p>
+                            <p className="text-3xl font-black">${amountToPay.toFixed(2)}</p>
+                        </div>
                     </div>
+
                     {amountToPay > 0 && (
                         <>
-                            <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
-                                <div className="flex items-center gap-3">{usdtImage && <Image src={usdtImage.imageUrl} alt="USDT" width={32} height={32} className="rounded-full" />}<div><p className="font-semibold text-sm">USDT (BEP20 Network) - <span className="text-green-600 font-bold">Recommended</span></p><p className="text-xs text-gray-500 leading-tight">Use Binance Smart Chain for low fees.</p></div></div>
-                                <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between"><span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span><CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3"><Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/></CopyToClipboard></div>
+                            <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
+                                <div className="flex items-center gap-3">
+                                    {usdtImage && <Image src={usdtImage.imageUrl} alt="USDT" width={32} height={32} className="rounded-full" />}
+                                    <div>
+                                        <p className="font-bold text-sm">USDT (BEP20 Network) - <span className="text-green-600">Recommended</span></p>
+                                        <p className="text-[10px] text-gray-500">Use Binance Smart Chain for low fees.</p>
+                                    </div>
+                                </div>
+                                <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
+                                    <span className="font-medium">0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
+                                    <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 ml-2 hover:bg-gray-200">
+                                            <Copy className="w-4 h-4 text-gray-500"/>
+                                        </Button>
+                                    </CopyToClipboard>
+                                </div>
                             </div>
 
                             <Button 
                                 variant="ghost" 
-                                size="sm" 
-                                className="w-full text-blue-600 flex items-center justify-center gap-1"
+                                className="w-full h-12 text-gray-500 flex items-center justify-center gap-2 border rounded-xl hover:bg-gray-50 transition-all"
                                 onClick={() => setShowOtherPayments(!showOtherPayments)}
                             >
+                                <span className="text-sm font-medium">Show Other Payment Methods</span>
                                 {showOtherPayments ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                {showOtherPayments ? "Show Less" : "Other Payment Methods"}
                             </Button>
 
                             {showOtherPayments && (
                                 <div className="space-y-3 animate-fade-in pb-4">
-                                    <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
+                                    <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                         <div className="flex items-center gap-3">
                                             {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
                                             <div>
-                                                <p className="font-semibold text-sm">USDT (TRC20 Network)</p>
-                                                <p className="text-xs text-gray-500">Fast transaction speed.</p>
+                                                <p className="font-bold text-sm">USDT (TRC20 Network)</p>
+                                                <p className="text-[10px] text-gray-500">Standard Tether network.</p>
                                             </div>
                                         </div>
-                                        <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                        <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
                                             <span>TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X</span>
                                             <CopyToClipboard text="TLvAnvEjMTvRWnmNbZ6vpxUKvX9Zp1Xv1X">
-                                                <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                                                    <Copy className="w-4 h-4 text-gray-500"/>
+                                                </Button>
                                             </CopyToClipboard>
                                         </div>
                                     </div>
-                                    <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
+                                    <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                         <div className="flex items-center gap-3">
                                             {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}
                                             <div>
-                                                <p className="font-semibold text-sm">Bitcoin (BTC)</p>
-                                                <p className="text-xs text-gray-500">Standard network confirmation.</p>
+                                                <p className="font-bold text-sm">Bitcoin (BTC)</p>
+                                                <p className="text-[10px] text-gray-500">Traditional network confirmation.</p>
                                             </div>
                                         </div>
-                                        <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                        <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
                                             <span>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</span>
                                             <CopyToClipboard text="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa">
-                                                <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                                                    <Copy className="w-4 h-4 text-gray-500"/>
+                                                </Button>
                                             </CopyToClipboard>
                                         </div>
                                     </div>
-                                    <div className="p-3 border rounded-lg bg-gray-50 space-y-2">
+                                    <div className="p-4 border rounded-2xl bg-white shadow-sm space-y-3">
                                         <div className="flex items-center gap-3">
                                             {ethereumImage && <Image src={ethereumImage.imageUrl} alt="Ethereum" width={32} height={32} className="rounded-full" />}
                                             <div>
-                                                <p className="font-semibold text-sm">Ethereum (ERC20)</p>
-                                                <p className="text-xs text-gray-500">Fast and secure network.</p>
+                                                <p className="font-bold text-sm">Ethereum (ERC20)</p>
+                                                <p className="text-[10px] text-gray-500">Fast and secure smart contract network.</p>
                                             </div>
                                         </div>
-                                        <div className="font-mono bg-gray-100 p-2 rounded-md break-all text-sm flex items-center justify-between">
+                                        <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
                                             <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
                                             <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
-                                                <Copy className="w-4 h-4 ml-2 text-gray-500 hover:text-gray-800"/>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
+                                                    <Copy className="w-4 h-4 text-gray-500"/>
+                                                </Button>
                                             </CopyToClipboard>
                                         </div>
                                     </div>
                                 </div>
                             )}
 
-                            <div className="text-xs text-center text-gray-500 bg-yellow-100 text-yellow-800 p-2 rounded-md">Payments made within the timer will be automatically applied.</div>
+                            <Alert className="bg-yellow-50 border-yellow-100 py-3 rounded-xl">
+                                <AlertDescription className="text-[11px] text-center text-yellow-800 font-medium">
+                                    Payments made within the timer will be automatically applied.
+                                </AlertDescription>
+                            </Alert>
                         </>)}
-                     {amountToPay <= 0 && <div className="text-center p-3 bg-green-100 text-green-800 rounded-lg"><p className="font-semibold text-sm">Your balance covers the full amount!</p><p className="text-xs">Click "Confirm" to use your balance for this unlock.</p></div>}
+                     {amountToPay <= 0 && <div className="text-center p-6 bg-green-50 border border-green-100 text-green-800 rounded-2xl animate-fade-in"><CheckCircle2 className="h-10 w-10 mx-auto mb-3 text-green-500"/><p className="font-bold text-base">Your balance covers the full amount!</p><p className="text-xs opacity-80">Click "Confirm" to use your balance for this unlock.</p></div>}
                 </div>
             </ScrollArea>
-            <DialogFooter className="p-4 pt-2 border-t mt-auto">
-                <div className="flex flex-row justify-end gap-3 w-full">
-                    <Button variant="outline" className="flex-1 h-10 text-sm" onClick={() => setPaymentModalOpen(false)}>Cancel</Button>
-                    <Button onClick={handlePaid} className="btn-primary text-white flex-1 h-10 text-sm" disabled={isSubmittingOrder}>
-                        {isSubmittingOrder ? <><Loader className="mr-2 h-4 w-4 animate-spin" />Processing...</> : (amountToPay > 0 ? 'I Paid' : 'Confirm')}
-                    </Button>
-                </div>
+            <DialogFooter className="p-4 border-t flex flex-row gap-3 mt-auto bg-gray-50">
+                <Button variant="outline" className="flex-1 h-12 rounded-xl text-sm font-bold shadow-sm" onClick={() => setPaymentModalOpen(false)}>Cancel</Button>
+                <Button onClick={handlePaid} className="btn-primary text-white flex-1 h-12 rounded-xl text-sm font-bold shadow-md" disabled={isSubmittingOrder}>
+                    {isSubmittingOrder ? <><Loader className="mr-2 h-4 w-4 animate-spin" />Processing...</> : (amountToPay > 0 ? 'I Paid' : 'Confirm')}
+                </Button>
             </DialogFooter>
         </DialogContent>
       </Dialog>
