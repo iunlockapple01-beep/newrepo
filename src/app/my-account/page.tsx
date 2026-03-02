@@ -457,10 +457,10 @@ function MyAccountContent() {
       <Dialog open={isBulkPayModalOpen} onOpenChange={setIsBulkPayModalOpen}>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
             <DialogHeader className="px-5 py-3 border-b bg-white">
-                <DialogTitle className="text-base sm:text-lg flex justify-between items-center">
+                <DialogTitle className="text-base sm:text-lg flex items-center gap-3 pr-12">
                     <span>Bulk Payment (20% Off)</span>
                     {timeLeft > 0 && (
-                        <span className="text-sm font-mono bg-blue-100 text-blue-800 rounded-md px-2 py-0.5">
+                        <span className="text-xs sm:text-sm font-mono bg-blue-100 text-blue-800 rounded-md px-2 py-0.5">
                             {formatTime(timeLeft)}
                         </span>
                     )}

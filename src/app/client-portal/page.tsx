@@ -722,9 +722,9 @@ function DeviceCheckContent() {
       <Dialog open={isPaymentModalOpen} onOpenChange={setPaymentModalOpen}>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
             <DialogHeader className="px-5 py-3 border-b bg-white">
-                <DialogTitle className='flex justify-between items-center text-base sm:text-lg'>
+                <DialogTitle className='flex items-center gap-3 text-base sm:text-lg pr-12'>
                     <span>Pay with Crypto</span>
-                    {timeLeft > 0 && <span className="text-sm font-mono bg-blue-100 text-blue-800 rounded-md px-2 py-0.5">{formatTime(timeLeft)}</span>}
+                    {timeLeft > 0 && <span className="text-xs sm:text-sm font-mono bg-blue-100 text-blue-800 rounded-md px-2 py-0.5">{formatTime(timeLeft)}</span>}
                 </DialogTitle>
                 <DialogDescription className="text-sm">Pay unlock fees for this device. Send the exact crypto amount.</DialogDescription>
                  {submission && <div className="text-xs bg-gray-100 p-2 rounded-md text-gray-600 mt-1"><p><strong>Model:</strong> {submission.model} | <strong>IMEI/Serial:</strong> {submission.imei}</p></div>}
