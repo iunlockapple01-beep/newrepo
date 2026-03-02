@@ -159,7 +159,6 @@ function AdminDashboard() {
         const timestamp = format(new Date(), "PPpp"); 
         lines.push(`TIMESTAMP:${timestamp}`);
     }
-    if (status === 'feedback') lines.push('Wrong Model: Choose correct device model and check again');
 
     const submissionRef = doc(firestore, 'submissions', submissionId);
     const updatedData = {
@@ -265,7 +264,7 @@ function AdminDashboard() {
                   <div className="flex flex-col gap-4 p-4">
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
-                    {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
+                    {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
                     {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
                     <div className='pt-4'><LoginButton /></div>
                   </div>
@@ -319,7 +318,7 @@ function AdminDashboard() {
                       <p className="text-sm text-gray-600">User ID: {sub.userId}</p>
                       <p className="text-sm text-gray-600">IMEI/Serial: <strong>{sub.imei}</strong></p>
                       <p className="text-sm text-gray-600">Price: ${sub.price}</p>
-                      <div className="mt-4"><label className="block text-sm font-medium text-gray-700 mb-1">Feedback:</label><Textarea value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:') && l !== 'Wrong Model: Choose correct device model and check again').join('\n') || ''} onChange={(e) => handleFeedbackChange(sub.id, e.target.value)} className="font-mono" /></div>
+                      <div className="mt-4"><label className="block text-sm font-medium text-gray-700 mb-1">Feedback:</label><Textarea value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:') && !l.includes('Wrong Model:')).join('\n') || ''} onChange={(e) => handleFeedbackChange(sub.id, e.target.value)} className="font-mono" /></div>
                     </CardContent>
                     <CardFooter className='flex-col items-stretch gap-3'>
                       {sub.status === 'waiting' && <Button onClick={() => handleDeviceFound(sub.id)} className="w-full">Device Found</Button>}

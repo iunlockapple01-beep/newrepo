@@ -537,7 +537,7 @@ function DeviceCheckContent() {
     }
 
     if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off'].includes(submission.status)) {
-        const specialStatusLines = feedbackData.lines.filter(line => line === 'FIND_MY_ON_STATUS' || line === 'FIND_MY_OFF_STATUS' || line === 'Wrong Model: Choose correct device model and check again');
+        const specialStatusLines = feedbackData.lines.filter(line => line === 'FIND_MY_ON_STATUS' || line === 'FIND_MY_OFF_STATUS');
         const feedbackText = feedbackData.lines.filter(line => !specialStatusLines.includes(line)).join('\n');
         
         return (
@@ -557,13 +557,6 @@ function DeviceCheckContent() {
                       <div key={`special-${index}`} className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono flex items-center gap-2">
                         <span>Find My:</span>
                         <span className="bg-green-500 text-white font-bold px-2 py-0.5 rounded-md text-xs">OFF</span>
-                      </div>
-                    )
-                  }
-                  if (line === 'Wrong Model: Choose correct device model and check again') {
-                    return (
-                      <div key={`special-${index}`} className="p-2 px-3 rounded-md bg-red-100 border border-red-200 text-sm font-bold text-red-800 flex items-center gap-2">
-                        <span>⚠️ Wrong Model: Choose correct device model and check again</span>
                       </div>
                     )
                   }
@@ -643,7 +636,7 @@ function DeviceCheckContent() {
                       <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
-                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>}
+                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>}
                         {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>}
                         <div className="pt-4"><LoginButton /></div>
                       </div>
