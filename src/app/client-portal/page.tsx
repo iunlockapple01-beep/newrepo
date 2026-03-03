@@ -430,7 +430,7 @@ function DeviceCheckContent() {
     addDoc(ordersCollectionRef, newOrderData)
       .then(() => {
         setPaymentModalOpen(false);
-        alert(`Payment submitted for confirmation. Your Order ID is: ${newOrderId}. You will be redirected to your account page.`);
+        alert(`Order submitted for confirmation. Your Order ID is: ${newOrderId}. You will be redirected to your account page.`);
         if (typeof window !== 'undefined') {
           window.location.assign('/my-account');
         }
