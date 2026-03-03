@@ -504,7 +504,7 @@ function DeviceCheckContent() {
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">⚠️ Device Check Failed</h3>
                 <div className="space-y-4 text-gray-700 text-lg leading-relaxed">
                     <p>We are currently unable to complete your IMEI / Serial device check. One or more device check servers may be temporarily offline or experiencing high traffic volume.</p>
-                    <p>Please try again shortly. Our system will automatically resume full compatibility validation once the server connection is restored.</p>
+                    <p>Please try again later. Our system will automatically resume full compatibility validation once the server connection is restored.</p>
                     <p className="font-semibold">We appreciate your patience.</p>
                 </div>
             </div>
