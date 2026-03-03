@@ -551,9 +551,17 @@ function DeviceCheckContent() {
     if (submission?.status === 'device_found') {
         if (showDeviceFoundNotif) {
             return (
-                <div className="flex flex-col items-center justify-center h-full animate-pop-in">
+                <div className="flex flex-col items-center justify-center h-full animate-pop-in text-center px-6">
                     <CheckCircle2 className="w-24 h-24 text-green-500 mb-4" />
-                    <p className="text-3xl font-bold text-gray-800">Device Found</p>
+                    <h2 className="text-3xl font-bold text-gray-800 mb-2">Device Identified.</h2>
+                    <div className="text-lg text-gray-600 flex items-center justify-center">
+                        <span>Initializing unlock verification sequence</span>
+                        <span className="inline-flex ml-1 font-bold">
+                            <span className="animate-pulse">.</span>
+                            <span className="animate-pulse" style={{ animationDelay: '0.2s' }}>.</span>
+                            <span className="animate-pulse" style={{ animationDelay: '0.4s' }}>.</span>
+                        </span>
+                    </div>
                 </div>
             );
         }
