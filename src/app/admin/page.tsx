@@ -117,7 +117,7 @@ function AdminDashboard() {
   const sortedSubmissions = submissions?.sort((a, b) => {
     const isPriority = (status: Submission['status']) => status === 'waiting' || status === 'device_found';
     if (isPriority(a.status) && !isPriority(b.status)) return -1;
-    if (!isPriority(a.status) && iPriority(b.status)) return 1;
+    if (!isPriority(a.status) && isPriority(b.status)) return 1;
     return 0;
   });
 
