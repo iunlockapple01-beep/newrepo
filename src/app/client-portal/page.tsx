@@ -810,7 +810,7 @@ function DeviceCheckContent() {
                                                         {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}
                                                         <div>
                                                             <p className="font-bold text-sm">Bitcoin (BTC)</p>
-                                                            <p className="text-[10px] text-gray-500">Traditional network confirmation.</p>
+                                                            <p className="text-[10px] text-gray-500">Standard network confirmation.</p>
                                                         </div>
                                                     </div>
                                                     <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
@@ -899,7 +899,7 @@ function DeviceCheckContent() {
                                             {bitcoinImage && <Image src={bitcoinImage.imageUrl} alt="Bitcoin" width={32} height={32} className="rounded-full" />}
                                             <div>
                                                 <p className="font-bold text-sm">Bitcoin (BTC)</p>
-                                                <p className="text-[10px] text-gray-500">Traditional network confirmation.</p>
+                                                <p className="text-[10px] text-gray-500">Standard network confirmation.</p>
                                             </div>
                                         </div>
                                         <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">

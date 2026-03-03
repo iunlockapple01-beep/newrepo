@@ -183,16 +183,17 @@ function AdminDashboard() {
 
   const handleDelete = (submissionId: string) => {
     if (!submissionId) return;
-    if (window.confirm('Are you sure?')) {
-      const submissionRef = doc(firestore, 'submissions', submissionId);
-      deleteDoc(submissionRef).catch(async (serverError) => {
+    // Replace window.confirm with Toast or logic handling
+    const submissionRef = doc(firestore, 'submissions', submissionId);
+    deleteDoc(submissionRef)
+      .then(() => toast({ title: "Submission deleted" }))
+      .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
           path: submissionRef.path,
           operation: 'delete',
         });
         errorEmitter.emit('permission-error', permissionError);
       });
-    }
   };
 
   const handleOrderStatusChange = (orderId: string, status: Order['status']) => {
