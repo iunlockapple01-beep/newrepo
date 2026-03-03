@@ -281,10 +281,7 @@ function DeviceCheckContent() {
 
       if (!querySnapshot.empty) {
         const existingDocs = querySnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as Submission) }));
-        
-        // If feedback was sent (status is NOT 'waiting'), show the cached message.
-        // If status IS 'waiting', ignore it and treat as a new submission.
-        const match = existingDocs.find(s => s.model === model && s.status !== 'waiting');
+        const match = existingDocs.find(s => s.model === model);
         
         if (match) {
             setIsCachedCheck(true);
@@ -299,8 +296,7 @@ function DeviceCheckContent() {
             return;
         }
 
-        // Check for conflicts with different models only if feedback was sent for them
-        const conflict = existingDocs.find(s => s.model !== model && s.status !== 'feedback' && s.status !== 'waiting');
+        const conflict = existingDocs.find(s => s.model !== model && s.status !== 'feedback');
         if (conflict) {
              setTimeout(() => {
                  setIsChecking(false);
@@ -309,39 +305,11 @@ function DeviceCheckContent() {
              return;
         }
       }
-    } catch (e) {
-        if (e instanceof Error && e.message.includes('permission')) {
-            const permissionError = new FirestorePermissionError({
-                path: 'submissions',
-                operation: 'list',
-            });
-            errorEmitter.emit('permission-error', permissionError);
-        }
-    }
+    } catch (e) {}
 
     if (!isServerOnline) {
         setIsChecking(false);
         setIsOfflineSimulating(true);
-        const newOfflineSubmission = {
-            userId: user.uid,
-            model,
-            price,
-            image,
-            imei: trimmedImei,
-            status: 'waiting' as const,
-            feedback: null,
-            createdAt: serverTimestamp(),
-        };
-        addDoc(collection(firestore, 'submissions'), newOfflineSubmission)
-          .catch(async (serverError) => {
-            const permissionError = new FirestorePermissionError({
-              path: 'submissions',
-              operation: 'create',
-              requestResourceData: newOfflineSubmission,
-            });
-            errorEmitter.emit('permission-error', permissionError);
-          });
-
         setTimeout(() => {
             setIsOfflineSimulating(false);
             setOfflineError(true);
@@ -385,28 +353,7 @@ function DeviceCheckContent() {
       });
   };
 
-  const openPaymentModal = async () => {
-    if (!submission?.imei) return;
-
-    // Check if an order already exists for this device
-    try {
-      const ordersRef = collection(firestore, 'orders');
-      const q = query(ordersRef, where('imei', '==', submission.imei), limit(1));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const existingOrder = querySnapshot.docs[0].data();
-        toast({
-          title: "Duplicate Order Detected",
-          description: `An unlock order of the device had already been submitted. Contact admin for any assistance or submit a ticket with the Order ID (#${existingOrder.orderId}).`,
-          variant: "destructive",
-        });
-        return;
-      }
-    } catch (error) {
-      console.error("Error checking existing orders:", error);
-    }
-
+  const openPaymentModal = () => {
     setTimeLeft(20 * 60);
     setIsLoading(true);
     setLoadingMessage('Processing payment...');
