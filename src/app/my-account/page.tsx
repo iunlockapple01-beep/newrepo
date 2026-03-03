@@ -21,11 +21,10 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu, RefreshCw, AlertCircle, Loader, ChevronDown, ChevronUp, MessageSquare, Ticket, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Copy, RefreshCw, AlertCircle, Loader, ChevronDown, MessageSquare, Ticket, ChevronRight, CheckCircle2, Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
 interface Order {
@@ -50,19 +49,6 @@ interface SupportTicket {
   status: 'open' | 'in_review' | 'replied' | 'resolved' | 'closed';
   createdAt: { toDate: () => Date };
 }
-
-const paymentMethods = [
-    { name: 'USDT', imageUrl: 'https://i.postimg.cc/ZRTpmnTk/download_(4).png' },
-    { name: 'Apple Pay', imageUrl: 'https://i.postimg.cc/G2qYmRpg/download_(6).png' },
-    { name: 'Binance', imageUrl: 'https://i.postimg.cc/BQVwY9J3/binance.jpg' },
-    { name: 'Visa', imageUrl: 'https://i.postimg.cc/50DfvbkH/Screenshot-2026-01-29-at-05-45-16.png' },
-    { name: 'MasterCard', imageUrl: 'https://i.postimg.cc/P57tbr3p/download_(1).png' },
-    { name: 'Bitcoin', imageUrl: 'https://i.postimg.cc/rwH8GFn4/download_(2).png' },
-    { name: 'Ethereum', imageUrl: 'https://i.postimg.cc/0y48G2WY/download_(3).png' },
-    { name: 'Skrill', imageUrl: 'https://i.postimg.cc/Z5QTPK7p/images.png' },
-    { name: 'Perfect Money', imageUrl: 'https://i.postimg.cc/6pP9V5jC/images.jpg' },
-    { name: 'Cash App', imageUrl: 'https://i.postimg.cc/Df6jpBcX/download.png' },
-];
 
 const CopyToClipboard = ({ text, children }: { text: string; children: React.ReactNode }) => {
   const { toast } = useToast();
@@ -163,7 +149,7 @@ function MyAccountContent() {
         setBulkPaid(true);
         setIsSubmittingBulk(false);
         toast({
-          title: "Bulk Payment Received",
+          title: "Success",
           description: "Bulk payment notification sent to administrator.",
         });
     }, 1500);
