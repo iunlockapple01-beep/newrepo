@@ -114,12 +114,15 @@ function AdminDashboard() {
     }
   }, [counters]);
 
-  const sortedSubmissions = submissions?.sort((a, b) => {
+  const sortedSubmissions = useMemo(() => {
+    if (!submissions) return [];
     const isPriority = (status: Submission['status']) => status === 'waiting' || status === 'device_found';
-    if (isPriority(a.status) && !isPriority(b.status)) return -1;
-    if (!isPriority(a.status) && isPriority(b.status)) return 1;
-    return 0;
-  });
+    return [...submissions].sort((a, b) => {
+      if (isPriority(a.status) && !isPriority(b.status)) return -1;
+      if (!isPriority(a.status) && isPriority(b.status)) return 1;
+      return 0;
+    });
+  }, [submissions]);
 
   const handleFeedbackChange = (id: string, value: string) => {
     setFeedbackValues(prev => ({ ...prev, [id]: value }));
@@ -183,7 +186,6 @@ function AdminDashboard() {
 
   const handleDelete = (submissionId: string) => {
     if (!submissionId) return;
-    // Replace window.confirm with Toast or logic handling
     const submissionRef = doc(firestore, 'submissions', submissionId);
     deleteDoc(submissionRef)
       .then(() => toast({ title: "Submission deleted" }))
@@ -311,9 +313,9 @@ function AdminDashboard() {
                 </Card>
             </div>
             <h1 className="text-4xl font-bold text-center mb-10">Submissions</h1>
-            {submissionsLoading ? <p>Loading submissions...</p> : sortedSubmissions?.length === 0 ? <p className='text-center text-gray-500'>None found.</p> : (
+            {submissionsLoading ? <p>Loading submissions...</p> : sortedSubmissions.length === 0 ? <p className='text-center text-gray-500'>None found.</p> : (
               <div className="space-y-6">
-                {sortedSubmissions?.map(sub => (
+                {sortedSubmissions.map(sub => (
                   <Card key={sub.id} className={`bg-white ${sub.status === 'waiting' || sub.status === 'device_found' ? 'border-2 border-primary' : ''}`}>
                     <CardHeader><CardTitle className='flex justify-between items-center'><span>{sub.model}</span><Badge variant={sub.status === 'waiting' ? 'default' : 'secondary'} className={sub.status === 'waiting' || sub.status === 'device_found' ? 'animate-pulse' : ''}>{sub.status.replace('_', ' ')}</Badge></CardTitle></CardHeader>
                     <CardContent>

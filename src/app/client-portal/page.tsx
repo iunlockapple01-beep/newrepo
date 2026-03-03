@@ -281,7 +281,11 @@ function DeviceCheckContent() {
 
       if (!querySnapshot.empty) {
         const existingDocs = querySnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as Submission) }));
-        const match = existingDocs.find(s => s.model === model);
+        
+        // If feedback was sent (status is NOT 'waiting'), show the cached message.
+        // If status IS 'waiting', ignore it and treat as a new submission.
+        const match = existingDocs.find(s => s.model === model && s.status !== 'waiting');
+        
         if (match) {
             setIsCachedCheck(true);
             setTimeout(() => {
@@ -295,7 +299,8 @@ function DeviceCheckContent() {
             return;
         }
 
-        const conflict = existingDocs.find(s => s.model !== model && s.status !== 'feedback');
+        // Check for conflicts with different models only if feedback was sent for them
+        const conflict = existingDocs.find(s => s.model !== model && s.status !== 'feedback' && s.status !== 'waiting');
         if (conflict) {
              setTimeout(() => {
                  setIsChecking(false);
