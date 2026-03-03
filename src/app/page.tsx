@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -227,14 +225,10 @@ export default function IcloudUnlocksPage() {
   const { data: counters, loading: countersLoading } = useDoc<Counters>('counters', 'metrics');
 
   const handleAddReviewClick = () => {
-    const { id, dismiss } = toast({
+    toast({
         title: "Unable to Add Review",
         description: "You must have a completed unlock order with us to leave a review.",
     });
-
-    setTimeout(() => {
-        dismiss();
-    }, 3000);
   };
   
   return (

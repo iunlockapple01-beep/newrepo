@@ -353,9 +353,33 @@ function DeviceCheckContent() {
       });
   };
 
-  const openPaymentModal = () => {
-    setTimeLeft(20 * 60);
+  const openPaymentModal = async () => {
+    if (!submission?.imei) return;
+
     setIsLoading(true);
+    setLoadingMessage('Verifying status...');
+
+    // Duplicate Check logic: check if imei/serial already in orders
+    try {
+      const ordersRef = collection(firestore, 'orders');
+      const q = query(ordersRef, where('imei', '==', submission.imei), limit(1));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        setIsLoading(false);
+        toast({
+          title: "Order Already Submitted",
+          description: "An unlock order of the device had already been submitted. Contact admin for any assistance or submit a ticket with the Order ID.",
+          variant: "destructive",
+          duration: 6000,
+        });
+        return;
+      }
+    } catch (err) {
+      console.error("Duplicate check error:", err);
+    }
+
+    setTimeLeft(20 * 60);
     setLoadingMessage('Processing payment...');
     setShowOtherPayments(false);
 
