@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -20,6 +19,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import Image from 'next/image';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ArrowLeft, Menu } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface UserProfile {
   id: string;
@@ -34,6 +34,7 @@ function UserManagementDashboard() {
   const { data: user, loading: userLoading } = useUser();
   const { firestore } = useFirebase();
   const router = useRouter();
+  const { toast } = useToast();
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
@@ -71,13 +72,13 @@ function UserManagementDashboard() {
 
   const handleUpdateBalance = (userId: string) => {
     const newBalance = balances[userId];
-    if (newBalance === undefined || isNaN(newBalance)) return alert('Invalid balance.');
+    if (newBalance === undefined || isNaN(newBalance)) return toast({ title: "Error", description: "Invalid balance.", variant: "destructive" });
 
     const userRef = doc(firestore, 'users', userId);
     const updatedData = { balance: newBalance };
 
     updateDoc(userRef, updatedData)
-      .then(() => alert('User balance updated successfully!'))
+      .then(() => toast({ title: "Success", description: "User balance updated successfully!" }))
       .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
           path: userRef.path,
@@ -111,8 +112,8 @@ function UserManagementDashboard() {
                   <div className="flex flex-col gap-4 p-4">
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
-                    {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
-                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
+                    {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
+                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
                     <div className='pt-4'><LoginButton /></div>
                   </div>
                 </SheetContent>

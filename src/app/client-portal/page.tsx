@@ -430,10 +430,14 @@ function DeviceCheckContent() {
     addDoc(ordersCollectionRef, newOrderData)
       .then(() => {
         setPaymentModalOpen(false);
-        alert(`Order submitted for confirmation. Your Order ID is: ${newOrderId}. You will be redirected to your account page.`);
-        if (typeof window !== 'undefined') {
-          window.location.assign('/my-account');
-        }
+        toast({
+          title: "Order Submitted",
+          description: `Order submitted for confirmation. Your Order ID is: ${newOrderId}. You will be redirected to your account page.`,
+          duration: 6000,
+        });
+        setTimeout(() => {
+          router.push('/my-account');
+        }, 2500);
       })
       .catch(async (serverError) => {
         setIsSubmittingOrder(false);

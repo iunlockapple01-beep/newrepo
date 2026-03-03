@@ -162,7 +162,10 @@ function MyAccountContent() {
         setIsBulkPayModalOpen(false);
         setBulkPaid(true);
         setIsSubmittingBulk(false);
-        alert('Bulk payment notification sent to administrator.');
+        toast({
+          title: "Bulk Payment Received",
+          description: "Bulk payment notification sent to administrator.",
+        });
     }, 1500);
   };
 
@@ -550,7 +553,7 @@ function MyAccountContent() {
                                                     {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
                                                     <div>
                                                         <p className="font-bold text-sm">USDT (TRC20 Network)</p>
-                                                        <p className="text-[10px] text-gray-500">Standard network confirmation.</p>
+                                                        <p className="text-[10px] text-gray-500">Standard Tether network.</p>
                                                     </div>
                                                 </div>
                                                 <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
@@ -645,7 +648,7 @@ function MyAccountContent() {
                                         {usdtTrc20Image && <Image src={usdtTrc20Image.imageUrl} alt="USDT TRC20" width={32} height={32} className="rounded-full" />}
                                         <div>
                                             <p className="font-bold text-sm">USDT (TRC20 Network)</p>
-                                            <p className="text-[10px] text-gray-500">Standard network confirmation.</p>
+                                            <p className="text-[10px] text-gray-500">Standard Tether network.</p>
                                         </div>
                                     </div>
                                     <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">

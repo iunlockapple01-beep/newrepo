@@ -34,6 +34,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Ban, Menu, Users, Server, ServerOff, MessageSquare } from 'lucide-react';
 import { format } from 'date-fns';
 import { Switch } from '@/components/ui/switch';
+import { useToast } from '@/hooks/use-toast';
 
 interface Submission {
   id: string;
@@ -69,6 +70,7 @@ function AdminDashboard() {
   const { data: user, loading: userLoading } = useUser();
   const { firestore } = useFirebase();
   const router = useRouter();
+  const { toast } = useToast();
 
   const isAdmin = user?.email === ADMIN_EMAIL;
 
@@ -115,7 +117,7 @@ function AdminDashboard() {
   const sortedSubmissions = submissions?.sort((a, b) => {
     const isPriority = (status: Submission['status']) => status === 'waiting' || status === 'device_found';
     if (isPriority(a.status) && !isPriority(b.status)) return -1;
-    if (!isPriority(a.status) && isPriority(b.status)) return 1;
+    if (!isPriority(a.status) && iPriority(b.status)) return 1;
     return 0;
   });
 
@@ -134,7 +136,7 @@ function AdminDashboard() {
       updatedAt: serverTimestamp(),
     };
     updateDoc(submissionRef, updatedData)
-      .then(() => alert('Client notified.'))
+      .then(() => toast({ title: "Client notified." }))
       .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
             path: submissionRef.path,
@@ -148,8 +150,8 @@ function AdminDashboard() {
   const handleSendFeedback = (submissionId: string) => {
     const feedbackText = feedbackValues[submissionId] || '';
     const status = feedbackStatus[submissionId];
-    if (!status) return alert('Select an outcome.');
-    if (feedbackText.trim() === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported') return alert('Enter feedback.');
+    if (!status) return toast({ title: "Selection Required", description: "Select an outcome.", variant: "destructive" });
+    if (feedbackText.trim() === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported') return toast({ title: "Input Required", description: "Enter feedback.", variant: "destructive" });
 
     const lines = feedbackText.split('\n').filter(l => l.trim() && !l.startsWith('TIMESTAMP:'));
     if (status === 'eligible') lines.push('FIND_MY_ON_STATUS');
@@ -167,7 +169,7 @@ function AdminDashboard() {
     };
     updateDoc(submissionRef, updatedData)
       .then(() => {
-        alert('Feedback sent!');
+        toast({ title: "Feedback sent!" });
       })
       .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
@@ -197,7 +199,7 @@ function AdminDashboard() {
     const orderRef = doc(firestore, 'orders', orderId);
     const updatedData = { status, updatedAt: serverTimestamp() };
     updateDoc(orderRef, updatedData)
-        .then(() => alert(`Order status updated to ${status}`))
+        .then(() => toast({ title: "Order status updated", description: `Updated to ${status.replace(/_/g, ' ')}` }))
         .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
             path: orderRef.path,
@@ -229,7 +231,7 @@ function AdminDashboard() {
       isServerOnline: isServerOnline,
     };
     setDoc(metricsRef, metricsData, { merge: true })
-      .then(() => alert('Site settings updated!'))
+      .then(() => toast({ title: "Site settings updated!" }))
       .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
           path: metricsRef.path,

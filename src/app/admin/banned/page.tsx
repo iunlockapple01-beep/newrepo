@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -21,6 +20,7 @@ import Image from 'next/image';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ArrowLeft, Menu } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 interface BannedUser {
   id: string;
@@ -32,6 +32,7 @@ function BannedUsersDashboard() {
   const { data: user, loading: userLoading } = useUser();
   const { firestore } = useFirebase();
   const router = useRouter();
+  const { toast } = useToast();
 
   const { data: bannedUsers, loading: bannedUsersLoading } = useCollection<BannedUser>('banned_users');
   const [userIdInput, setUserIdInput] = useState('');
@@ -50,7 +51,7 @@ function BannedUsersDashboard() {
   const handleAddBannedUser = async () => {
     const trimmedId = userIdInput.trim();
     if (!trimmedId) {
-      return alert('Please enter a User ID.');
+      return toast({ title: "Error", description: "Please enter a User ID.", variant: "destructive" });
     }
 
     const bannedUserRef = doc(firestore, 'banned_users', trimmedId);
@@ -61,7 +62,7 @@ function BannedUsersDashboard() {
 
     setDoc(bannedUserRef, bannedUserData)
       .then(() => {
-        alert('User ID added to banned list.');
+        toast({ title: "Success", description: "User ID added to banned list." });
         setUserIdInput('');
       })
       .catch((serverError) => {
@@ -71,7 +72,7 @@ function BannedUsersDashboard() {
           requestResourceData: bannedUserData,
         });
         errorEmitter.emit('permission-error', permissionError);
-        alert('Failed to add user to banned list.');
+        toast({ title: "Error", description: "Failed to add user to banned list.", variant: "destructive" });
       });
   };
 
