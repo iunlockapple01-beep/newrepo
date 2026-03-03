@@ -380,7 +380,28 @@ function DeviceCheckContent() {
       });
   };
 
-  const openPaymentModal = () => {
+  const openPaymentModal = async () => {
+    if (!submission?.imei) return;
+
+    // Check if an order already exists for this device
+    try {
+      const ordersRef = collection(firestore, 'orders');
+      const q = query(ordersRef, where('imei', '==', submission.imei), limit(1));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const existingOrder = querySnapshot.docs[0].data();
+        toast({
+          title: "Duplicate Order Detected",
+          description: `An unlock order of the device had already been submitted. Contact admin for any assistance or submit a ticket with the Order ID (#${existingOrder.orderId}).`,
+          variant: "destructive",
+        });
+        return;
+      }
+    } catch (error) {
+      console.error("Error checking existing orders:", error);
+    }
+
     setTimeLeft(20 * 60);
     setIsLoading(true);
     setLoadingMessage('Processing payment...');
