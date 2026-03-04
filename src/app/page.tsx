@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -268,7 +269,7 @@ export default function IcloudUnlocksPage() {
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
                     {user && (
-                        <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
+                        <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
                     )}
                     {isAdmin && (
                       <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>
@@ -291,6 +292,9 @@ export default function IcloudUnlocksPage() {
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="text-center md:text-left text-white">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] mb-2 opacity-60 animate-fade-in">
+                iCloud Unlocks Version 1.3
+              </p>
               <h1 className="text-4xl md:text-5xl font-bold mb-3 animate-fade-in">
                 Professional iCloud Unlocking Service
               </h1>
