@@ -155,10 +155,11 @@ function AdminDashboard() {
     const status = feedbackStatus[submissionId];
     if (!status) return toast({ title: "Selection Required", description: "Select an outcome.", variant: "destructive" });
     
-    // Clean up "undefined" and missing spaces in iPhone models (e.g. iPhone11 -> iPhone 11)
+    // Robust cleaning logic for spacing and "undefined" strings
     const feedbackText = feedbackTextRaw
-        .replace(/undefined/g, '')
-        .replace(/iPhone\s*(\d+)/gi, 'iPhone $1')
+        .replace(/undefined/gi, '')
+        .replace(/\(undefined\)/gi, '')
+        .replace(/(iPhone)(\d+)/gi, '$1 $2') // Insert space: iPhone11 -> iPhone 11
         .trim();
 
     if (feedbackText === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported') {
