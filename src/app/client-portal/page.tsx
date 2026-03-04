@@ -281,7 +281,12 @@ function DeviceCheckContent() {
 
       if (!querySnapshot.empty) {
         const existingDocs = querySnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as Submission) }));
-        const match = existingDocs.find(s => s.model === model);
+        
+        // We only block/warn if there is a record that ALREADY HAS FEEDBACK.
+        // If all existing records are 'waiting', we treat it as a new submission.
+        const docsWithFeedback = existingDocs.filter(s => s.status !== 'waiting');
+
+        const match = docsWithFeedback.find(s => s.model === model);
         
         if (match) {
             setIsCachedCheck(true);
@@ -296,7 +301,7 @@ function DeviceCheckContent() {
             return;
         }
 
-        const conflict = existingDocs.find(s => s.model !== model && s.status !== 'feedback');
+        const conflict = docsWithFeedback.find(s => s.model !== model && s.status !== 'feedback');
         if (conflict) {
              setTimeout(() => {
                  setIsChecking(false);
@@ -307,16 +312,7 @@ function DeviceCheckContent() {
       }
     } catch (e) {}
 
-    if (!isServerOnline) {
-        setIsChecking(false);
-        setIsOfflineSimulating(true);
-        setTimeout(() => {
-            setIsOfflineSimulating(false);
-            setOfflineError(true);
-        }, 10000);
-        return;
-    }
-    
+    // Even if server is offline, we ALWAYS record the submission.
     const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
     try {
       fetch('/api/telegram', {
@@ -340,7 +336,18 @@ function DeviceCheckContent() {
     addDoc(collection(firestore, 'submissions'), newSubmission)
       .then((docRef) => {
         setSubmissionId(docRef.id);
-        setIsChecking(false);
+        
+        if (!isServerOnline) {
+            // Server status is offline: keep simulation going for 10s then show error
+            setIsChecking(false);
+            setIsOfflineSimulating(true);
+            setTimeout(() => {
+                setIsOfflineSimulating(false);
+                setOfflineError(true);
+            }, 10000);
+        } else {
+            setIsChecking(false);
+        }
       })
       .catch(async (serverError) => {
         setIsChecking(false);
@@ -359,7 +366,6 @@ function DeviceCheckContent() {
     setIsLoading(true);
     setLoadingMessage('Verifying status...');
 
-    // Duplicate Check logic: check if imei/serial already in orders
     try {
       const ordersRef = collection(firestore, 'orders');
       const q = query(ordersRef, where('imei', '==', submission.imei), limit(1));
@@ -542,13 +548,12 @@ function DeviceCheckContent() {
     if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off'].includes(submission.status)) {
         const specialStatusLines = feedbackData.lines.filter(line => line === 'FIND_MY_ON_STATUS' || line === 'FIND_MY_OFF_STATUS');
         
-        // Final Formatting engine for "iPhone 11" spacing and stripping "undefined"
         const feedbackText = feedbackData.lines
             .filter(line => !specialStatusLines.includes(line))
             .map(line => line
                 .replace(/undefined/gi, '')
                 .replace(/\(undefined\)/gi, '')
-                .replace(/(iPhone)(\d+)/gi, '$1 $2') // Robust replacement for space
+                .replace(/(iPhone)(\d+)/gi, '$1 $2')
                 .trim()
             )
             .filter(line => line !== '')
