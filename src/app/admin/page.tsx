@@ -151,10 +151,16 @@ function AdminDashboard() {
   };
 
   const handleSendFeedback = (submissionId: string) => {
-    const feedbackText = feedbackValues[submissionId] || '';
+    const feedbackTextRaw = feedbackValues[submissionId] || '';
     const status = feedbackStatus[submissionId];
     if (!status) return toast({ title: "Selection Required", description: "Select an outcome.", variant: "destructive" });
-    if (feedbackText.trim() === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported') return toast({ title: "Input Required", description: "Enter feedback.", variant: "destructive" });
+    
+    // Clean up any "undefined" strings that might have attached themselves
+    const feedbackText = feedbackTextRaw.replace(/undefined/g, '').trim();
+
+    if (feedbackText === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported') {
+        return toast({ title: "Input Required", description: "Enter feedback.", variant: "destructive" });
+    }
 
     const lines = feedbackText.split('\n').filter(l => l.trim() && !l.startsWith('TIMESTAMP:'));
     if (status === 'eligible') lines.push('FIND_MY_ON_STATUS');

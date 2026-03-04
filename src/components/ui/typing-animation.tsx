@@ -34,7 +34,8 @@ export function TypingAnimation({
     let currentIndex = 0;
     const intervalId = setInterval(() => {
       if (currentIndex < totalWords) {
-        setDisplayedText((prev) => prev + words[currentIndex]);
+        // Use ?? '' safety to prevent technical "undefined" concatenation
+        setDisplayedText((prev) => prev + (words[currentIndex] ?? ''));
         currentIndex++;
       } else {
         clearInterval(intervalId);

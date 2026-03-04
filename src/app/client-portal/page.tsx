@@ -541,7 +541,12 @@ function DeviceCheckContent() {
 
     if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off'].includes(submission.status)) {
         const specialStatusLines = feedbackData.lines.filter(line => line === 'FIND_MY_ON_STATUS' || line === 'FIND_MY_OFF_STATUS');
-        const feedbackText = feedbackData.lines.filter(line => !specialStatusLines.includes(line)).join('\n');
+        
+        // Sanitize feedbackText to remove any accidental "undefined" strings
+        const feedbackText = feedbackData.lines
+            .filter(line => !specialStatusLines.includes(line))
+            .join('\n')
+            .replace(/undefined/g, '');
         
         return (
             <div className="w-full text-left p-4">
