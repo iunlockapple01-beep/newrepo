@@ -292,7 +292,7 @@ export default function IcloudUnlocksPage() {
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="text-center md:text-left text-white">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] mb-2 opacity-60 animate-fade-in">
+              <p className="text-xs font-bold tracking-[0.2em] mb-2 opacity-60 animate-fade-in">
                 iCloud Unlocks Version 1.3
               </p>
               <h1 className="text-4xl md:text-5xl font-bold mb-3 animate-fade-in">
