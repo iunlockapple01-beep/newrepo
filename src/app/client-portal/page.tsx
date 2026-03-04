@@ -547,7 +547,8 @@ function DeviceCheckContent() {
             .filter(line => !specialStatusLines.includes(line))
             .join('\n')
             .replace(/undefined/g, '')
-            .replace(/iPhone(\d+)/g, 'iPhone $1');
+            .replace(/iPhone\s*(\d+)/gi, 'iPhone $1')
+            .trim();
         
         return (
             <div className="w-full text-left p-4">

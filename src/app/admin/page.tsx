@@ -158,7 +158,7 @@ function AdminDashboard() {
     // Clean up "undefined" and missing spaces in iPhone models (e.g. iPhone11 -> iPhone 11)
     const feedbackText = feedbackTextRaw
         .replace(/undefined/g, '')
-        .replace(/iPhone(\d+)/g, 'iPhone $1')
+        .replace(/iPhone\s*(\d+)/gi, 'iPhone $1')
         .trim();
 
     if (feedbackText === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported') {
