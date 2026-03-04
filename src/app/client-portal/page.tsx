@@ -542,11 +542,12 @@ function DeviceCheckContent() {
     if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off'].includes(submission.status)) {
         const specialStatusLines = feedbackData.lines.filter(line => line === 'FIND_MY_ON_STATUS' || line === 'FIND_MY_OFF_STATUS');
         
-        // Sanitize feedbackText to remove any accidental "undefined" strings
+        // Sanitize feedbackText to remove any accidental "undefined" strings and fix iPhone model spacing
         const feedbackText = feedbackData.lines
             .filter(line => !specialStatusLines.includes(line))
             .join('\n')
-            .replace(/undefined/g, '');
+            .replace(/undefined/g, '')
+            .replace(/iPhone(\d+)/g, 'iPhone $1');
         
         return (
             <div className="w-full text-left p-4">

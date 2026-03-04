@@ -155,8 +155,11 @@ function AdminDashboard() {
     const status = feedbackStatus[submissionId];
     if (!status) return toast({ title: "Selection Required", description: "Select an outcome.", variant: "destructive" });
     
-    // Clean up any "undefined" strings that might have attached themselves
-    const feedbackText = feedbackTextRaw.replace(/undefined/g, '').trim();
+    // Clean up "undefined" and missing spaces in iPhone models (e.g. iPhone11 -> iPhone 11)
+    const feedbackText = feedbackTextRaw
+        .replace(/undefined/g, '')
+        .replace(/iPhone(\d+)/g, 'iPhone $1')
+        .trim();
 
     if (feedbackText === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported') {
         return toast({ title: "Input Required", description: "Enter feedback.", variant: "destructive" });
