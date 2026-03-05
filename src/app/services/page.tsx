@@ -88,19 +88,41 @@ export default function ServicesPage() {
     { name: 'MacBook Air 2017', price: 80 },
     { name: 'MacBook Air 2018', price: 85 },
     { name: 'MacBook Air 2019', price: 90 },
+    { name: 'MacBook Air (Intel) 2020', price: 95 },
     { name: 'MacBook Air M1 2020', price: 150 },
-    { name: 'MacBook Air M2 2022', price: 155 },
-    { name: 'MacBook Air M2 2023', price: 140 },
-    { name: 'MacBook Air M3 2024', price: 145 },
-    { name: 'MacBook Pro 2016', price: 90 },
-    { name: 'MacBook Pro 2017', price: 95 },
-    { name: 'MacBook Pro 2018', price: 100 },
-    { name: 'MacBook Pro 2019', price: 110 },
-    { name: 'MacBook Pro M1 2020', price: 160 },
-    { name: 'MacBook Pro M1 Pro/Max 2021', price: 180 },
-    { name: 'MacBook Pro M2 2022', price: 185 },
-    { name: 'MacBook Pro M3 2023', price: 190 },
-    { name: 'MacBook Pro M3 Pro/Max 2024', price: 195 },
+    { name: 'MacBook Air M2 13" 2022', price: 155 },
+    { name: 'MacBook Air M2 15" 2023', price: 140 },
+    { name: 'MacBook Air M3 13" 2024', price: 145 },
+    { name: 'MacBook Air M3 15" 2024', price: 150 },
+    { name: 'MacBook Air M4 13" 2025', price: 165 },
+    { name: 'MacBook Air M4 15" 2025', price: 170 },
+    { name: 'MacBook Air M5 13" 2026', price: 185 },
+    { name: 'MacBook Air M5 15" 2026', price: 190 },
+    { name: 'MacBook Pro 13" 2016', price: 90 },
+    { name: 'MacBook Pro 15" 2016', price: 95 },
+    { name: 'MacBook Pro 13" 2017', price: 95 },
+    { name: 'MacBook Pro 15" 2017', price: 100 },
+    { name: 'MacBook Pro 13" 2018', price: 100 },
+    { name: 'MacBook Pro 15" 2018', price: 105 },
+    { name: 'MacBook Pro 13" 2019', price: 110 },
+    { name: 'MacBook Pro 15" 2019', price: 115 },
+    { name: 'MacBook Pro 16" (Intel) 2019', price: 125 },
+    { name: 'MacBook Pro 13" (Intel) 2020', price: 130 },
+    { name: 'MacBook Pro M1 13" 2020', price: 160 },
+    { name: 'MacBook Pro M1 Pro/Max 14" 2021', price: 180 },
+    { name: 'MacBook Pro M1 Pro/Max 16" 2021', price: 190 },
+    { name: 'MacBook Pro M2 13" 2022', price: 185 },
+    { name: 'MacBook Pro M2 Pro/Max 14" 2023', price: 200 },
+    { name: 'MacBook Pro M2 Pro/Max 16" 2023', price: 210 },
+    { name: 'MacBook Pro M3 14" 2023', price: 190 },
+    { name: 'MacBook Pro M3 Pro/Max 14" 2023', price: 215 },
+    { name: 'MacBook Pro M3 Pro/Max 16" 2023', price: 225 },
+    { name: 'MacBook Pro M4 14" 2024', price: 230 },
+    { name: 'MacBook Pro M4 Pro/Max 14" 2024', price: 245 },
+    { name: 'MacBook Pro M4 Pro/Max 16" 2024', price: 255 },
+    { name: 'MacBook Pro M5 14" 2025', price: 270 },
+    { name: 'MacBook Pro M5 Pro/Max 14" 2026', price: 285 },
+    { name: 'MacBook Pro M5 Pro/Max 16" 2026', price: 295 },
   ];
 
   const watchModels = [
@@ -185,7 +207,7 @@ export default function ServicesPage() {
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Services</Link>
                         {user && (
-                            <Link href="/my-account" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
+                            <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
                         )}
                         {isAdmin && (
                             <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>
