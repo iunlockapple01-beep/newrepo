@@ -96,8 +96,6 @@ export default function ServicesPage() {
     { name: 'MacBook Air M3 15" 2024', price: 150 },
     { name: 'MacBook Air M4 13" 2025', price: 165 },
     { name: 'MacBook Air M4 15" 2025', price: 170 },
-    { name: 'MacBook Air M5 13" 2026', price: 185 },
-    { name: 'MacBook Air M5 15" 2026', price: 190 },
     { name: 'MacBook Pro 13" 2016', price: 90 },
     { name: 'MacBook Pro 15" 2016', price: 95 },
     { name: 'MacBook Pro 13" 2017', price: 95 },
@@ -121,8 +119,6 @@ export default function ServicesPage() {
     { name: 'MacBook Pro M4 Pro/Max 14" 2024', price: 245 },
     { name: 'MacBook Pro M4 Pro/Max 16" 2024', price: 255 },
     { name: 'MacBook Pro M5 14" 2025', price: 270 },
-    { name: 'MacBook Pro M5 Pro/Max 14" 2026', price: 285 },
-    { name: 'MacBook Pro M5 Pro/Max 16" 2026', price: 295 },
   ];
 
   const watchModels = [
@@ -136,14 +132,12 @@ export default function ServicesPage() {
     { name: 'Apple Watch Series 9 (2023)', price: 80 },
     { name: 'Apple Watch Series 10 (2024)', price: 85 },
     { name: 'Apple Watch Series 11 (2025)', price: 95 },
-    { name: 'Apple Watch Series 12 (2026)', price: 110 },
     { name: 'Apple Watch SE 1st Gen (2020)', price: 55 },
     { name: 'Apple Watch SE 2nd Gen (2022)', price: 75 },
     { name: 'Apple Watch SE 3rd Gen (2025)', price: 80 },
     { name: 'Apple Watch Ultra 1 (2022)', price: 90 },
     { name: 'Apple Watch Ultra 2 (2023)', price: 95 },
     { name: 'Apple Watch Ultra 3 (2025)', price: 115 },
-    { name: 'Apple Watch Ultra 4 (2026)', price: 130 },
   ];
 
   const ipadModels = [
@@ -154,7 +148,6 @@ export default function ServicesPage() {
     { name: 'iPad 9th Gen (2021)', price: 80 },
     { name: 'iPad 10th Gen (2022)', price: 85 },
     { name: 'iPad 11th Gen (2025)', price: 90 },
-    { name: 'iPad 12th Gen (2026)', price: 100 },
     { name: 'iPad Air 3rd Gen (2019)', price: 70 },
     { name: 'iPad Air 4th Gen (2020)', price: 80 },
     { name: 'iPad Air 5th Gen (2022)', price: 85 },
@@ -162,8 +155,6 @@ export default function ServicesPage() {
     { name: 'iPad Air 6th Gen 13" (M2)', price: 100 },
     { name: 'iPad Air 7th Gen 11" (M3)', price: 105 },
     { name: 'iPad Air 7th Gen 13" (M3)', price: 110 },
-    { name: 'iPad Air 8th Gen 11" (M4, 2026)', price: 115 },
-    { name: 'iPad Air 8th Gen 13" (M4, 2026)', price: 120 },
     { name: 'iPad Pro 10.5" (2017)', price: 80 },
     { name: 'iPad Pro 12.9" 2nd Gen (2017)', price: 85 },
     { name: 'iPad Pro 11" 1st Gen (2018)', price: 90 },
@@ -178,12 +169,9 @@ export default function ServicesPage() {
     { name: 'iPad Pro 13" (M4, 2024)', price: 125 },
     { name: 'iPad Pro 11" (M5, 2025)', price: 130 },
     { name: 'iPad Pro 13" (M5, 2025)', price: 135 },
-    { name: 'iPad Pro 11" (M6, 2026)', price: 145 },
-    { name: 'iPad Pro 13" (M6, 2026)', price: 150 },
     { name: 'iPad Mini 5th Gen (2019)', price: 65 },
     { name: 'iPad Mini 6th Gen (2021)', price: 80 },
     { name: 'iPad Mini 7th Gen (A17 Pro, 2024)', price: 95 },
-    { name: 'iPad Mini 8th Gen (2026)', price: 105 },
   ];
 
   const telegramIcon = getImage('telegram-icon');
