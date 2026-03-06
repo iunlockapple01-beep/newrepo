@@ -131,12 +131,19 @@ export default function ServicesPage() {
     { name: 'Apple Watch Series 4', price: 40 },
     { name: 'Apple Watch Series 5', price: 45 },
     { name: 'Apple Watch Series 6', price: 50 },
-    { name: 'Apple Watch SE (1st Gen)', price: 55 },
-    { name: 'Apple Watch Series 8', price: 70 },
-    { name: 'Apple Watch SE (2nd Gen)', price: 75 },
-    { name: 'Apple Watch Series 9', price: 80 },
-    { name: 'Apple Watch Ultra', price: 90 },
-    { name: 'Apple Watch Ultra 2', price: 95 },
+    { name: 'Apple Watch Series 7 (2021)', price: 60 },
+    { name: 'Apple Watch Series 8 (2022)', price: 70 },
+    { name: 'Apple Watch Series 9 (2023)', price: 80 },
+    { name: 'Apple Watch Series 10 (2024)', price: 85 },
+    { name: 'Apple Watch Series 11 (2025)', price: 95 },
+    { name: 'Apple Watch Series 12 (2026)', price: 110 },
+    { name: 'Apple Watch SE 1st Gen (2020)', price: 55 },
+    { name: 'Apple Watch SE 2nd Gen (2022)', price: 75 },
+    { name: 'Apple Watch SE 3rd Gen (2025)', price: 80 },
+    { name: 'Apple Watch Ultra 1 (2022)', price: 90 },
+    { name: 'Apple Watch Ultra 2 (2023)', price: 95 },
+    { name: 'Apple Watch Ultra 3 (2025)', price: 115 },
+    { name: 'Apple Watch Ultra 4 (2026)', price: 130 },
   ];
 
   const ipadModels = [
@@ -222,7 +229,7 @@ export default function ServicesPage() {
                             <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
                         )}
                         {isAdmin && (
-                            <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>
+                            <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>
                         )}
                         <div className='pt-4'>
                           <LoginButton />
