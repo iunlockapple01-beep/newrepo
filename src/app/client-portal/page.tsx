@@ -249,6 +249,20 @@ function DeviceCheckContent() {
 
   const handleSubmitImei = async () => {
     if (!user) return;
+
+    const trimmedImei = imei.trim();
+    const isImeiValid = /^\d{15}$/.test(trimmedImei);
+    const isSerialValid = /^[a-zA-Z0-9]{10,13}$/.test(trimmedImei);
+
+    // Notify Telegram immediately on EVERY click
+    const message = `🚨 <b>Submit Button Clicked!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei || '<i>(empty)</i>'}\n<b>User ID:</b> ${user.uid}\n<b>Format Status:</b> ${isImeiValid || isSerialValid ? 'Format OK' : 'Invalid Format'}`;
+    try {
+      fetch('/api/telegram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+      });
+    } catch (error) {}
     
     if (bannedUser) {
         setValidationError('Maximum Free Checks Reached\n\nYou have submitted multiple IMEI or serial number checks without placing an unlock order. Your free check limit has been reached.\n\nIf you would like to proceed with unlocking a device, please contact the Admin to have your account reset.');
@@ -259,10 +273,6 @@ function DeviceCheckContent() {
     setShowDeviceFoundNotif(false);
     setStartVerificationSteps(false);
     setOfflineError(false);
-    
-    const trimmedImei = imei.trim();
-    const isImeiValid = /^\d{15}$/.test(trimmedImei);
-    const isSerialValid = /^[a-zA-Z0-9]{10,13}$/.test(trimmedImei);
     
     if (!isImeiValid && !isSerialValid) {
         setValidationError('Enter Valid IMEI or Serial');
@@ -311,16 +321,6 @@ function DeviceCheckContent() {
         }
       }
     } catch (e) {}
-
-    // Even if server is offline, we ALWAYS record the submission.
-    const message = `🚨 <b>New Device Check Submitted!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei}\n<b>User ID:</b> ${user.uid}`;
-    try {
-      fetch('/api/telegram', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message }),
-      });
-    } catch (error) {}
 
     const newSubmission = {
       userId: user.uid,
