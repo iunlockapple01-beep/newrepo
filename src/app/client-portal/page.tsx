@@ -266,7 +266,7 @@ function DeviceCheckContent() {
     } catch (error) {}
     
     if (bannedUser) {
-        setValidationError('Maximum Free Checks Reached\n\nYou have submitted multiple IMEI or serial number checks without placing an unlock order. Your free check limit has been reached.\n\nIf you would like to proceed with unlocking a device, please contact the Admin to have your account reset.');
+        setValidationError('Maximum Free Checks Reached\n\nYou have reached the limit for free IMEI / Serial checks without placing an unlock order.\n\nThis may also happen if an order was created and the “I Paid” button was clicked without completing or arranging the payment with Support\n\nPlease contact the Admin if you wish to proceed and have your account reset.');
         return;
     }
 
