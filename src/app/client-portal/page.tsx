@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -559,6 +560,9 @@ function DeviceCheckContent() {
             .filter(line => line !== '')
             .join('\n');
         
+        // Typing animation only for 'eligible' status, not cached
+        const shouldAnimate = !isCachedCheck && submission.status === 'eligible';
+        
         return (
             <div className="w-full text-left p-4">
               <div className="space-y-2">
@@ -583,16 +587,16 @@ function DeviceCheckContent() {
                 })}
 
                 {feedbackText && (
-                  isCachedCheck ? (
-                    <div className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono whitespace-pre-wrap animate-fade-in">
-                      {feedbackText}
-                    </div>
-                  ) : (
+                  shouldAnimate ? (
                     <TypingAnimation 
                         text={feedbackText} 
                         duration={5000} 
                         className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono"
                     />
+                  ) : (
+                    <div className="p-2 px-3 rounded-md bg-white border border-gray-200 text-sm font-mono whitespace-pre-wrap animate-fade-in">
+                      {feedbackText}
+                    </div>
                   )
                 )}
               </div>
