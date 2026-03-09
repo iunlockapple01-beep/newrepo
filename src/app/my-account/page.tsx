@@ -243,7 +243,7 @@ function MyAccountContent() {
                         <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
                     )}
                     {isAdmin && (
-                      <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>
+                      <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>
                     )}
                     <div className='pt-4'>
                       <LoginButton />
@@ -286,8 +286,8 @@ function MyAccountContent() {
                                <div className="flex-1">
                                  <p className="text-sm">USDT BEP20 Address:</p>
                                  <div className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all flex items-center justify-between border shadow-inner">
-                                    <span>0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
-                                    <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                                    <span>0x056AAc9B30E82eb84e5E96dd85D42568231064AC</span>
+                                    <CopyToClipboard text="0x056AAc9B30E82eb84e5E96dd85D42568231064AC">
                                         <Button variant="ghost" size="icon" className="h-6 w-6">
                                             <Copy className="w-3 h-3 text-gray-500 hover:text-gray-800"/>
                                         </Button>
@@ -517,8 +517,8 @@ function MyAccountContent() {
                             </div>
                         </div>
                         <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                            <span className="font-medium">0x04bF65223Aa01924691773101FF250E4Fc6903c3</span>
-                            <CopyToClipboard text="0x04bF65223Aa01924691773101FF250E4Fc6903c3">
+                            <span className="font-medium">0x056AAc9B30E82eb84e5E96dd85D42568231064AC</span>
+                            <CopyToClipboard text="0x056AAc9B30E82eb84e5E96dd85D42568231064AC">
                                 <Button variant="ghost" size="icon" className="h-8 w-8 ml-2 hover:bg-gray-200">
                                     <Copy className="w-4 h-4 text-gray-500"/>
                                 </Button>
