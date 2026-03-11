@@ -547,7 +547,7 @@ function AdminDashboard() {
                           <TableBody>
                           {orders?.map(order => (
                               <TableRow key={order.id}>
-                                  <TableCell>{order.createdAt.toDate().toLocaleDateString()}</TableCell>
+                                  <TableCell>{order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : 'N/A'}</TableCell>
                                   <TableCell className="font-mono text-xs">{order.orderId}</TableCell>
                                   <TableCell>{order.model}</TableCell>
                                   <TableCell className="font-mono text-xs">{order.imei}</TableCell>

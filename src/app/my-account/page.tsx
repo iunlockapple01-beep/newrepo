@@ -366,7 +366,7 @@ function MyAccountContent() {
                 <TableBody>
                   {orders.map(order => (
                     <TableRow key={order.id}>
-                      <TableCell>{order.createdAt.toDate().toLocaleDateString()}</TableCell>
+                      <TableCell>{order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : 'N/A'}</TableCell>
                       <TableCell className="font-mono text-sm">{order.orderId}</TableCell>
                       <TableCell>iCloud Unlock</TableCell>
                       <TableCell>{order.model}</TableCell>
@@ -418,9 +418,13 @@ function MyAccountContent() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {tickets.sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime()).map(ticket => (
+                            {tickets.sort((a, b) => {
+                                const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+                                const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+                                return timeB - timeA;
+                            }).map(ticket => (
                                 <TableRow key={ticket.id}>
-                                    <TableCell>{ticket.createdAt.toDate().toLocaleDateString()}</TableCell>
+                                    <TableCell>{ticket.createdAt?.toDate ? ticket.createdAt.toDate().toLocaleDateString() : 'N/A'}</TableCell>
                                     <TableCell className="font-mono text-xs uppercase">{ticket.id.slice(0, 8)}</TableCell>
                                     <TableCell>{ticket.category}</TableCell>
                                     <TableCell className="font-medium">{ticket.subject}</TableCell>
