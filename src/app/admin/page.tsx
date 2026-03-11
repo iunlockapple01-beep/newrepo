@@ -58,7 +58,7 @@ interface Order {
   model: string;
   price: number;
   status: 'confirming_payment' | 'approved' | 'declined' | 'unlocked' | 'processing' | 'ready_for_activation_bulk' | 'ready_for_activation';
-  createdAt: { toDate: () => Date };
+  createdAt: any;
 }
 
 interface PaymentClaim {
@@ -70,7 +70,7 @@ interface PaymentClaim {
   model: string;
   price: number;
   status: 'pending' | 'approved' | 'rejected';
-  createdAt: { toDate: () => Date };
+  createdAt: any;
 }
 
 interface UserProfile {

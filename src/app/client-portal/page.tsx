@@ -219,7 +219,8 @@ function DeviceCheckContent() {
         if (claimData.status === 'approved') {
           // Redirect immediately to My Account page
           router.push('/my-account');
-          setVerifyingClaimId(null);
+          // Note: We don't clear verifyingClaimId here to prevent the "glitch"
+          // where the feedback screen briefly reappears during the navigation transition.
           toast({
             title: "Payment Verified",
             description: "Your payment has been confirmed. Opening your account...",
