@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -38,6 +37,7 @@ import { format } from 'date-fns';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 interface Submission {
   id: string;
