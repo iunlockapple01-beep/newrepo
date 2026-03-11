@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -29,6 +30,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { VerificationAnimation } from '@/components/ui/verification-animation';
 import { cn } from '@/lib/utils';
 import { TypingAnimation } from '@/components/ui/typing-animation';
+import { Progress } from '@/components/ui/progress';
 
 // Define the structure for a submission
 interface Submission {
@@ -39,6 +41,7 @@ interface Submission {
   image: string;
   imei: string;
   status: 'waiting' | 'eligible' | 'not_supported' | 'paid' | 'feedback' | 'find_my_off' | 'device_found';
+  successRate?: number;
   feedback: string[] | null;
   createdAt: any;
 }
@@ -291,11 +294,7 @@ function DeviceCheckContent() {
 
       if (!querySnapshot.empty) {
         const existingDocs = querySnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as Submission) }));
-        
-        // We only block/warn if there is a record that ALREADY HAS FEEDBACK.
-        // If all existing records are 'waiting', we treat it as a new submission.
         const docsWithFeedback = existingDocs.filter(s => s.status !== 'waiting');
-
         const match = docsWithFeedback.find(s => s.model === model);
         
         if (match) {
@@ -309,15 +308,6 @@ function DeviceCheckContent() {
                 }, 3000); 
             }, 4000); 
             return;
-        }
-
-        const conflict = docsWithFeedback.find(s => s.model !== model && s.status !== 'feedback');
-        if (conflict) {
-             setTimeout(() => {
-                 setIsChecking(false);
-                 setValidationError('This IMEI/Serial is already associated with a different device model. Please select the correct model to proceed.');
-             }, 3500); 
-             return;
         }
       }
     } catch (e) {}
@@ -338,7 +328,6 @@ function DeviceCheckContent() {
         setSubmissionId(docRef.id);
         
         if (!isServerOnline) {
-            // Server status is offline: keep simulation going for 10s then show error
             setIsChecking(false);
             setIsOfflineSimulating(true);
             setTimeout(() => {
@@ -563,7 +552,7 @@ function DeviceCheckContent() {
         const shouldAnimate = !isCachedCheck && submission.status === 'eligible';
         
         return (
-            <div className="w-full text-left p-4">
+            <div className="w-full text-left p-4 space-y-4">
               <div className="space-y-2">
                 {specialStatusLines.map((line, index) => {
                   if (line === 'FIND_MY_ON_STATUS') {
@@ -599,16 +588,50 @@ function DeviceCheckContent() {
                   )
                 )}
               </div>
+
+              {submission.status === 'eligible' && submission.successRate && (
+                <div className="mt-6 space-y-4 animate-fade-in">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wide">
+                      <span className={cn(submission.successRate >= 75 ? "text-green-600" : "text-red-600")}>
+                        Unlock Success Probability
+                      </span>
+                      <span className={cn(submission.successRate >= 75 ? "text-green-600" : "text-red-600")}>
+                        {submission.successRate}%
+                      </span>
+                    </div>
+                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className={cn("h-full transition-all duration-1000", submission.successRate >= 75 ? "bg-green-500" : "bg-red-500")}
+                        style={{ width: `${submission.successRate}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  {submission.successRate <= 45 && (
+                    <div className="p-4 bg-red-50 border border-red-100 rounded-xl text-[13px] text-red-800 space-y-3 leading-relaxed shadow-sm">
+                      <p className="font-bold">Advice: It is recommended not to proceed with the unlock due to the low success probability.</p>
+                      <p>If you choose to proceed, please note that in the event the unlock is unsuccessful, only 70% of the payment will be refunded. The remaining 30% will be retained as a processing service fee.</p>
+                      <p>If you agree to these terms, you may still proceed with the unlock order.</p>
+                      <div className="pt-2 border-t border-red-200 space-y-1 text-xs opacity-90">
+                        <p>• Refunds will be processed using the same payment method used for the original transaction.</p>
+                        <p>• If the unlock order is confirmed unsuccessful, the client must submit a support ticket or contact support with their Order ID to request the refund.</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {feedbackData.timestamp && (
                 <p className="text-xs text-gray-500 mt-2 text-right animate-fade-in">Feedback received: {feedbackData.timestamp}</p>
               )}
               {submission.status === 'eligible' && (
                 <div className="mt-4 text-right flex items-center justify-end gap-4 animate-fade-in">
-                  <p className="bg-green-100 text-green-800 font-semibold p-2 px-3 rounded-lg">✅ This device is eligible for iCloud Unlock</p>
+                  <p className="bg-green-100 text-green-800 font-semibold p-2 px-3 rounded-lg text-sm hidden sm:block">✅ This device is eligible for iCloud Unlock</p>
                   <Button 
                     onClick={openPaymentModal} 
                     variant="outline" 
-                    className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-semibold"
+                    className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-bold shadow-sm"
                   >
                     Proceed with Unlock
                     <ChevronRight className="ml-1 h-4 w-4" />
@@ -616,16 +639,16 @@ function DeviceCheckContent() {
                 </div>
               )}
                {submission.status === 'not_supported' && (
-                 <p className="bg-red-100 text-red-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center animate-fade-in">❌ Unable to proceed with the unlock.</p>
+                 <p className="bg-red-100 text-red-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center animate-fade-in text-sm">❌ Unable to proceed with the unlock.</p>
                )}
                {submission.status === 'find_my_off' && (
-                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center animate-fade-in">
+                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center animate-fade-in text-sm leading-relaxed">
                     Find My is OFF. If you need help restoring your device, please contact the {' '}
                     <a href="https://t.me/Chris_Morgan057" target="_blank" rel="noopener noreferrer" className="underline font-bold">technician</a>.
                  </p>
                )}
                {submission.status === 'feedback' && (
-                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center animate-fade-in">ℹ️ Select the above device model and check again.</p>
+                 <p className="bg-blue-100 text-blue-800 font-semibold p-2 px-3 rounded-lg mt-4 text-center animate-fade-in text-sm">ℹ️ Select the above device model and check again.</p>
                )}
             </div>
         );
@@ -660,8 +683,8 @@ function DeviceCheckContent() {
                       <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
-                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>}
-                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>}
+                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
+                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>}
                         <div className="pt-4"><LoginButton /></div>
                       </div>
                     </SheetContent>

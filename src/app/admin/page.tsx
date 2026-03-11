@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -35,6 +36,7 @@ import { Ban, Menu, Users, Server, ServerOff, MessageSquare } from 'lucide-react
 import { format } from 'date-fns';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface Submission {
   id: string;
@@ -43,6 +45,7 @@ interface Submission {
   price: number;
   imei: string;
   status: 'waiting' | 'feedback' | 'paid' | 'eligible' | 'not_supported' | 'find_my_off' | 'device_found';
+  successRate?: number;
   feedback: string[] | null;
 }
 
@@ -93,11 +96,12 @@ function AdminDashboard() {
 
   const [feedbackValues, setFeedbackValues] = useState<{ [key: string]: string }>({});
   const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' }>({});
+  const [selectedRates, setSelectedRates] = useState<{ [key: string]: number }>({});
+  
   const [registeredUsers, setRegisteredUsers] = useState<number>(0);
   const [unlockedDevices, setUnlockedDevices] = useState<number>(0);
   const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
 
-  // Automatically calculate how many total submissions that specific User ID has made
   const userIdCounts = useMemo(() => {
     if (!submissions) return {};
     const counts: Record<string, number> = {};
@@ -183,11 +187,16 @@ function AdminDashboard() {
     lines.push(`TIMESTAMP:${timestamp}`);
 
     const submissionRef = doc(firestore, 'submissions', submissionId);
-    const updatedData = {
+    const updatedData: any = {
       feedback: lines,
       status: status,
       updatedAt: serverTimestamp(),
     };
+
+    if (status === 'eligible' && selectedRates[submissionId]) {
+      updatedData.successRate = selectedRates[submissionId];
+    }
+
     updateDoc(submissionRef, updatedData)
       .then(() => {
         toast({ title: "Feedback sent!" });
@@ -354,6 +363,49 @@ function AdminDashboard() {
                               <SelectItem value="find_my_off">Find My: OFF</SelectItem>
                           </SelectContent>
                       </Select>
+
+                      {feedbackStatus[sub.id] === 'eligible' && (
+                        <div className="p-4 border rounded-lg bg-gray-50 space-y-3 animate-fade-in">
+                          <Label className="text-xs font-bold uppercase text-gray-500">Select Success Rate</Label>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <p className="text-[10px] font-bold text-green-600 uppercase tracking-wider">High Success Rate</p>
+                              <div className="flex gap-2">
+                                <Button 
+                                  variant={selectedRates[sub.id] === 98 ? 'default' : 'outline'} 
+                                  size="sm"
+                                  className={cn("flex-1 h-8", selectedRates[sub.id] === 98 && "bg-green-600 hover:bg-green-700")}
+                                  onClick={() => setSelectedRates(prev => ({...prev, [sub.id]: 98}))}
+                                >98%</Button>
+                                <Button 
+                                  variant={selectedRates[sub.id] === 75 ? 'default' : 'outline'} 
+                                  size="sm"
+                                  className={cn("flex-1 h-8", selectedRates[sub.id] === 75 && "bg-green-500 hover:bg-green-600")}
+                                  onClick={() => setSelectedRates(prev => ({...prev, [sub.id]: 75}))}
+                                >75%</Button>
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <p className="text-[10px] font-bold text-red-600 uppercase tracking-wider">Low Success Rate</p>
+                              <div className="flex gap-2">
+                                <Button 
+                                  variant={selectedRates[sub.id] === 45 ? 'default' : 'outline'} 
+                                  size="sm"
+                                  className={cn("flex-1 h-8", selectedRates[sub.id] === 45 && "bg-red-500 hover:bg-red-600")}
+                                  onClick={() => setSelectedRates(prev => ({...prev, [sub.id]: 45}))}
+                                >45%</Button>
+                                <Button 
+                                  variant={selectedRates[sub.id] === 25 ? 'default' : 'outline'} 
+                                  size="sm"
+                                  className={cn("flex-1 h-8", selectedRates[sub.id] === 25 && "bg-red-600 hover:bg-red-700")}
+                                  onClick={() => setSelectedRates(prev => ({...prev, [sub.id]: 25}))}
+                                >25%</Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       <div className='flex justify-end gap-2'><Button onClick={() => handleSendFeedback(sub.id)} className="btn-primary text-white">Send Feedback</Button><Button onClick={() => handleDelete(sub.id)} variant="destructive">Delete</Button></div>
                     </CardFooter>
                   </Card>))}

@@ -60,6 +60,10 @@
           "enum": ["waiting", "feedback", "paid", "eligible", "not_supported", "find_my_off", "device_found"],
           "description": "The current status of the submission"
         },
+        "successRate": {
+          "type": "number",
+          "description": "The probability percentage of a successful unlock (e.g., 98, 75, 45, 25)"
+        },
         "feedback": {
           "type": "array",
           "items": {
