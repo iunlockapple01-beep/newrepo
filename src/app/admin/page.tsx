@@ -97,6 +97,16 @@ function AdminDashboard() {
   const [unlockedDevices, setUnlockedDevices] = useState<number>(0);
   const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
 
+  // Automatically calculate how many total submissions that specific User ID has made
+  const userIdCounts = useMemo(() => {
+    if (!submissions) return {};
+    const counts: Record<string, number> = {};
+    submissions.forEach((sub) => {
+      counts[sub.userId] = (counts[sub.userId] || 0) + 1;
+    });
+    return counts;
+  }, [submissions]);
+
   useEffect(() => {
     if (userLoading) return;
     if (!user) {
@@ -155,11 +165,10 @@ function AdminDashboard() {
     const status = feedbackStatus[submissionId];
     if (!status) return toast({ title: "Selection Required", description: "Select an outcome.", variant: "destructive" });
     
-    // Robust cleaning logic for spacing and "undefined" strings
     const feedbackText = feedbackTextRaw
         .replace(/undefined/gi, '')
         .replace(/\(undefined\)/gi, '')
-        .replace(/(iPhone)(\d+)/gi, '$1 $2') // Insert space: iPhone11 -> iPhone 11
+        .replace(/(iPhone)(\d+)/gi, '$1 $2')
         .trim();
 
     if (feedbackText === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported') {
@@ -170,7 +179,6 @@ function AdminDashboard() {
     if (status === 'eligible') lines.push('FIND_MY_ON_STATUS');
     if (status === 'find_my_off') lines.push('FIND_MY_OFF_STATUS');
     
-    // Always add timestamp for fresh feedback
     const timestamp = format(new Date(), "PPpp"); 
     lines.push(`TIMESTAMP:${timestamp}`);
 
@@ -328,8 +336,9 @@ function AdminDashboard() {
                 {sortedSubmissions.map(sub => (
                   <Card key={sub.id} className={`bg-white ${sub.status === 'waiting' || sub.status === 'device_found' ? 'border-2 border-primary' : ''}`}>
                     <CardHeader><CardTitle className='flex justify-between items-center'><span>{sub.model}</span><Badge variant={sub.status === 'waiting' ? 'default' : 'secondary'} className={sub.status === 'waiting' || sub.status === 'device_found' ? 'animate-pulse' : ''}>{sub.status.replace('_', ' ')}</Badge></CardTitle></CardHeader>
-                    <CardContent>
+                    <CardContent className="space-y-1">
                       <p className="text-sm text-gray-600">User ID: {sub.userId}</p>
+                      <p className="text-sm font-bold text-blue-600">Submission Count: {userIdCounts[sub.userId] || 0}</p>
                       <p className="text-sm text-gray-600">IMEI/Serial: <strong>{sub.imei}</strong></p>
                       <p className="text-sm text-gray-600">Price: ${sub.price}</p>
                       <div className="mt-4"><label className="block text-sm font-medium text-gray-700 mb-1">Feedback:</label><Textarea value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:')).join('\n') || ''} onChange={(e) => handleFeedbackChange(sub.id, e.target.value)} className="font-mono" /></div>
