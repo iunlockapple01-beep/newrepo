@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -17,11 +18,11 @@ import {
 import { LoginButton } from '@/components/login-button';
 import { PlaceHolderImages, getImage } from '@/lib/placeholder-images';
 import { useUser, useFirebase, useDoc } from '@/firebase';
-import { addDoc, collection, serverTimestamp, query, where, getDocs, limit } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, query, where, getDocs, limit, doc, onSnapshot } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu, Loader, CheckCircle2, AlertTriangle, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
+import { Copy, Menu, Loader, CheckCircle2, AlertTriangle, ChevronDown, ChevronUp, ChevronRight, XCircle } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -30,6 +31,7 @@ import { VerificationAnimation } from '@/components/ui/verification-animation';
 import { cn } from '@/lib/utils';
 import { TypingAnimation } from '@/components/ui/typing-animation';
 import { Progress } from '@/components/ui/progress';
+import { PaymentVerificationAnimation } from '@/components/ui/payment-verification-animation';
 
 // Define the structure for a submission
 interface Submission {
@@ -58,6 +60,11 @@ interface BannedUser {
 
 interface Counters {
     isServerOnline?: boolean;
+}
+
+interface PaymentClaim {
+  id: string;
+  status: 'pending' | 'approved' | 'rejected';
 }
 
 const paymentMethods = [
@@ -173,6 +180,10 @@ function DeviceCheckContent() {
   const [isOfflineSimulating, setIsOfflineSimulating] = useState(false);
   const [offlineError, setOfflineError] = useState(false);
 
+  // Verification Claim State
+  const [verifyingClaimId, setVerifyingClaimId] = useState<string | null>(null);
+  const [claimRejected, setClaimRejected] = useState(false);
+
   const telegramIcon = getImage('telegram-icon');
   const whatsappIcon = getImage('whatsapp-icon');
   const usdtImage = getImage('usdt-icon');
@@ -181,7 +192,7 @@ function DeviceCheckContent() {
   const ethereumImage = getImage('eth-icon');
   const usdcImage = getImage('usdc-icon');
 
-  const formDisabled = isChecking || !!submission || isOfflineSimulating;
+  const formDisabled = isChecking || !!submission || isOfflineSimulating || !!verifyingClaimId;
   const shouldShowLoader = (isChecking || (submission && submission.status === 'waiting') || isOfflineSimulating) && !offlineError;
 
   useEffect(() => {
@@ -197,6 +208,34 @@ function DeviceCheckContent() {
         setStartVerificationSteps(false);
     }
   }, [submission?.status, submission?.id]);
+
+  // Listener for payment verification claims
+  useEffect(() => {
+    if (!verifyingClaimId || !firestore) return;
+
+    const claimRef = doc(firestore, 'payment_claims', verifyingClaimId);
+    const unsubscribe = onSnapshot(claimRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const claimData = snapshot.data() as PaymentClaim;
+        if (claimData.status === 'approved') {
+          setVerifyingClaimId(null);
+          toast({
+            title: "Payment Verified",
+            description: "Your payment has been confirmed. Redirecting to your account...",
+            duration: 5000,
+          });
+          setTimeout(() => {
+            router.push('/my-account');
+          }, 2000);
+        } else if (claimData.status === 'rejected') {
+          setVerifyingClaimId(null);
+          setClaimRejected(true);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, [verifyingClaimId, firestore, router, toast]);
 
   const feedbackData = useMemo(() => {
     if (!submission?.feedback) return { lines: [], timestamp: null };
@@ -234,6 +273,8 @@ function DeviceCheckContent() {
     setIsOfflineSimulating(false);
     setOfflineError(false);
     setIsChecking(false);
+    setVerifyingClaimId(null);
+    setClaimRejected(false);
   };
 
   useEffect(() => {
@@ -275,6 +316,7 @@ function DeviceCheckContent() {
     setShowDeviceFoundNotif(false);
     setStartVerificationSteps(false);
     setOfflineError(false);
+    setClaimRejected(false);
     
     if (!isImeiValid && !isSerialValid) {
         setValidationError('Enter Valid IMEI or Serial');
@@ -405,37 +447,33 @@ function DeviceCheckContent() {
     };
     const newOrderId = `#ORD-${generateRandomPart(5)}`;
 
-    const newOrderData = {
+    const newClaimData = {
       orderId: newOrderId,
       userId: user.uid,
       submissionId: submissionId,
       imei: submission.imei,
       model: submission.model,
       price: submission.price,
-      status: 'confirming_payment' as const,
+      status: 'pending' as const,
       createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
     };
 
-    const ordersCollectionRef = collection(firestore, 'orders');
-    addDoc(ordersCollectionRef, newOrderData)
-      .then(() => {
+    addDoc(collection(firestore, 'payment_claims'), newClaimData)
+      .then((docRef) => {
+        setVerifyingClaimId(docRef.id);
         setPaymentModalOpen(false);
+        setIsSubmittingOrder(false);
         toast({
-          title: "Order Submitted",
-          description: `Order submitted for confirmation. Your Order ID is: ${newOrderId}. You will be redirected to your account page.`,
-          duration: 6000,
+          title: "Payment Claim Received",
+          description: "Our system is now scanning for your payment. Please stay on this page.",
         });
-        setTimeout(() => {
-          router.push('/my-account');
-        }, 2500);
       })
       .catch(async (serverError) => {
         setIsSubmittingOrder(false);
         const permissionError = new FirestorePermissionError({
-          path: 'orders',
+          path: 'payment_claims',
           operation: 'create',
-          requestResourceData: newOrderData,
+          requestResourceData: newClaimData,
         });
         errorEmitter.emit('permission-error', permissionError);
       });
@@ -455,6 +493,25 @@ function DeviceCheckContent() {
   }
   
   const renderContent = () => {
+    if (verifyingClaimId) {
+      return <PaymentVerificationAnimation />;
+    }
+
+    if (claimRejected) {
+      return (
+        <div className="w-full max-w-lg mx-auto p-8 text-center animate-fade-in">
+          <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">Verification Failed</h3>
+          <div className="bg-red-50 border border-red-100 rounded-xl p-6 text-red-800 text-sm leading-relaxed">
+            "No payment matching this order has been detected. If you believe this is an error, please contact support or submit a support ticket with your Order ID for assistance."
+          </div>
+          <Button variant="outline" className="mt-6" onClick={() => setClaimRejected(false)}>
+            Back to Device Details
+          </Button>
+        </div>
+      );
+    }
+
     if (validationError) {
       return (
           <div className="w-full text-left p-4">
@@ -682,8 +739,8 @@ function DeviceCheckContent() {
                       <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                         <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
-                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
-                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">Admin</Link>}
+                        {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">My Account</Link>}
+                        {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</Link>}
                         <div className="pt-4"><LoginButton /></div>
                       </div>
                     </SheetContent>
@@ -722,7 +779,7 @@ function DeviceCheckContent() {
           </div>
         </div>
 
-        <div className={cn("mt-5 rounded-lg border border-gray-200", shouldShowLoader ? "bg-white overflow-hidden" : "p-4 bg-gray-50 min-h-[120px] flex items-center justify-center flex-col text-center")}>
+        <div className={cn("mt-5 rounded-lg border border-gray-200", (shouldShowLoader || verifyingClaimId) ? "bg-white overflow-hidden" : "p-4 bg-gray-50 min-h-[120px] flex items-center justify-center flex-col text-center")}>
           {renderContent()}
         </div>
       </main>

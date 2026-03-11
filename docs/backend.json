@@ -82,6 +82,22 @@
       },
       "required": ["userId", "model", "price", "imei", "status", "createdAt"]
     },
+    "payment_claim": {
+      "title": "Payment Claim",
+      "description": "A claim made by a user that they have paid for an unlock",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string" },
+        "userId": { "type": "string" },
+        "submissionId": { "type": "string" },
+        "imei": { "type": "string" },
+        "model": { "type": "string" },
+        "price": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["orderId", "userId", "submissionId", "imei", "model", "price", "status", "createdAt"]
+    },
     "order": {
       "title": "Order",
       "description": "A confirmed and paid unlock order",
@@ -240,6 +256,12 @@
         "$ref": "#/backend/entities/banned_user"
       },
       "description": "List of user IDs who are banned from making new submissions"
+    },
+    "/payment_claims/{claimId}": {
+      "schema": {
+        "$ref": "#/backend/entities/payment_claim"
+      },
+      "description": "Claims made by users after clicking 'I Paid'"
     }
   }
 }
