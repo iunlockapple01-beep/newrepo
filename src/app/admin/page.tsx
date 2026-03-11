@@ -402,7 +402,8 @@ function AdminDashboard() {
                       <div className="space-y-1">
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Client Info</p>
                         <p className="font-medium">{client?.displayName || 'N/A'}</p>
-                        <p className="text-xs text-gray-500">{client?.email || claim.userId}</p>
+                        <p className="text-xs text-gray-500">{client?.email || 'N/A'}</p>
+                        <p className="text-[10px] text-gray-400 font-mono">ID: {claim.userId}</p>
                         <p className="text-xs font-semibold text-green-600">Balance: ${client?.balance?.toFixed(2) || '0.00'}</p>
                       </div>
                       <Separator className="bg-blue-100" />
