@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -594,7 +593,7 @@ function DeviceCheckContent() {
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wide">
                       <span className={cn(submission.successRate >= 75 ? "text-green-600" : "text-red-600")}>
-                        Unlock Success Probability
+                        Unlock Success Rate
                       </span>
                       <span className={cn(submission.successRate >= 75 ? "text-green-600" : "text-red-600")}>
                         {submission.successRate}%
