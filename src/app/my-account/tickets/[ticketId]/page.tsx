@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -130,7 +129,7 @@ export default function TicketDetailsPage() {
               <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0"><User className="h-4 w-4 text-blue-600" /></div>
               <div className="space-y-1">
                 <div className="bg-white border rounded-2xl p-4 shadow-sm"><p className="text-sm whitespace-pre-wrap">{ticket.message}</p></div>
-                <p className="text-[10px] text-gray-400 px-2">{format(ticket.createdAt.toDate(), 'PPp')}</p>
+                <p className="text-[10px] text-gray-400 px-2">{ticket.createdAt?.toDate ? format(ticket.createdAt.toDate(), 'PPp') : 'Just now'}</p>
               </div>
             </div>
             {ticket.replies.map((reply, index) => (

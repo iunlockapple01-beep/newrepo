@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -166,7 +165,7 @@ export default function AdminTicketManagementPage() {
             <h1 className="text-3xl font-bold">{ticket.subject}</h1>
             <div className="flex items-center gap-2 mt-1">
                 <Badge variant="outline" className="text-gray-500 uppercase">{ticket.id.slice(0, 8)}</Badge>
-                <span className="text-xs text-gray-500">by {ticket.userName} on {format(ticket.createdAt.toDate(), 'PPpp')}</span>
+                <span className="text-xs text-gray-500">by {ticket.userName} on {ticket.createdAt?.toDate ? format(ticket.createdAt.toDate(), 'PPpp') : 'Just now'}</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -192,7 +191,7 @@ export default function AdminTicketManagementPage() {
                         <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0"><User className="h-4 w-4 text-blue-600" /></div>
                         <div className="space-y-1">
                             <div className="bg-white border rounded-2xl p-4 shadow-sm"><p className="text-xs font-bold text-blue-600 mb-1">CLIENT INITIAL MESSAGE</p><p className="text-sm whitespace-pre-wrap">{ticket.message}</p></div>
-                            <p className="text-[10px] text-gray-400 px-2">{format(ticket.createdAt.toDate(), 'PPp')}</p>
+                            <p className="text-[10px] text-gray-400 px-2">{ticket.createdAt?.toDate ? format(ticket.createdAt.toDate(), 'PPp') : 'Just now'}</p>
                         </div>
                     </div>
                     {ticket.replies.map((reply, index) => (

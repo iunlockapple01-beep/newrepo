@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -218,15 +217,13 @@ function DeviceCheckContent() {
       if (snapshot.exists()) {
         const claimData = snapshot.data() as PaymentClaim;
         if (claimData.status === 'approved') {
+          // Redirect immediately to My Account page
+          router.push('/my-account');
           setVerifyingClaimId(null);
           toast({
             title: "Payment Verified",
-            description: "Your payment has been confirmed. Redirecting to your account...",
-            duration: 5000,
+            description: "Your payment has been confirmed. Opening your account...",
           });
-          setTimeout(() => {
-            router.push('/my-account');
-          }, 2000);
         } else if (claimData.status === 'rejected') {
           setVerifyingClaimId(null);
           setClaimRejected(true);
