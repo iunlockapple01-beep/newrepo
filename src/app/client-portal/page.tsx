@@ -335,7 +335,24 @@ function DeviceCheckContent() {
         const existingDocs = querySnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as Submission) }));
         const docsWithFeedback = existingDocs.filter(s => s.status !== 'waiting');
         
-        // 1. Check for "Eligible" mismatch under a DIFFERENT model
+        // 1. Check for "Not Supported" status across ANY model
+        const notSupportedMatch = docsWithFeedback.find(s => s.status === 'not_supported');
+        if (notSupportedMatch) {
+            setIsSearching(false);
+            setIsChecking(true);
+            setIsCachedCheck(true);
+            setTimeout(() => {
+                setIsChecking(false);
+                setShowCachedDataNotification(true);
+                setTimeout(() => {
+                    setShowCachedDataNotification(false);
+                    setSubmissionId(notSupportedMatch.id);
+                }, 3000); 
+            }, 4000); 
+            return;
+        }
+
+        // 2. Check for "Eligible" mismatch under a DIFFERENT model
         const eligibleMismatch = docsWithFeedback.find(s => s.status === 'eligible' && s.model !== model);
         if (eligibleMismatch) {
             setIsSearching(false);
@@ -343,7 +360,7 @@ function DeviceCheckContent() {
             return;
         }
 
-        // 2. Check for same model cache
+        // 3. Check for same model cache (for other statuses like feedback, find_my_off etc)
         const sameModelMatch = docsWithFeedback.find(s => s.model === model);
         if (sameModelMatch) {
             setIsSearching(false);
