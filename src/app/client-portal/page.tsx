@@ -21,7 +21,7 @@ import { addDoc, collection, serverTimestamp, query, where, getDocs, limit, doc,
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu, Loader, CheckCircle2, AlertTriangle, ChevronDown, ChevronUp, ChevronRight, XCircle } from 'lucide-react';
+import { Copy, Menu, Loader, CheckCircle2, AlertTriangle, ChevronDown, ChevronUp, ChevronRight, XCircle, Info } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -620,6 +620,12 @@ function DeviceCheckContent() {
         
         // Typing animation only for 'eligible' status, not cached
         const shouldAnimate = !isCachedCheck && submission.status === 'eligible';
+
+        const getEstimatedTime = (rate: number) => {
+          if (rate >= 98) return "Usually completed in less than 24 hours.";
+          if (rate >= 75) return "This process may take up to 2 days.";
+          return "Maximum expected wait time is up to 72 hours.";
+        };
         
         return (
             <div className="w-full text-left p-4 space-y-4">
@@ -660,7 +666,7 @@ function DeviceCheckContent() {
               </div>
 
               {submission.status === 'eligible' && submission.successRate && (
-                <div className="mt-6 space-y-4 animate-fade-in">
+                <div className="mt-6 space-y-6 animate-fade-in">
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wide">
                       <span className={cn(submission.successRate >= 75 ? "text-green-600" : "text-red-600")}>
@@ -675,6 +681,18 @@ function DeviceCheckContent() {
                         className={cn("h-full transition-all duration-1000", submission.successRate >= 75 ? "bg-green-500" : "bg-red-500")}
                         style={{ width: `${submission.successRate}%` }}
                       ></div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="text-[13px] font-bold text-gray-900">
+                      Estimated processing time: {getEstimatedTime(submission.successRate)}
+                    </p>
+                    <div className="flex gap-2 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                      <Info className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
+                      <p className="text-[11px] text-gray-500 leading-relaxed italic">
+                        Unlock processing time depends on server response, device verification stages, and Apple activation server synchronization. In most cases it is completed within the estimated time, but delays can occasionally occur due to server traffic or additional verification checks.
+                      </p>
                     </div>
                   </div>
                   
