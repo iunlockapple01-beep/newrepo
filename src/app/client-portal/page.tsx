@@ -166,6 +166,7 @@ function DeviceCheckContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('Processing payment...');
   const [isChecking, setIsChecking] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(20 * 60);
@@ -191,7 +192,7 @@ function DeviceCheckContent() {
   const ethereumImage = getImage('eth-icon');
   const usdcImage = getImage('usdc-icon');
 
-  const formDisabled = isChecking || !!submission || isOfflineSimulating || !!verifyingClaimId;
+  const formDisabled = isChecking || isSearching || !!submission || isOfflineSimulating || !!verifyingClaimId;
   const shouldShowLoader = (isChecking || (submission && submission.status === 'waiting') || isOfflineSimulating) && !offlineError;
 
   useEffect(() => {
@@ -219,8 +220,6 @@ function DeviceCheckContent() {
         if (claimData.status === 'approved') {
           // Redirect immediately to My Account page
           router.push('/my-account');
-          // Note: We don't clear verifyingClaimId here to prevent the "glitch"
-          // where the feedback screen briefly reappears during the navigation transition.
           toast({
             title: "Payment Verified",
             description: "Your payment has been confirmed. Opening your account...",
@@ -271,6 +270,7 @@ function DeviceCheckContent() {
     setIsOfflineSimulating(false);
     setOfflineError(false);
     setIsChecking(false);
+    setIsSearching(false);
     setVerifyingClaimId(null);
     setClaimRejected(false);
   };
@@ -289,19 +289,19 @@ function DeviceCheckContent() {
   const isAdmin = user?.email === 'iunlockapple01@gmail.com';
 
   const handleSubmitImei = async () => {
-    if (!user) return;
+    if (!user || isSearching || isChecking) return;
 
     const trimmedImei = imei.trim();
     const isImeiValid = /^\d{15}$/.test(trimmedImei);
     const isSerialValid = /^[a-zA-Z0-9]{10,13}$/.test(trimmedImei);
 
     // Notify Telegram immediately on EVERY click
-    const message = `🚨 <b>Submit Button Clicked!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei || '<i>(empty)</i>'}\n<b>User ID:</b> ${user.uid}\n<b>Format Status:</b> ${isImeiValid || isSerialValid ? 'Format OK' : 'Invalid Format'}`;
+    const tgMessage = `🚨 <b>Submit Button Clicked!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei || '<i>(empty)</i>'}\n<b>User ID:</b> ${user.uid}\n<b>Format Status:</b> ${isImeiValid || isSerialValid ? 'Format OK' : 'Invalid Format'}`;
     try {
       fetch('/api/telegram', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message: tgMessage }),
       });
     } catch (error) {}
     
@@ -321,7 +321,7 @@ function DeviceCheckContent() {
         return;
     }
 
-    setIsChecking(true);
+    setIsSearching(true);
 
     try {
       const submissionsRef = collection(firestore, 'submissions');
@@ -334,22 +334,38 @@ function DeviceCheckContent() {
       if (!querySnapshot.empty) {
         const existingDocs = querySnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as Submission) }));
         const docsWithFeedback = existingDocs.filter(s => s.status !== 'waiting');
-        const match = docsWithFeedback.find(s => s.model === model);
         
-        if (match) {
+        // 1. Check for "Eligible" mismatch under a DIFFERENT model
+        const eligibleMismatch = docsWithFeedback.find(s => s.status === 'eligible' && s.model !== model);
+        if (eligibleMismatch) {
+            setIsSearching(false);
+            setValidationError(`Device Mismatch\n\nThis IMEI / Serial Number is already registered in our database as eligible for unlock under a different model: ${eligibleMismatch.model}.\n\nPlease ensure you have selected the correct device model or contact support.`);
+            return;
+        }
+
+        // 2. Check for same model cache
+        const sameModelMatch = docsWithFeedback.find(s => s.model === model);
+        if (sameModelMatch) {
+            setIsSearching(false);
+            setIsChecking(true);
             setIsCachedCheck(true);
             setTimeout(() => {
                 setIsChecking(false);
                 setShowCachedDataNotification(true);
                 setTimeout(() => {
                     setShowCachedDataNotification(false);
-                    setSubmissionId(match.id);
+                    setSubmissionId(sameModelMatch.id);
                 }, 3000); 
             }, 4000); 
             return;
         }
       }
-    } catch (e) {}
+    } catch (e) {
+        console.error("Submission check error:", e);
+    }
+
+    setIsSearching(false);
+    setIsChecking(true);
 
     const newSubmission = {
       userId: user.uid,
@@ -767,8 +783,11 @@ function DeviceCheckContent() {
                 disabled={formDisabled}
               />
               <div className="flex gap-3">
-                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={formDisabled}>Submit</Button>
-                <Button onClick={handleClear} variant="outline">Clear</Button>
+                <Button onClick={handleSubmitImei} className="btn-primary text-white" disabled={formDisabled}>
+                    {isSearching ? <Loader className="mr-2 h-4 w-4 animate-spin" /> : null}
+                    Submit
+                </Button>
+                <Button onClick={handleClear} variant="outline" disabled={formDisabled}>Clear</Button>
               </div>
             </div>
             <p className="text-sm text-gray-500 mt-2">
@@ -964,7 +983,7 @@ function DeviceCheckContent() {
                                 )}
 
                                 <Alert className="bg-yellow-50 border-yellow-100 py-2 rounded-xl">
-                                    <AlertDescription className="text-[10px] text-center text-yellow-800 font-medium">
+                                    <AlertDescription className="text-[11px] text-center text-yellow-800 font-medium">
                                         Payments made within the timer will be automatically applied.
                                     </AlertDescription>
                                 </Alert>
