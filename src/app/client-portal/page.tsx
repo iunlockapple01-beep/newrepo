@@ -731,12 +731,14 @@ function DeviceCheckContent() {
                 <p className="text-xs text-gray-500 mt-2 text-right animate-fade-in">Feedback received: {feedbackData.timestamp}</p>
               )}
               {submission.status === 'eligible' && (
-                <div className="mt-4 text-right flex items-center justify-end gap-4 animate-fade-in">
-                  <p className="bg-green-100 text-green-800 font-semibold p-2 px-3 rounded-lg text-sm hidden sm:block">✅ This device is eligible for iCloud Unlock</p>
+                <div className="mt-4 flex flex-col sm:flex-row items-center sm:justify-end gap-4 animate-fade-in">
+                  <p className="bg-green-100 text-green-800 font-semibold p-2 px-3 rounded-lg text-sm block w-full sm:w-auto text-center">
+                    ✅ This device is eligible for iCloud Unlock
+                  </p>
                   <Button 
                     onClick={openPaymentModal} 
                     variant="outline" 
-                    className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-bold shadow-sm"
+                    className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-bold shadow-sm w-full sm:w-auto"
                   >
                     Proceed with Unlock
                     <ChevronRight className="ml-1 h-4 w-4" />
