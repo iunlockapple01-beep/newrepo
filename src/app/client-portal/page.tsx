@@ -534,7 +534,7 @@ function DeviceCheckContent() {
           <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
           <h3 className="text-2xl font-bold text-gray-900 mb-4">Verification Failed</h3>
           <div className="bg-red-50 border border-red-100 rounded-xl p-6 text-red-800 text-sm leading-relaxed">
-            "No payment matching this order has been detected. If you believe this is an error, please contact support or submit a support ticket with your Order ID for assistance."
+            "No payment matching this order has been detected. If you believe this is an error, please contact support or submit a support ticket with your payment details so our team can review the transaction and assist you.."
           </div>
           <Button variant="outline" className="mt-6" onClick={() => setClaimRejected(false)}>
             Back to Device Details
