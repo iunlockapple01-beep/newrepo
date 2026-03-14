@@ -80,6 +80,11 @@ interface UserProfile {
   balance: number;
 }
 
+interface SupportTicket {
+  id: string;
+  status: string;
+}
+
 interface Counters {
     registeredUsers: number;
     unlockedDevices: number;
@@ -109,12 +114,15 @@ function AdminDashboard() {
     return [where('userId', '==', user.uid)];
   }, [isAdmin, user, userLoading]);
 
+  const openTicketsConstraints = useMemo(() => [where('status', '==', 'open')], []);
+
   const { data: submissions, loading: submissionsLoading } =
     useCollection<Submission>('submissions', { constraints: submissionConstraints });
   const { data: orders, loading: ordersLoading } = useCollection<Order>('orders', { constraints: orderConstraints });
   const { data: counters, loading: countersLoading } = useDoc<Counters>('counters', 'metrics');
   const { data: claims, loading: claimsLoading } = useCollection<PaymentClaim>('payment_claims');
   const { data: allUsers } = useCollection<UserProfile>('users');
+  const { data: openTickets } = useCollection<SupportTicket>('tickets', { constraints: openTicketsConstraints });
 
   const [feedbackValues, setFeedbackValues] = useState<{ [key: string]: string }>({});
   const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' }>({});
@@ -123,6 +131,8 @@ function AdminDashboard() {
   const [registeredUsers, setRegisteredUsers] = useState<number>(0);
   const [unlockedDevices, setUnlockedDevices] = useState<number>(0);
   const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
+
+  const hasOpenTickets = (openTickets?.length || 0) > 0;
 
   const userIdCounts = useMemo(() => {
     if (!submissions) return {};
@@ -369,7 +379,7 @@ function AdminDashboard() {
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
                     {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
-                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
+                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
                     <div className='pt-4'><LoginButton /></div>
                   </div>
                 </SheetContent>
@@ -403,7 +413,6 @@ function AdminDashboard() {
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Client Info</p>
                         <p className="font-medium">{client?.displayName || 'N/A'}</p>
                         <p className="text-xs text-gray-500">{client?.email || 'N/A'}</p>
-                        <p className="text-[10px] text-gray-400 font-mono">ID: {claim.userId}</p>
                         <p className="text-xs font-semibold text-green-600">Balance: ${client?.balance?.toFixed(2) || '0.00'}</p>
                       </div>
                       <Separator className="bg-blue-100" />
@@ -459,7 +468,18 @@ function AdminDashboard() {
                       <CardFooter className="flex justify-between flex-wrap gap-2">
                           <Button onClick={handleUpdateMetrics} className="btn-primary text-white">Save All Settings</Button>
                           <div className="flex gap-2">
-                              <Link href="/admin/tickets"><Button variant="outline" className="border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100"><MessageSquare className="mr-2 h-4 w-4" />Tickets</Button></Link>
+                              <Link href="/admin/tickets">
+                                <Button variant="outline" className="relative border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100">
+                                  <MessageSquare className="mr-2 h-4 w-4" />
+                                  Tickets
+                                  {hasOpenTickets && (
+                                    <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                      <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                    </span>
+                                  )}
+                                </Button>
+                              </Link>
                               <Link href="/admin/users"><Button variant="outline"><Users className="mr-2 h-4 w-4" />Users</Button></Link>
                               <Link href="/admin/banned"><Button variant="destructive"><Ban className="mr-2 h-4 w-4" />Banned</Button></Link>
                           </div>
@@ -507,7 +527,7 @@ function AdminDashboard() {
                                   <Button 
                                     variant={selectedRates[sub.id] === 75 ? 'default' : 'outline'} 
                                     size="sm"
-                                    className={cn("flex-1 h-8", selectedRates[sub.id] === 75 && "bg-green-500 hover:bg-green-600")}
+                                    className={cn("flex-1 h-8", selectedRates[sub.id] === 75 && "bg-green-50 hover:bg-green-600")}
                                     onClick={() => setSelectedRates(prev => ({...prev, [sub.id]: 75}))}
                                   >75%</Button>
                                 </div>

@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
 import { FirebaseProvider } from '@/firebase/provider';
+import { TicketNotificationListener } from '@/components/ticket-notification-listener';
 
 export const metadata: Metadata = {
   title: 'iCloud Unlocks - Professional Apple Device Unlocking Service',
@@ -23,6 +24,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <FirebaseProvider>
+          <TicketNotificationListener />
           {children}
         </FirebaseProvider>
         <Toaster />
