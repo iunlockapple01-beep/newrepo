@@ -923,8 +923,8 @@ function DeviceCheckContent() {
                                         </div>
                                     </div>
                                     <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                        <span className="font-medium">0x855D4832c5AABbF3Ff74F82b47fe6d6A099A3863</span>
-                                        <CopyToClipboard text="0x855D4832c5AABbF3Ff74F82b47fe6d6A099A3863">
+                                        <span className="font-medium">0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b</span>
+                                        <CopyToClipboard text="0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b">
                                             <Button variant="ghost" size="icon" className="h-8 w-8 ml-2 hover:bg-gray-200">
                                                 <Copy className="w-4 h-4 text-gray-500"/>
                                             </Button>
@@ -989,8 +989,8 @@ function DeviceCheckContent() {
                                                         </div>
                                                     </div>
                                                     <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                                        <span>0x855D4832c5AABbF3Ff74F82b47fe6d6A099A3863</span>
-                                                        <CopyToClipboard text="0x855D4832c5AABbF3Ff74F82b47fe6d6A099A3863">
+                                                        <span>0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b</span>
+                                                        <CopyToClipboard text="0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b">
                                                             <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
                                                                 <Copy className="w-4 h-4 text-gray-500"/>
                                                             </Button>
@@ -1006,8 +1006,8 @@ function DeviceCheckContent() {
                                                         </div>
                                                     </div>
                                                     <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                                        <span>0x855D4832c5AABbF3Ff74F82b47fe6d6A099A3863</span>
-                                                        <CopyToClipboard text="0x855D4832c5AABbF3Ff74F82b47fe6d6A099A3863">
+                                                        <span>0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b</span>
+                                                        <CopyToClipboard text="0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b">
                                                             <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
                                                                 <Copy className="w-4 h-4 text-gray-500"/>
                                                             </Button>
@@ -1078,8 +1078,8 @@ function DeviceCheckContent() {
                                             </div>
                                         </div>
                                         <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                            <span>0x855D4832c5AABbF3Ff74F82b47fe6d6A099A3863</span>
-                                            <CopyToClipboard text="0x855D4832c5AABbF3Ff74F82b47fe6d6A099A3863">
+                                            <span>0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b</span>
+                                            <CopyToClipboard text="0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b">
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
                                                     <Copy className="w-4 h-4 text-gray-500"/>
                                                 </Button>
@@ -1095,8 +1095,8 @@ function DeviceCheckContent() {
                                             </div>
                                         </div>
                                         <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                            <span>0x855D4832c5AABbF3Ff74F82b47fe6d6A099A3863</span>
-                                            <CopyToClipboard text="0x855D4832c5AABbF3Ff74F82b47fe6d6A099A3863">
+                                            <span>0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b</span>
+                                            <CopyToClipboard text="0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b">
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
                                                     <Copy className="w-4 h-4 text-gray-500"/>
                                                 </Button>
