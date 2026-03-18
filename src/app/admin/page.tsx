@@ -384,7 +384,7 @@ function AdminDashboard() {
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
                     {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
-                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
+                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
                     <div className='pt-4'><LoginButton /></div>
                   </div>
                 </SheetContent>
@@ -418,6 +418,7 @@ function AdminDashboard() {
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Client Info</p>
                         <p className="font-medium">{client?.displayName || 'N/A'}</p>
                         <p className="text-xs text-gray-500">{client?.email || 'N/A'}</p>
+                        <p className="text-[10px] font-mono text-gray-400">UID: {claim.userId}</p>
                         <p className="text-xs font-semibold text-green-600">Balance: ${client?.balance?.toFixed(2) || '0.00'}</p>
                       </div>
                       <Separator className="bg-blue-100" />
