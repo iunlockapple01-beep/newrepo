@@ -625,8 +625,11 @@ function DeviceCheckContent() {
     if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off', 'chimaera'].includes(submission.status)) {
         const specialStatusLines = feedbackData.lines.filter(line => line === 'FIND_MY_ON_STATUS' || line === 'FIND_MY_OFF_STATUS');
         
+        const chimaeraHeading = "Chimaera Device Policy & Blacklist (Blocked by Apple)";
+        const isChimaera = submission.status === 'chimaera' || feedbackData.lines.includes(chimaeraHeading);
+
         const feedbackText = feedbackData.lines
-            .filter(line => !specialStatusLines.includes(line))
+            .filter(line => !specialStatusLines.includes(line) && line !== chimaeraHeading)
             .map(line => line
                 .replace(/undefined/gi, '')
                 .replace(/\(undefined\)/gi, '')
@@ -648,6 +651,13 @@ function DeviceCheckContent() {
         return (
             <div className="w-full text-left p-4 space-y-4">
               <div className="space-y-2">
+                {isChimaera && (
+                  <div className="p-3 px-4 rounded-xl bg-red-50 border border-red-200 text-red-700 font-bold text-sm sm:text-base animate-fade-in shadow-sm flex items-center gap-2 mb-2">
+                    <AlertTriangle className="h-5 w-5 flex-shrink-0" />
+                    <span>{chimaeraHeading}</span>
+                  </div>
+                )}
+
                 {specialStatusLines.map((line, index) => {
                   if (line === 'FIND_MY_ON_STATUS') {
                     return (

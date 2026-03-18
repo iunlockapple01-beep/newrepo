@@ -220,7 +220,7 @@ function AdminDashboard() {
     if (status === 'eligible') lines.push('FIND_MY_ON_STATUS');
     if (status === 'find_my_off') lines.push('FIND_MY_OFF_STATUS');
     if (status === 'chimaera') {
-        lines.push('FIND_MY_ON_STATUS');
+        // Do not push FIND_MY_ON_STATUS for Chimaera per user request
         lines.push('Chimaera Device Policy & Blacklist (Blocked by Apple)');
     }
     
