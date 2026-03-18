@@ -57,7 +57,7 @@
         },
         "status": {
           "type": "string",
-          "enum": ["waiting", "feedback", "paid", "eligible", "not_supported", "find_my_off", "device_found"],
+          "enum": ["waiting", "feedback", "paid", "eligible", "not_supported", "find_my_off", "device_found", "chimaera"],
           "description": "The current status of the submission"
         },
         "successRate": {

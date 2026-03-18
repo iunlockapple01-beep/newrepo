@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -45,7 +46,7 @@ interface Submission {
   model: string;
   price: number;
   imei: string;
-  status: 'waiting' | 'feedback' | 'paid' | 'eligible' | 'not_supported' | 'find_my_off' | 'device_found';
+  status: 'waiting' | 'feedback' | 'paid' | 'eligible' | 'not_supported' | 'find_my_off' | 'device_found' | 'chimaera';
   successRate?: number;
   feedback: string[] | null;
 }
@@ -125,7 +126,7 @@ function AdminDashboard() {
   const { data: openTickets } = useCollection<SupportTicket>('tickets', { constraints: openTicketsConstraints });
 
   const [feedbackValues, setFeedbackValues] = useState<{ [key: string]: string }>({});
-  const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' }>({});
+  const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' | 'chimaera' }>({});
   const [selectedRates, setSelectedRates] = useState<{ [key: string]: number }>({});
   
   const [registeredUsers, setRegisteredUsers] = useState<number>(0);
@@ -178,7 +179,7 @@ function AdminDashboard() {
     setFeedbackValues(prev => ({ ...prev, [id]: value }));
   };
 
-  const handleStatusChange = (id: string, value: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off') => {
+  const handleStatusChange = (id: string, value: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' | 'chimaera') => {
     setFeedbackStatus(prev => ({ ...prev, [id]: value }));
   };
   
@@ -211,13 +212,17 @@ function AdminDashboard() {
         .replace(/(iPhone)(\d+)/gi, '$1 $2')
         .trim();
 
-    if (feedbackText === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported') {
+    if (feedbackText === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported' && status !== 'chimaera') {
         return toast({ title: "Input Required", description: "Enter feedback.", variant: "destructive" });
     }
 
     const lines = feedbackText.split('\n').filter(l => l.trim() && !l.startsWith('TIMESTAMP:'));
     if (status === 'eligible') lines.push('FIND_MY_ON_STATUS');
     if (status === 'find_my_off') lines.push('FIND_MY_OFF_STATUS');
+    if (status === 'chimaera') {
+        lines.push('FIND_MY_ON_STATUS');
+        lines.push('Chimaera Device Policy & Blacklist (Blocked by Apple)');
+    }
     
     const timestamp = format(new Date(), "PPpp"); 
     lines.push(`TIMESTAMP:${timestamp}`);
@@ -229,7 +234,7 @@ function AdminDashboard() {
       updatedAt: serverTimestamp(),
     };
 
-    if (status === 'eligible' && selectedRates[submissionId]) {
+    if ((status === 'eligible' || status === 'chimaera') && selectedRates[submissionId]) {
       updatedData.successRate = selectedRates[submissionId];
     }
 
@@ -379,7 +384,7 @@ function AdminDashboard() {
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
                     {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
-                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
+                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
                     <div className='pt-4'><LoginButton /></div>
                   </div>
                 </SheetContent>
@@ -501,17 +506,18 @@ function AdminDashboard() {
                       </CardContent>
                       <CardFooter className='flex-col items-stretch gap-3'>
                         {sub.status === 'waiting' && <Button onClick={() => handleDeviceFound(sub.id)} className="w-full">Device Found</Button>}
-                        <Select onValueChange={(value: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off') => handleStatusChange(sub.id, value)}>
+                        <Select onValueChange={(value: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' | 'chimaera') => handleStatusChange(sub.id, value)}>
                             <SelectTrigger><SelectValue placeholder="Select Outcome..." /></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="eligible">Eligible for Unlock</SelectItem>
                                 <SelectItem value="not_supported">Not Supported for Unlock</SelectItem>
                                 <SelectItem value="feedback">Select the above device model and check again</SelectItem>
                                 <SelectItem value="find_my_off">Find My: OFF</SelectItem>
+                                <SelectItem value="chimaera">Chimaera Device Policy & Blacklist (Blocked by Apple)</SelectItem>
                             </SelectContent>
                         </Select>
 
-                        {feedbackStatus[sub.id] === 'eligible' && (
+                        {(feedbackStatus[sub.id] === 'eligible' || feedbackStatus[sub.id] === 'chimaera') && (
                           <div className="p-4 border rounded-lg bg-gray-50 space-y-3 animate-fade-in">
                             <Label className="text-xs font-bold uppercase text-gray-500">Select Success Rate</Label>
                             <div className="grid grid-cols-2 gap-4">

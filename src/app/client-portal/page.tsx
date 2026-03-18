@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Suspense, useMemo } from 'react';
@@ -40,7 +41,7 @@ interface Submission {
   price: number;
   image: string;
   imei: string;
-  status: 'waiting' | 'eligible' | 'not_supported' | 'paid' | 'feedback' | 'find_my_off' | 'device_found';
+  status: 'waiting' | 'eligible' | 'not_supported' | 'paid' | 'feedback' | 'find_my_off' | 'device_found' | 'chimaera';
   successRate?: number;
   feedback: string[] | null;
   createdAt: any;
@@ -353,7 +354,7 @@ function DeviceCheckContent() {
         }
 
         // 2. Check for "Eligible" mismatch under a DIFFERENT model
-        const eligibleMismatch = docsWithFeedback.find(s => s.status === 'eligible' && s.model !== model);
+        const eligibleMismatch = docsWithFeedback.find(s => (s.status === 'eligible' || s.status === 'chimaera') && s.model !== model);
         if (eligibleMismatch) {
             setIsSearching(false);
             setValidationError(`Device Mismatch\n\nThis IMEI / Serial Number is already registered in our database as eligible for unlock under a different model: ${eligibleMismatch.model}.\n\nPlease ensure you have selected the correct device model or contact support.`);
@@ -621,7 +622,7 @@ function DeviceCheckContent() {
         if (startVerificationSteps) return <VerificationSteps steps={verificationStepsList} />;
     }
 
-    if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off'].includes(submission.status)) {
+    if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off', 'chimaera'].includes(submission.status)) {
         const specialStatusLines = feedbackData.lines.filter(line => line === 'FIND_MY_ON_STATUS' || line === 'FIND_MY_OFF_STATUS');
         
         const feedbackText = feedbackData.lines
@@ -635,8 +636,8 @@ function DeviceCheckContent() {
             .filter(line => line !== '')
             .join('\n');
         
-        // Typing animation only for 'eligible' status, not cached
-        const shouldAnimate = !isCachedCheck && submission.status === 'eligible';
+        // Typing animation only for eligible/chimaera status, not cached
+        const shouldAnimate = !isCachedCheck && (submission.status === 'eligible' || submission.status === 'chimaera');
 
         const getEstimatedTime = (rate: number) => {
           if (rate >= 98) return "Usually completed in less than 24 hours.";
@@ -682,7 +683,7 @@ function DeviceCheckContent() {
                 )}
               </div>
 
-              {submission.status === 'eligible' && submission.successRate && (
+              {(submission.status === 'eligible' || submission.status === 'chimaera') && submission.successRate && (
                 <div className="mt-6 space-y-6 animate-fade-in">
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wide">
@@ -730,7 +731,7 @@ function DeviceCheckContent() {
               {feedbackData.timestamp && (
                 <p className="text-xs text-gray-500 mt-2 text-right animate-fade-in">Feedback received: {feedbackData.timestamp}</p>
               )}
-              {submission.status === 'eligible' && (
+              {(submission.status === 'eligible' || submission.status === 'chimaera') && (
                 <div className="mt-4 flex flex-col sm:flex-row items-center sm:justify-end gap-4 animate-fade-in">
                   <p className="bg-green-100 text-green-800 font-semibold p-2 px-3 rounded-lg text-sm block w-full sm:w-auto text-center">
                     ✅ This device is eligible for iCloud Unlock
@@ -922,8 +923,8 @@ function DeviceCheckContent() {
                                         </div>
                                     </div>
                                     <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                        <span className="font-medium">0x056AAc9B30E82eb84e5E96dd85D42568231064AC</span>
-                                        <CopyToClipboard text="0x056AAc9B30E82eb84e5E96dd85D42568231064AC">
+                                        <span className="font-medium">0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b</span>
+                                        <CopyToClipboard text="0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b">
                                             <Button variant="ghost" size="icon" className="h-8 w-8 ml-2 hover:bg-gray-200">
                                                 <Copy className="w-4 h-4 text-gray-500"/>
                                             </Button>
@@ -988,8 +989,8 @@ function DeviceCheckContent() {
                                                         </div>
                                                     </div>
                                                     <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                                        <span>0x056AAc9B30E82eb84e5E96dd85D42568231064AC</span>
-                                                        <CopyToClipboard text="0x056AAc9B30E82eb84e5E96dd85D42568231064AC">
+                                                        <span>0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b</span>
+                                                        <CopyToClipboard text="0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b">
                                                             <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
                                                                 <Copy className="w-4 h-4 text-gray-500"/>
                                                             </Button>
@@ -1005,8 +1006,8 @@ function DeviceCheckContent() {
                                                         </div>
                                                     </div>
                                                     <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                                        <span>0x056AAc9B30E82eb84e5E96dd85D42568231064AC</span>
-                                                        <CopyToClipboard text="0x056AAc9B30E82eb84e5E96dd85D42568231064AC">
+                                                        <span>0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b</span>
+                                                        <CopyToClipboard text="0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b">
                                                             <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
                                                                 <Copy className="w-4 h-4 text-gray-500"/>
                                                             </Button>
@@ -1077,8 +1078,8 @@ function DeviceCheckContent() {
                                             </div>
                                         </div>
                                         <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                            <span>0x056AAc9B30E82eb84e5E96dd85D42568231064AC</span>
-                                            <CopyToClipboard text="0x056AAc9B30E82eb84e5E96dd85D42568231064AC">
+                                            <span>0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b</span>
+                                            <CopyToClipboard text="0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b">
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
                                                     <Copy className="w-4 h-4 text-gray-500"/>
                                                 </Button>
@@ -1094,8 +1095,8 @@ function DeviceCheckContent() {
                                             </div>
                                         </div>
                                         <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                                            <span>0x056AAc9B30E82eb84e5E96dd85D42568231064AC</span>
-                                            <CopyToClipboard text="0x056AAc9B30E82eb84e5E96dd85D42568231064AC">
+                                            <span>0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b</span>
+                                            <CopyToClipboard text="0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b">
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 ml-2">
                                                     <Copy className="w-4 h-4 text-gray-500"/>
                                                 </Button>
