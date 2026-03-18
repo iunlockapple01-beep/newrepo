@@ -87,7 +87,7 @@ function MyAccountContent() {
   const { toast } = useToast();
   
   const orderConstraints = useMemo(() => {
-    if (!user) return undefined;
+    if (!user) return [where('userId', '==', 'none')];
     return [where('userId', '==', user.uid)];
   }, [user]);
 
@@ -97,7 +97,7 @@ function MyAccountContent() {
   );
 
   const ticketConstraints = useMemo(() => {
-    if (!user) return undefined;
+    if (!user) return [where('userId', '==', 'none')];
     return [where('userId', '==', user.uid)];
   }, [user]);
 
@@ -286,8 +286,8 @@ function MyAccountContent() {
                                <div className="flex-1">
                                  <p className="text-sm">USDT BEP20 Address:</p>
                                  <div className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all flex items-center justify-between border shadow-inner">
-                                    <span>0x056AAc9B30E82eb84e5E96dd85D42568231064AC</span>
-                                    <CopyToClipboard text="0x056AAc9B30E82eb84e5E96dd85D42568231064AC">
+                                    <span>0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b</span>
+                                    <CopyToClipboard text="0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b">
                                         <Button variant="ghost" size="icon" className="h-6 w-6">
                                             <Copy className="w-3 h-3 text-gray-500 hover:text-gray-800"/>
                                         </Button>
@@ -521,8 +521,8 @@ function MyAccountContent() {
                             </div>
                         </div>
                         <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                            <span className="font-medium">0x056AAc9B30E82eb84e5E96dd85D42568231064AC</span>
-                            <CopyToClipboard text="0x056AAc9B30E82eb84e5E96dd85D42568231064AC">
+                            <span className="font-medium">0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b</span>
+                            <CopyToClipboard text="0xE7384fbbA34ae998e3AD7eB9E31b506463CCA35b">
                                 <Button variant="ghost" size="icon" className="h-8 w-8 ml-2 hover:bg-gray-200">
                                     <Copy className="w-4 h-4 text-gray-500"/>
                                 </Button>

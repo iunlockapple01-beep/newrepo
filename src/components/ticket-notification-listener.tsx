@@ -22,7 +22,8 @@ export function TicketNotificationListener() {
   const [repliedTickets, setRepliedTickets] = useState<any[]>([]);
 
   const ticketConstraints = useMemo(() => {
-    if (!user) return undefined;
+    // If no user is present, query a non-existent ID to prevent fetching all tickets
+    if (!user) return [where('userId', '==', 'none')];
     return [where('userId', '==', user.uid), where('status', '==', 'replied')];
   }, [user]);
 

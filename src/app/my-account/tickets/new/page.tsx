@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -33,7 +32,8 @@ export default function NewTicketPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const orderConstraints = useMemo(() => {
-    if (!user) return undefined;
+    // Prevent fetching all orders if user is not loaded
+    if (!user) return [where('userId', '==', 'none')];
     return [where('userId', '==', user.uid)];
   }, [user]);
 
@@ -116,8 +116,14 @@ export default function NewTicketPage() {
                 <div className="space-y-2"><Label htmlFor="category">Category</Label><Select onValueChange={setCategory} value={category}><SelectTrigger id="category"><SelectValue placeholder="Select a category" /></SelectTrigger><SelectContent>{CATEGORIES.map(cat => (<SelectItem key={cat} value={cat}>{cat}</SelectItem>))}</SelectContent></Select></div>
                 <div className="space-y-2"><Label htmlFor="order">Related Order (Optional)</Label><Select onValueChange={setOrderId} value={orderId}><SelectTrigger id="order"><SelectValue placeholder="Select an order" /></SelectTrigger><SelectContent><SelectItem value="none">Not related</SelectItem>{!ordersLoading && orders?.map(order => (<SelectItem key={order.id} value={order.orderId}>{order.orderId} - {order.model}</SelectItem>))}</SelectContent></Select></div>
               </div>
-              <div className="space-y-2"><Label htmlFor="subject">Subject</Label><Input id="subject" placeholder="e.g., Refund for order" value={subject} onChange={(e) => setSubject(e.target.value)} required /></div>
-              <div className="space-y-2"><Label htmlFor="message">Message</Label><Textarea id="message" placeholder="Describe your issue..." className="min-h-[200px]" value={message} onChange={(e) => setMessage(e.target.value)} required /></div>
+              <div className="grid gap-2">
+                <Label htmlFor="subject">Subject</Label>
+                <Input id="subject" placeholder="e.g., Refund for order" value={subject} onChange={(e) => setSubject(e.target.value)} required />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="message">Message</Label>
+                <Textarea id="message" placeholder="Describe your issue..." className="min-h-[200px]" value={message} onChange={(e) => setMessage(e.target.value)} required />
+              </div>
               <Button type="submit" className="w-full btn-primary text-white h-12" disabled={isSubmitting}>{isSubmitting ? <><Loader className="mr-2 h-4 w-4 animate-spin" />Submitting...</> : 'Submit Support Ticket'}</Button>
             </form>
           </CardContent>
