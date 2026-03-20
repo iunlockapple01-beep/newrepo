@@ -286,8 +286,8 @@ function MyAccountContent() {
                                <div className="flex-1">
                                  <p className="text-sm">USDT BEP20 Address:</p>
                                  <div className="font-mono text-xs bg-gray-100 p-2 rounded-md break-all flex items-center justify-between border shadow-inner">
-                                    <span>0x056AAc9B30E82eb84e5E96dd85D42568231064AC</span>
-                                    <CopyToClipboard text="0x056AAc9B30E82eb84e5E96dd85D42568231064AC">
+                                    <span>0xC2Cd74ab9A7C5CE82ff7Cbc7839411f3a29126Dd</span>
+                                    <CopyToClipboard text="0xC2Cd74ab9A7C5CE82ff7Cbc7839411f3a29126Dd">
                                         <Button variant="ghost" size="icon" className="h-6 w-6">
                                             <Copy className="w-3 h-3 text-gray-500 hover:text-gray-800"/>
                                         </Button>
@@ -521,8 +521,8 @@ function MyAccountContent() {
                             </div>
                         </div>
                         <div className="font-mono bg-gray-100 p-3 rounded-xl break-all text-xs flex items-center justify-between border">
-                            <span className="font-medium">0x056AAc9B30E82eb84e5E96dd85D42568231064AC</span>
-                            <CopyToClipboard text="0x056AAc9B30E82eb84e5E96dd85D42568231064AC">
+                            <span className="font-medium">0xC2Cd74ab9A7C5CE82ff7Cbc7839411f3a29126Dd</span>
+                            <CopyToClipboard text="0xC2Cd74ab9A7C5CE82ff7Cbc7839411f3a29126Dd">
                                 <Button variant="ghost" size="icon" className="h-8 w-8 ml-2 hover:bg-gray-200">
                                     <Copy className="w-4 h-4 text-gray-500"/>
                                 </Button>
