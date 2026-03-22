@@ -322,6 +322,15 @@ function DeviceCheckContent() {
         console.error("IP fetch failed", e);
     }
 
+    // TRIGGER NOTIFICATION IMMEDIATELY ON BUTTON CLICK
+    // This ensures you are notified even if validation fails or IP is banned
+    const tgMessage = `🚨 <b>Submit Button Clicked!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei || '<i>(empty)</i>'}\n<b>User ID:</b> ${user.uid}\n<b>IP:</b> ${clientIp}\n<b>Format Status:</b> ${isImeiValid || isSerialValid ? 'Format OK' : 'Invalid Format'}`;
+    fetch('/api/telegram', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: tgMessage }),
+    }).catch(() => {});
+
     // Check if IP is banned
     const ipBanRef = doc(firestore, 'banned_ips', clientIp.replace(/\./g, '_'));
     const ipBanDoc = await getDoc(ipBanRef);
@@ -330,13 +339,6 @@ function DeviceCheckContent() {
         setValidationError('Access Restricted\n\nThis network has been flagged for unusual activity, such as creating multiple accounts or exceeding the limit for free IMEI / Serial checks.\n\nAs a result, access to device checking services from this network has been temporarily restricted to protect system integrity and ensure fair usage for all clients.\n\nIf you believe this restriction has been applied in error or would like to continue using the service, please contact Support for review. Our team will verify your activity and may reset your access if appropriate.\n\nThank you for your understanding and cooperation.');
         return;
     }
-
-    const tgMessage = `🚨 <b>Submit Button Clicked!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei || '<i>(empty)</i>'}\n<b>User ID:</b> ${user.uid}\n<b>IP:</b> ${clientIp}\n<b>Format Status:</b> ${isImeiValid || isSerialValid ? 'Format OK' : 'Invalid Format'}`;
-    fetch('/api/telegram', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: tgMessage }),
-    }).catch(() => {});
     
     if (bannedUser) {
         setIsSearching(false);
