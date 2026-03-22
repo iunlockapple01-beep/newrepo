@@ -567,7 +567,24 @@ function AdminDashboard() {
                         </div>
                         <p className="text-sm text-gray-600">IMEI/Serial: <strong>{sub.imei}</strong></p>
                         <p className="text-sm text-gray-600">Price: ${sub.price}</p>
-                        <div className="mt-4"><label className="block text-sm font-medium text-gray-700 mb-1">Feedback:</label><Textarea value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:')).join('\n') || ''} onChange={(e) => handleFeedbackChange(sub.id, e.target.value)} className="font-mono" /></div>
+                        <div className="mt-4 space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Sent Feedback History:</label>
+                                {sub.feedback && sub.feedback.length > 0 ? (
+                                    <div className="p-2 bg-gray-50 border rounded-md max-h-32 overflow-y-auto text-[10px] font-mono text-gray-600 space-y-1 shadow-inner">
+                                        {sub.feedback.map((line, idx) => (
+                                            <div key={idx} className={line.startsWith('TIMESTAMP:') ? 'text-blue-500 border-t mt-1 pt-1' : ''}>{line}</div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="p-2 bg-gray-50 border rounded-md text-[10px] text-gray-400 italic">No feedback sent yet.</div>
+                                )}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Update Feedback Message:</label>
+                                <Textarea value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:') && !l.includes('Chimaera Device Policy')).join('\n') || ''} onChange={(e) => handleFeedbackChange(sub.id, e.target.value)} className="font-mono text-sm" placeholder="Type message to send to client..." />
+                            </div>
+                        </div>
                       </CardContent>
                       <CardFooter className='flex-col items-stretch gap-3'>
                         {sub.status === 'waiting' && <Button onClick={() => handleDeviceFound(sub.id)} className="w-full">Device Found</Button>}

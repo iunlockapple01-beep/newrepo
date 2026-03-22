@@ -18,7 +18,7 @@ import {
 import { LoginButton } from '@/components/login-button';
 import { PlaceHolderImages, getImage } from '@/lib/placeholder-images';
 import { useUser, useFirebase, useDoc } from '@/firebase';
-import { addDoc, collection, serverTimestamp, query, where, getDocs, limit, doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, query, where, getDocs, limit, doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
