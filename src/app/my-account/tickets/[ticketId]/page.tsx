@@ -125,18 +125,20 @@ export default function TicketDetailsPage() {
         <Card className="flex flex-col h-[70vh]">
           <CardHeader className="border-b bg-gray-50/50"><CardTitle className="text-base flex items-center gap-2"><MessageSquare className="h-4 w-4 text-blue-600" />Communication History</CardTitle></CardHeader>
           <CardContent ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6">
-            <div className="flex gap-3 max-w-[85%]">
+            {/* Initial Client Message - Align Right */}
+            <div className="flex gap-3 max-w-[85%] ml-auto flex-row-reverse">
               <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0"><User className="h-4 w-4 text-blue-600" /></div>
-              <div className="space-y-1">
+              <div className="space-y-1 text-right">
                 <div className="bg-white border rounded-2xl p-4 shadow-sm"><p className="text-sm whitespace-pre-wrap">{ticket.message}</p></div>
                 <p className="text-[10px] text-gray-400 px-2">{ticket.createdAt?.toDate ? format(ticket.createdAt.toDate(), 'PPp') : 'Just now'}</p>
               </div>
             </div>
+            {/* Replies */}
             {ticket.replies.map((reply, index) => (
-              <div key={index} className={cn("flex gap-3 max-w-[85%]", reply.sender === 'client' ? "" : "ml-auto flex-row-reverse")}>
-                <div className={cn("h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0", reply.sender === 'client' ? "bg-blue-100" : "bg-green-100")}>{reply.sender === 'client' ? (<User className="h-4 w-4 text-blue-600" />) : (<ShieldCheck className="h-4 w-4 text-green-600" />)}</div>
-                <div className={cn("space-y-1", reply.sender === 'client' ? "" : "text-right")}>
-                  <div className={cn("rounded-2xl p-4 shadow-sm text-sm whitespace-pre-wrap", reply.sender === 'client' ? "bg-white border" : "bg-blue-600 text-white")}>{reply.message}</div>
+              <div key={index} className={cn("flex gap-3 max-w-[85%]", reply.sender === 'admin' ? "" : "ml-auto flex-row-reverse")}>
+                <div className={cn("h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0", reply.sender === 'admin' ? "bg-green-100" : "bg-blue-100")}>{reply.sender === 'admin' ? (<ShieldCheck className="h-4 w-4 text-green-600" />) : (<User className="h-4 w-4 text-blue-600" />)}</div>
+                <div className={cn("space-y-1", reply.sender === 'admin' ? "" : "text-right")}>
+                  <div className={cn("rounded-2xl p-4 shadow-sm text-sm whitespace-pre-wrap", reply.sender === 'admin' ? "bg-blue-600 text-white" : "bg-white border")}>{reply.message}</div>
                   <p className="text-[10px] text-gray-400 px-2">{reply.sender === 'admin' ? 'Support Team' : 'You'} • {format(new Date(reply.createdAt), 'PPp')}</p>
                 </div>
               </div>))}
