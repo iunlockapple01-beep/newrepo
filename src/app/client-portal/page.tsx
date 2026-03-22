@@ -327,7 +327,7 @@ function DeviceCheckContent() {
     const ipBanDoc = await getDoc(ipBanRef);
     if (ipBanDoc.exists()) {
         setIsSearching(false);
-        setValidationError('Access Restricted\n\nThis network has been flagged for unusual activity or reaching the limit for free IMEI checks.\n\nPlease contact Support to review your network status.');
+        setValidationError('Access Restricted\n\nThis network has been flagged for unusual activity, such as creating multiple accounts or exceeding the limit for free IMEI / Serial checks.\n\nAs a result, access to device checking services from this network has been temporarily restricted to protect system integrity and ensure fair usage for all clients.\n\nIf you believe this restriction has been applied in error or would like to continue using the service, please contact Support for review. Our team will verify your activity and may reset your access if appropriate.\n\nThank you for your understanding and cooperation.');
         return;
     }
 
@@ -571,7 +571,7 @@ function DeviceCheckContent() {
     if (validationError) {
       return (
           <div className="w-full text-left p-4">
-              <div className="p-2 px-3 rounded-md bg-red-100 border border-red-200 text-sm whitespace-pre-wrap font-mono text-red-800 animate-fade-in">
+              <div className="p-4 px-5 rounded-md bg-red-100 border border-red-200 text-sm whitespace-pre-wrap font-mono text-red-800 animate-fade-in leading-relaxed">
                 {validationError}
               </div>
           </div>
