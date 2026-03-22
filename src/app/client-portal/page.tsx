@@ -693,6 +693,7 @@ function DeviceCheckContent() {
         const getEstimatedTime = (rate: number) => {
           if (rate >= 98) return "Usually completed in less than 24 hours.";
           if (rate >= 75) return "This process may take up to 2 days.";
+          if (rate >= 45) return "Maximum expected wait time is up to 72 hours.";
           return "Maximum expected wait time is up to 72 hours.";
         };
         
