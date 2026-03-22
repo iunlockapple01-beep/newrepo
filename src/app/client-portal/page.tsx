@@ -919,8 +919,36 @@ function DeviceCheckContent() {
                 <div>
                     <h4 className="font-semibold mb-4">Contact Us</h4>
                     <ul className="space-y-2 text-gray-400">
-                        <li><a href="https://t.me/iUnlock_Apple1" target="_blank" className="hover:text-white inline-flex items-center">{telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}Telegram Channel</a></li>
-                        <li><a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" className="hover:text-white inline-flex items-center">{whatsappIcon && <Image src={whatsappIcon.imageUrl} alt="WhatsApp" width={18} height={18} className="mr-2" />}WhatsApp</a></li>
+                        <li className='block'>
+                            <a href="https://t.me/iUnlock_Apple1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
+                                Telegram Channel
+                            </a>
+                        </li>
+                        <li className='block'>
+                            <a href="https://t.me/iCloudUnlocks_2023" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
+                                Support 1
+                            </a>
+                        </li>
+                        <li className='block'>
+                            <a href="https://t.me/iUnlock_Apple" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
+                                Support 2
+                            </a>
+                        </li>
+                        <li className='block'>
+                            <a href="https://t.me/Chris_Morgan057" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {telegramIcon && <Image src={telegramIcon.imageUrl} alt="Telegram" width={18} height={18} className="mr-2" />}
+                                Technician
+                            </a>
+                        </li>
+                        <li className='block'>
+                           <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center hover:text-white">
+                                {whatsappIcon && <Image src={whatsappIcon.imageUrl} alt="WhatsApp" width={18} height={18} className="mr-2" />}
+                                WhatsApp
+                            </a>
+                        </li>
                     </ul>
                 </div>
                  <div>
