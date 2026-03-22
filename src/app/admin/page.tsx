@@ -472,14 +472,14 @@ function AdminDashboard() {
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Client Info</p>
                         <p className="font-medium">{client?.displayName || 'N/A'}</p>
                         <p className="text-xs text-gray-500">{client?.email || 'N/A'}</p>
-                        <p className="text-[10px] font-mono text-gray-400">UID: {claim.userId}</p>
+                        <p className="text-[10px] font-mono text-gray-400 break-all">UID: {claim.userId}</p>
                         <p className="text-xs font-semibold text-green-600">Balance: ${client?.balance?.toFixed(2) || '0.00'}</p>
                       </div>
                       <Separator className="bg-blue-100" />
                       <div className="space-y-1">
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Device Details</p>
                         <p className="font-bold">{claim.model}</p>
-                        <p className="font-mono text-[11px] bg-white/50 px-2 py-1 rounded border">{claim.imei}</p>
+                        <p className="font-mono text-[11px] bg-white/50 px-2 py-1 rounded border break-all">{claim.imei}</p>
                         <p className="font-bold text-blue-700 mt-1">Cost: ${claim.price.toFixed(2)}</p>
                       </div>
                       <div className="text-[10px] text-gray-400 flex items-center gap-1 pt-2">
@@ -553,19 +553,19 @@ function AdminDashboard() {
                     <Card key={sub.id} className={`bg-white ${sub.status === 'waiting' || sub.status === 'device_found' ? 'border-2 border-primary' : ''}`}>
                       <CardHeader><CardTitle className='flex justify-between items-center'><span>{sub.model}</span><Badge variant={sub.status === 'waiting' ? 'default' : 'secondary'} className={sub.status === 'waiting' || sub.status === 'device_found' ? 'animate-pulse' : ''}>{sub.status.replace('_', ' ')}</Badge></CardTitle></CardHeader>
                       <CardContent className="space-y-1">
-                        <div className="grid grid-cols-2 gap-2 text-xs mb-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs mb-4">
                             <div className="space-y-1">
                                 <p className="text-gray-400 uppercase font-bold tracking-tighter">Client Details</p>
-                                <p>UID: <span className="font-mono">{sub.userId}</span></p>
+                                <p className="break-all">UID: <span className="font-mono">{sub.userId}</span></p>
                                 <p className="font-bold text-blue-600">Submissions: {userIdCounts[sub.userId] || 0}</p>
                             </div>
                             <div className="space-y-1">
                                 <p className="text-gray-400 uppercase font-bold tracking-tighter">Network Info</p>
-                                <p>IP: <span className="font-mono text-blue-700">{sub.ipAddress || 'unknown'}</span></p>
+                                <p className="break-all">IP: <span className="font-mono text-blue-700">{sub.ipAddress || 'unknown'}</span></p>
                                 <p className="font-bold text-red-600">IP Frequency: {sub.ipAddress ? ipCounts[sub.ipAddress] : 0}</p>
                             </div>
                         </div>
-                        <p className="text-sm text-gray-600">IMEI/Serial: <strong>{sub.imei}</strong></p>
+                        <p className="text-sm text-gray-600 break-all">IMEI/Serial: <strong>{sub.imei}</strong></p>
                         <p className="text-sm text-gray-600">Price: ${sub.price}</p>
                         <div className="mt-4 space-y-4">
                             <div>
@@ -667,7 +667,7 @@ function AdminDashboard() {
                                   <TableCell>{order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : 'N/A'}</TableCell>
                                   <TableCell className="font-mono text-xs">{order.orderId}</TableCell>
                                   <TableCell>{order.model}</TableCell>
-                                  <TableCell className="font-mono text-xs">{order.imei}</TableCell>
+                                  <TableCell className="font-mono text-xs break-all">{order.imei}</TableCell>
                                   <TableCell><Badge variant={order.status === 'approved' || order.status === 'unlocked' ? 'secondary' : order.status === 'declined' ? 'destructive' : 'default'} className={order.status === 'confirming_payment' || order.status === 'processing' ? 'animate-pulse' : ''}>{order.status.replace(/_/g, ' ')}</Badge></TableCell>
                                   <TableCell><Select value={order.status} onValueChange={(value: Order['status']) => handleOrderStatusChange(order.id, value)}><SelectTrigger className='h-8'><SelectValue placeholder="Update Status" /></SelectTrigger><SelectContent><SelectItem value="confirming_payment">Confirming Payment</SelectItem><SelectItem value="processing">Processing</SelectItem><SelectItem value="approved">Approved</SelectItem><SelectItem value="declined">Declined</SelectItem><SelectItem value="unlocked">Unlocked</SelectItem><SelectItem value="ready_for_activation">Ready for activation</SelectItem><SelectItem value="ready_for_activation_bulk">Ready for activation (bulk)</SelectItem></SelectContent></Select></TableCell>
                               </TableRow>))}
