@@ -22,7 +22,7 @@ import { addDoc, collection, serverTimestamp, query, where, getDocs, limit, doc,
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Menu, Loader, CheckCircle2, AlertTriangle, ChevronDown, ChevronUp, ChevronRight, XCircle, Info } from 'lucide-react';
+import { Copy, Menu, Loader, CheckCircle2, AlertTriangle, ChevronDown, ChevronUp, ChevronRight, XCircle, Info, MessageSquare } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -41,7 +41,7 @@ interface Submission {
   price: number;
   image: string;
   imei: string;
-  status: 'waiting' | 'eligible' | 'not_supported' | 'paid' | 'feedback' | 'find_my_off' | 'device_found' | 'chimaera';
+  status: 'waiting' | 'eligible' | 'not_supported' | 'paid' | 'feedback' | 'find_my_off' | 'device_found' | 'chimaera' | 'banned';
   successRate?: number;
   feedback: string[] | null;
   createdAt: any;
@@ -633,7 +633,35 @@ function DeviceCheckContent() {
         if (startVerificationSteps) return <VerificationSteps steps={verificationStepsList} />;
     }
 
-    if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off', 'chimaera'].includes(submission.status)) {
+    if (submission && ['eligible', 'not_supported', 'feedback', 'find_my_off', 'chimaera', 'banned'].includes(submission.status)) {
+        if (submission.status === 'banned') {
+            const feedbackText = feedbackData.lines.join('\n');
+            return (
+                <div className="w-full text-left p-4 space-y-6">
+                    <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-900 text-sm leading-relaxed whitespace-pre-wrap font-mono animate-fade-in shadow-sm">
+                        {feedbackText}
+                    </div>
+                    
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 rounded-2xl text-white shadow-2xl animate-fade-in relative overflow-hidden text-center">
+                        <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+                        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+                        
+                        <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight mb-6">Contact Support to Reset Your Account</h3>
+                        
+                        <div className="relative inline-block group">
+                            <div className="absolute -inset-1 bg-white/30 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+                            <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="relative block">
+                                <Button className="bg-white text-blue-700 hover:bg-gray-50 font-black px-10 h-16 rounded-xl text-xl shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-3 group animate-bounce">
+                                    Reset Support
+                                    <ChevronRight className="group-hover:translate-x-1 transition-transform" />
+                                </Button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
         const specialStatusLines = feedbackData.lines.filter(line => line === 'FIND_MY_ON_STATUS' || line === 'FIND_MY_OFF_STATUS');
         
         const chimaeraHeading = "Chimaera Device Policy & Blacklist (Blocked by Apple)";

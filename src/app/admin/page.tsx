@@ -46,7 +46,7 @@ interface Submission {
   model: string;
   price: number;
   imei: string;
-  status: 'waiting' | 'feedback' | 'paid' | 'eligible' | 'not_supported' | 'find_my_off' | 'device_found' | 'chimaera';
+  status: 'waiting' | 'feedback' | 'paid' | 'eligible' | 'not_supported' | 'find_my_off' | 'device_found' | 'chimaera' | 'banned';
   successRate?: number;
   feedback: string[] | null;
 }
@@ -126,7 +126,7 @@ function AdminDashboard() {
   const { data: openTickets } = useCollection<SupportTicket>('tickets', { constraints: openTicketsConstraints });
 
   const [feedbackValues, setFeedbackValues] = useState<{ [key: string]: string }>({});
-  const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' | 'chimaera' }>({});
+  const [feedbackStatus, setFeedbackStatus] = useState<{ [key: string]: Submission['status'] }>({});
   const [selectedRates, setSelectedRates] = useState<{ [key: string]: number }>({});
   
   const [registeredUsers, setRegisteredUsers] = useState<number>(0);
@@ -179,7 +179,7 @@ function AdminDashboard() {
     setFeedbackValues(prev => ({ ...prev, [id]: value }));
   };
 
-  const handleStatusChange = (id: string, value: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' | 'chimaera') => {
+  const handleStatusChange = (id: string, value: Submission['status']) => {
     setFeedbackStatus(prev => ({ ...prev, [id]: value }));
   };
   
@@ -206,22 +206,45 @@ function AdminDashboard() {
     const status = feedbackStatus[submissionId];
     if (!status) return toast({ title: "Selection Required", description: "Select an outcome.", variant: "destructive" });
     
-    const feedbackText = feedbackTextRaw
-        .replace(/undefined/gi, '')
-        .replace(/\(undefined\)/gi, '')
-        .replace(/(iPhone)(\d+)/gi, '$1 $2')
-        .trim();
+    const sub = submissions?.find(s => s.id === submissionId);
+    if (!sub) return;
 
-    if (feedbackText === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported' && status !== 'chimaera') {
-        return toast({ title: "Input Required", description: "Enter feedback.", variant: "destructive" });
-    }
+    let lines: string[] = [];
 
-    const lines = feedbackText.split('\n').filter(l => l.trim() && !l.startsWith('TIMESTAMP:'));
-    if (status === 'eligible') lines.push('FIND_MY_ON_STATUS');
-    if (status === 'find_my_off') lines.push('FIND_MY_OFF_STATUS');
-    if (status === 'chimaera') {
-        // Do not push FIND_MY_ON_STATUS for Chimaera per user request
-        lines.push('Chimaera Device Policy & Blacklist (Blocked by Apple)');
+    if (status === 'banned') {
+        const bannedUserRef = doc(firestore, 'banned_users', sub.userId);
+        setDoc(bannedUserRef, {
+            userId: sub.userId,
+            createdAt: serverTimestamp(),
+        }).catch(err => console.error("Auto-ban failed:", err));
+
+        lines = [
+            "Maximum Free Checks Reached",
+            "You have checked multiple devices without placing any unlock orders and have now reached the maximum limit for free IMEI / Serial checks.",
+            "",
+            "To continue using the service, please proceed with an unlock order for any device you have previously checked, or request an account reset. This limit helps us manage server load and ensure fair usage for all clients.",
+            "",
+            "If you are ready to proceed, kindly contact the Admin or submit a support ticket. Once confirmed, your account will be reset and access restored, allowing you to continue with device checks and processing.",
+            "",
+            "Thank you for your understanding."
+        ];
+    } else {
+        const feedbackText = feedbackTextRaw
+            .replace(/undefined/gi, '')
+            .replace(/\(undefined\)/gi, '')
+            .replace(/(iPhone)(\d+)/gi, '$1 $2')
+            .trim();
+
+        if (feedbackText === '' && status !== 'eligible' && status !== 'find_my_off' && status !== 'feedback' && status !== 'not_supported' && status !== 'chimaera') {
+            return toast({ title: "Input Required", description: "Enter feedback.", variant: "destructive" });
+        }
+
+        lines = feedbackText.split('\n').filter(l => l.trim() && !l.startsWith('TIMESTAMP:'));
+        if (status === 'eligible') lines.push('FIND_MY_ON_STATUS');
+        if (status === 'find_my_off') lines.push('FIND_MY_OFF_STATUS');
+        if (status === 'chimaera') {
+            lines.push('Chimaera Device Policy & Blacklist (Blocked by Apple)');
+        }
     }
     
     const timestamp = format(new Date(), "PPpp"); 
@@ -384,7 +407,7 @@ function AdminDashboard() {
                     <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
                     <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
                     {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
-                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
+                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
                     <div className='pt-4'><LoginButton /></div>
                   </div>
                 </SheetContent>
@@ -507,7 +530,7 @@ function AdminDashboard() {
                       </CardContent>
                       <CardFooter className='flex-col items-stretch gap-3'>
                         {sub.status === 'waiting' && <Button onClick={() => handleDeviceFound(sub.id)} className="w-full">Device Found</Button>}
-                        <Select onValueChange={(value: 'eligible' | 'not_supported' | 'feedback' | 'find_my_off' | 'chimaera') => handleStatusChange(sub.id, value)}>
+                        <Select onValueChange={(value: Submission['status']) => handleStatusChange(sub.id, value)}>
                             <SelectTrigger><SelectValue placeholder="Select Outcome..." /></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="eligible">Eligible for Unlock</SelectItem>
@@ -515,6 +538,7 @@ function AdminDashboard() {
                                 <SelectItem value="feedback">Select the above device model and check again</SelectItem>
                                 <SelectItem value="find_my_off">Find My: OFF</SelectItem>
                                 <SelectItem value="chimaera">Chimaera Device Policy & Blacklist (Blocked by Apple)</SelectItem>
+                                <SelectItem value="banned">Ban Member</SelectItem>
                             </SelectContent>
                         </Select>
 
