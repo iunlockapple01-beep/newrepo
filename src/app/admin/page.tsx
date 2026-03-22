@@ -33,7 +33,7 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Ban, Menu, Users, Server, ServerOff, MessageSquare, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Ban, Menu, Users, Server, ServerOff, MessageSquare, CheckCircle, XCircle, Clock, ShieldAlert } from 'lucide-react';
 import { format } from 'date-fns';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
@@ -49,6 +49,7 @@ interface Submission {
   status: 'waiting' | 'feedback' | 'paid' | 'eligible' | 'not_supported' | 'find_my_off' | 'device_found' | 'chimaera' | 'banned';
   successRate?: number;
   feedback: string[] | null;
+  ipAddress?: string;
 }
 
 interface Order {
@@ -79,6 +80,7 @@ interface UserProfile {
   displayName: string;
   email: string;
   balance: number;
+  ipAddress?: string;
 }
 
 interface SupportTicket {
@@ -140,6 +142,17 @@ function AdminDashboard() {
     const counts: Record<string, number> = {};
     submissions.forEach((sub) => {
       counts[sub.userId] = (counts[sub.userId] || 0) + 1;
+    });
+    return counts;
+  }, [submissions]);
+
+  const ipCounts = useMemo(() => {
+    if (!submissions) return {};
+    const counts: Record<string, number> = {};
+    submissions.forEach((sub) => {
+      if (sub.ipAddress) {
+        counts[sub.ipAddress] = (counts[sub.ipAddress] || 0) + 1;
+      }
     });
     return counts;
   }, [submissions]);
@@ -270,6 +283,25 @@ function AdminDashboard() {
             path: submissionRef.path,
             operation: 'update',
             requestResourceData: updatedData,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+    });
+  };
+
+  const handleBanIp = (ip: string) => {
+    if (!ip || ip === 'unknown') return;
+    const ipId = ip.replace(/\./g, '_');
+    const ipRef = doc(firestore, 'banned_ips', ipId);
+    setDoc(ipRef, {
+        ip: ip,
+        createdAt: serverTimestamp(),
+    }).then(() => {
+        toast({ title: "IP Banned", description: `${ip} has been blacklisted.` });
+    }).catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+            path: ipRef.path,
+            operation: 'create',
+            requestResourceData: { ip, createdAt: '...' },
         });
         errorEmitter.emit('permission-error', permissionError);
     });
@@ -418,7 +450,6 @@ function AdminDashboard() {
       </nav>
 
       <main className="max-w-7xl mx-auto pt-24 pb-12 px-4 sm:px-6 lg:px-8 space-y-12">
-        {/* Payment Verification Panel */}
         {pendingClaims.length > 0 && (
           <section className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
@@ -522,8 +553,18 @@ function AdminDashboard() {
                     <Card key={sub.id} className={`bg-white ${sub.status === 'waiting' || sub.status === 'device_found' ? 'border-2 border-primary' : ''}`}>
                       <CardHeader><CardTitle className='flex justify-between items-center'><span>{sub.model}</span><Badge variant={sub.status === 'waiting' ? 'default' : 'secondary'} className={sub.status === 'waiting' || sub.status === 'device_found' ? 'animate-pulse' : ''}>{sub.status.replace('_', ' ')}</Badge></CardTitle></CardHeader>
                       <CardContent className="space-y-1">
-                        <p className="text-sm text-gray-600">User ID: {sub.userId}</p>
-                        <p className="text-sm font-bold text-blue-600">Submission Count: {userIdCounts[sub.userId] || 0}</p>
+                        <div className="grid grid-cols-2 gap-2 text-xs mb-4">
+                            <div className="space-y-1">
+                                <p className="text-gray-400 uppercase font-bold tracking-tighter">Client Details</p>
+                                <p>UID: <span className="font-mono">{sub.userId}</span></p>
+                                <p className="font-bold text-blue-600">Submissions: {userIdCounts[sub.userId] || 0}</p>
+                            </div>
+                            <div className="space-y-1">
+                                <p className="text-gray-400 uppercase font-bold tracking-tighter">Network Info</p>
+                                <p>IP: <span className="font-mono text-blue-700">{sub.ipAddress || 'unknown'}</span></p>
+                                <p className="font-bold text-red-600">IP Frequency: {sub.ipAddress ? ipCounts[sub.ipAddress] : 0}</p>
+                            </div>
+                        </div>
                         <p className="text-sm text-gray-600">IMEI/Serial: <strong>{sub.imei}</strong></p>
                         <p className="text-sm text-gray-600">Price: ${sub.price}</p>
                         <div className="mt-4"><label className="block text-sm font-medium text-gray-700 mb-1">Feedback:</label><Textarea value={feedbackValues[sub.id] || sub.feedback?.filter(l => !l.startsWith('FIND_MY_') && !l.startsWith('TIMESTAMP:')).join('\n') || ''} onChange={(e) => handleFeedbackChange(sub.id, e.target.value)} className="font-mono" /></div>
@@ -584,7 +625,15 @@ function AdminDashboard() {
                           </div>
                         )}
 
-                        <div className='flex justify-end gap-2'><Button onClick={() => handleSendFeedback(sub.id)} className="btn-primary text-white">Send Feedback</Button><Button onClick={() => handleDelete(sub.id)} variant="destructive">Delete</Button></div>
+                        <div className='flex items-center gap-2 flex-wrap'>
+                            <Button onClick={() => handleSendFeedback(sub.id)} className="btn-primary text-white flex-1">Send Feedback</Button>
+                            {sub.ipAddress && (
+                                <Button variant="outline" size="icon" title="Ban IP Address" onClick={() => handleBanIp(sub.ipAddress!)} className="text-red-600 border-red-200 hover:bg-red-50">
+                                    <ShieldAlert className="h-4 w-4" />
+                                </Button>
+                            )}
+                            <Button onClick={() => handleDelete(sub.id)} variant="destructive">Delete</Button>
+                        </div>
                       </CardFooter>
                     </Card>))}
                 </div>)}

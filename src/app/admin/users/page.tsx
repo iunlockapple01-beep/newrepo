@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -26,6 +27,7 @@ interface UserProfile {
   displayName: string;
   email: string;
   balance?: number;
+  ipAddress?: string;
 }
 
 const ADMIN_EMAIL = 'iunlockapple01@gmail.com';
@@ -104,21 +106,6 @@ function UserManagementDashboard() {
               {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
               <LoginButton />
             </div>
-             <div className="md:hidden">
-              <Sheet>
-                <SheetTrigger asChild><Button variant="ghost" size="icon"><Menu /></Button></SheetTrigger>
-                <SheetContent side="right">
-                  <SheetHeader><SheetTitle className="sr-only">Mobile Menu</SheetTitle></SheetHeader>
-                  <div className="flex flex-col gap-4 p-4">
-                    <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
-                    <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Services</Link>
-                    {user && <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>}
-                    {isAdmin && <Link href="/admin" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Admin</Link>}
-                    <div className='pt-4'><LoginButton /></div>
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
           </div>
         </div>
       </nav>
@@ -128,13 +115,18 @@ function UserManagementDashboard() {
         {usersLoading ? <p>Loading users...</p> : users?.length === 0 ? <p className='text-center text-gray-500'>No users found.</p> : (
             <Card>
                 <Table>
-                    <TableHeader><TableRow><TableHead>Display Name</TableHead><TableHead>Email</TableHead><TableHead>User ID</TableHead><TableHead>Current Balance ($)</TableHead><TableHead>Update Balance</TableHead></TableRow></TableHeader>
+                    <TableHeader><TableRow><TableHead>Display Name</TableHead><TableHead>Email</TableHead><TableHead>IP Address</TableHead><TableHead>Current Balance ($)</TableHead><TableHead>Update Balance</TableHead></TableRow></TableHeader>
                     <TableBody>
                     {users?.map(u => (
                         <TableRow key={u.id}>
-                            <TableCell>{u.displayName}</TableCell>
+                            <TableCell>
+                                <div className="flex flex-col">
+                                    <span>{u.displayName}</span>
+                                    <span className="text-[10px] text-gray-400 font-mono">{u.id}</span>
+                                </div>
+                            </TableCell>
                             <TableCell>{u.email}</TableCell>
-                            <TableCell className="font-mono text-xs">{u.id}</TableCell>
+                            <TableCell className="font-mono text-xs text-blue-600">{u.ipAddress || 'unknown'}</TableCell>
                             <TableCell>${u.balance?.toFixed(2) || '0.00'}</TableCell>
                             <TableCell><div className="flex items-center gap-2"><Input type="number" value={balances[u.id] ?? ''} onChange={(e) => handleBalanceChange(u.id, e.target.value)} className="w-32" placeholder="Set new balance" /><Button size="sm" onClick={() => handleUpdateBalance(u.id)}>Update</Button></div></TableCell>
                         </TableRow>))}

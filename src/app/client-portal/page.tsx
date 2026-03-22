@@ -18,7 +18,7 @@ import {
 import { LoginButton } from '@/components/login-button';
 import { PlaceHolderImages, getImage } from '@/lib/placeholder-images';
 import { useUser, useFirebase, useDoc } from '@/firebase';
-import { addDoc, collection, serverTimestamp, query, where, getDocs, limit, doc, onSnapshot } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, query, where, getDocs, limit, doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useToast } from '@/hooks/use-toast';
@@ -33,7 +33,6 @@ import { TypingAnimation } from '@/components/ui/typing-animation';
 import { Progress } from '@/components/ui/progress';
 import { PaymentVerificationAnimation } from '@/components/ui/payment-verification-animation';
 
-// Define the structure for a submission
 interface Submission {
   id: string;
   userId: string;
@@ -44,6 +43,7 @@ interface Submission {
   status: 'waiting' | 'eligible' | 'not_supported' | 'paid' | 'feedback' | 'find_my_off' | 'device_found' | 'chimaera' | 'banned';
   successRate?: number;
   feedback: string[] | null;
+  ipAddress?: string;
   createdAt: any;
 }
 
@@ -210,7 +210,6 @@ function DeviceCheckContent() {
     }
   }, [submission?.status, submission?.id]);
 
-  // Listener for payment verification claims
   useEffect(() => {
     if (!verifyingClaimId || !firestore) return;
 
@@ -219,7 +218,6 @@ function DeviceCheckContent() {
       if (snapshot.exists()) {
         const claimData = snapshot.data() as PaymentClaim;
         if (claimData.status === 'approved') {
-          // Redirect immediately to My Account page
           router.push('/my-account');
           toast({
             title: "Payment Verified",
@@ -260,13 +258,12 @@ function DeviceCheckContent() {
     return () => clearInterval(timer);
   }, [isPaymentModalOpen, timeLeft, toast]);
 
-  // 5-minute timeout logic for manual checks if admin hasn't responded
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (submission?.status === 'waiting') {
       timer = setTimeout(() => {
         setOfflineError(true);
-      }, 5 * 60 * 1000); // 5 minutes
+      }, 5 * 60 * 1000);
     }
     return () => clearTimeout(timer);
   }, [submission?.status]);
@@ -307,33 +304,51 @@ function DeviceCheckContent() {
     const isImeiValid = /^\d{15}$/.test(trimmedImei);
     const isSerialValid = /^[a-zA-Z0-9]{10,13}$/.test(trimmedImei);
 
-    // Notify Telegram immediately on EVERY click
-    const tgMessage = `🚨 <b>Submit Button Clicked!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei || '<i>(empty)</i>'}\n<b>User ID:</b> ${user.uid}\n<b>Format Status:</b> ${isImeiValid || isSerialValid ? 'Format OK' : 'Invalid Format'}`;
-    try {
-      fetch('/api/telegram', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: tgMessage }),
-      });
-    } catch (error) {}
-    
-    if (bannedUser) {
-        setValidationError('Maximum Free Checks Reached\n\nYou have reached the limit for free IMEI / Serial checks without placing an unlock order.\n\nThis may also happen if an order was created and the “I Paid” button was clicked without completing or arranging the payment with Support.\n\nPlease contact the Admin if you wish to proceed and have your account reset.');
-        return;
-    }
-
     setValidationError(null);
     setShowDeviceFoundNotif(false);
     setStartVerificationSteps(false);
     setOfflineError(false);
     setClaimRejected(false);
-    
-    if (!isImeiValid && !isSerialValid) {
-        setValidationError('Enter Valid IMEI or Serial');
+
+    setIsSearching(true);
+
+    // Fetch IP address
+    let clientIp = 'unknown';
+    try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        clientIp = ipData.ip;
+    } catch (e) {
+        console.error("IP fetch failed", e);
+    }
+
+    // Check if IP is banned
+    const ipBanRef = doc(firestore, 'banned_ips', clientIp.replace(/\./g, '_'));
+    const ipBanDoc = await getDoc(ipBanRef);
+    if (ipBanDoc.exists()) {
+        setIsSearching(false);
+        setValidationError('Access Restricted\n\nThis network has been flagged for unusual activity or reaching the limit for free IMEI checks.\n\nPlease contact Support to review your network status.');
         return;
     }
 
-    setIsSearching(true);
+    const tgMessage = `🚨 <b>Submit Button Clicked!</b> 🚀\n\n<b>Model:</b> ${model}\n<b>IMEI/Serial:</b> ${trimmedImei || '<i>(empty)</i>'}\n<b>User ID:</b> ${user.uid}\n<b>IP:</b> ${clientIp}\n<b>Format Status:</b> ${isImeiValid || isSerialValid ? 'Format OK' : 'Invalid Format'}`;
+    fetch('/api/telegram', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: tgMessage }),
+    }).catch(() => {});
+    
+    if (bannedUser) {
+        setIsSearching(false);
+        setValidationError('Maximum Free Checks Reached\n\nYou have reached the limit for free IMEI / Serial checks without placing an unlock order.\n\nThis may also happen if an order was created and the “I Paid” button was clicked without completing or arranging the payment with Support.\n\nPlease contact the Admin if you wish to proceed and have your account reset.');
+        return;
+    }
+    
+    if (!isImeiValid && !isSerialValid) {
+        setIsSearching(false);
+        setValidationError('Enter Valid IMEI or Serial');
+        return;
+    }
 
     try {
       const submissionsRef = collection(firestore, 'submissions');
@@ -347,7 +362,6 @@ function DeviceCheckContent() {
         const existingDocs = querySnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as Submission) }));
         const docsWithFeedback = existingDocs.filter(s => s.status !== 'waiting');
         
-        // 1. Check for "Not Supported" status across ANY model
         const notSupportedMatch = docsWithFeedback.find(s => s.status === 'not_supported');
         if (notSupportedMatch) {
             setIsSearching(false);
@@ -364,7 +378,6 @@ function DeviceCheckContent() {
             return;
         }
 
-        // 2. Check for "Eligible" mismatch under a DIFFERENT model
         const eligibleMismatch = docsWithFeedback.find(s => (s.status === 'eligible' || s.status === 'chimaera') && s.model !== model);
         if (eligibleMismatch) {
             setIsSearching(false);
@@ -372,7 +385,6 @@ function DeviceCheckContent() {
             return;
         }
 
-        // 3. Check for same model cache (for other statuses like feedback, find_my_off etc)
         const sameModelMatch = docsWithFeedback.find(s => s.model === model);
         if (sameModelMatch) {
             setIsSearching(false);
@@ -404,6 +416,7 @@ function DeviceCheckContent() {
       imei: trimmedImei,
       status: 'waiting' as const,
       feedback: null,
+      ipAddress: clientIp,
       createdAt: serverTimestamp(),
     };
     
@@ -645,9 +658,7 @@ function DeviceCheckContent() {
                     <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 rounded-2xl text-white shadow-2xl animate-fade-in relative overflow-hidden text-center">
                         <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
                         <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
-                        
                         <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight mb-6">Contact Support to Reset Your Account</h3>
-                        
                         <div className="relative inline-block group">
                             <div className="absolute -inset-1 bg-white/30 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
                             <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="relative block">
@@ -663,7 +674,6 @@ function DeviceCheckContent() {
         }
 
         const specialStatusLines = feedbackData.lines.filter(line => line === 'FIND_MY_ON_STATUS' || line === 'FIND_MY_OFF_STATUS');
-        
         const chimaeraHeading = "Chimaera Device Policy & Blacklist (Blocked by Apple)";
         const isChimaera = submission.status === 'chimaera' || feedbackData.lines.includes(chimaeraHeading);
 
@@ -678,7 +688,6 @@ function DeviceCheckContent() {
             .filter(line => line !== '')
             .join('\n');
         
-        // Typing animation only for eligible/chimaera status, not cached
         const shouldAnimate = !isCachedCheck && (submission.status === 'eligible' || submission.status === 'chimaera');
 
         const getEstimatedTime = (rate: number) => {
@@ -949,7 +958,6 @@ function DeviceCheckContent() {
                                 For other payment options, contact the <a href="https://wa.me/message/P2IXLAG23I23P1" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-600">admin</a>.
                             </AlertDescription>
                         </Alert>
-                        
                         <div className="space-y-3">
                             <div className="grid grid-cols-2 gap-4 text-center">
                                 <div><p className="text-gray-500 text-[10px] uppercase tracking-wider font-bold">Service Cost</p><p className="text-lg font-bold">${price.toFixed(2)}</p></div>
@@ -960,7 +968,6 @@ function DeviceCheckContent() {
                                 <p className="text-3xl font-black">${amountToPay.toFixed(2)}</p>
                             </div>
                         </div>
-
                         {amountToPay > 0 && (
                             <>
                                 <div className="px-4 py-3 border rounded-2xl bg-white shadow-sm space-y-2">
@@ -980,7 +987,6 @@ function DeviceCheckContent() {
                                         </CopyToClipboard>
                                     </div>
                                 </div>
-
                                 <Button 
                                     variant="outline" 
                                     className="w-full h-10 text-gray-700 bg-gray-50 hover:bg-gray-100 hover:text-gray-700 flex items-center justify-center gap-2 border border-gray-200 rounded-xl transition-all font-semibold shadow-none"
@@ -989,7 +995,6 @@ function DeviceCheckContent() {
                                     <span className="text-sm">Show Other Payment Methods</span>
                                     <ChevronDown className={cn("h-4 w-4 transition-transform duration-200 text-gray-500", showOtherPayments && "rotate-180")} />
                                 </Button>
-
                                 {showOtherPayments && (
                                     <div className="lg:hidden mt-1">
                                         <h4 className="font-bold text-sm text-gray-500 uppercase tracking-wider mb-2">Other Networks</h4>
@@ -1068,7 +1073,6 @@ function DeviceCheckContent() {
                                         </ScrollArea>
                                     </div>
                                 )}
-
                                 <Alert className="bg-yellow-50 border-yellow-100 py-2 rounded-xl">
                                     <AlertDescription className="text-[11px] text-center text-yellow-800 font-medium">
                                         Payments made within the timer will be automatically applied.
@@ -1077,8 +1081,6 @@ function DeviceCheckContent() {
                             </>)}
                         {amountToPay <= 0 && <div className="text-center p-6 bg-green-50 border border-green-100 text-green-800 rounded-2xl animate-fade-in"><CheckCircle2 className="h-10 w-10 mx-auto mb-3 text-green-500"/><p className="font-bold text-base">Your balance covers the full amount!</p><p className="text-xs opacity-80">Click "Confirm" to use your balance for this unlock.</p></div>}
                     </div>
-
-                    {/* Desktop/Landscape Wide View Sidebar */}
                     {showOtherPayments && (
                         <div className="hidden lg:block space-y-3 animate-fade-in border-l pl-8">
                             <h4 className="font-bold text-sm text-gray-500 uppercase tracking-wider mb-2">Other Networks</h4>
@@ -1167,7 +1169,6 @@ function DeviceCheckContent() {
             </DialogFooter>
         </DialogContent>
       </Dialog>
-      
       {isLoading && <div className="fixed inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center z-50"><div className="spinner w-16 h-16 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-4"></div><p className="font-semibold text-gray-600">{loadingMessage}</p></div>}
     </div>
   );

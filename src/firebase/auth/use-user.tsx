@@ -82,18 +82,28 @@ export async function signUpWithEmail(auth: Auth, firestore: Firestore, email: s
         // Update the user's profile with the display name
         await updateProfile(user, { displayName });
 
+        // Get IP address
+        let ipAddress = 'unknown';
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            ipAddress = data.ip;
+        } catch (e) {
+            console.error("IP fetch failed during signup", e);
+        }
+
         const userRef = doc(firestore, 'users', user.uid);
         const userData = {
             displayName: displayName,
             email: user.email,
-            photoURL: user.photoURL, // Initially will be null
+            photoURL: user.photoURL,
             lastLogin: serverTimestamp(),
-            balance: 0, // Initialize balance to 0
+            balance: 0,
+            ipAddress: ipAddress,
         };
 
         const metricsRef = doc(firestore, 'counters', 'metrics');
 
-        // Check if user document already exists to avoid double counting
         const userDoc = await getDoc(userRef);
         if (!userDoc.exists()) {
              setDoc(userRef, userData, { merge: true }).catch(async (serverError) => {
@@ -105,7 +115,6 @@ export async function signUpWithEmail(auth: Auth, firestore: Firestore, email: s
                 errorEmitter.emit('permission-error', permissionError);
             });
             
-            // Increment registered users count
             const metricsDoc = await getDoc(metricsRef);
             if (metricsDoc.exists()) {
                 const currentCount = metricsDoc.data().registeredUsers || 0;
@@ -115,10 +124,7 @@ export async function signUpWithEmail(auth: Auth, firestore: Firestore, email: s
             }
         }
 
-
-        // Re-read user to get updated profile
         await user.reload();
-        
         return result;
     } catch (error) {
         console.error('Error signing up with email', error);

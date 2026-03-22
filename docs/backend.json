@@ -26,6 +26,10 @@
         "balance": {
           "type": "number",
           "description": "The user's account balance"
+        },
+        "ipAddress": {
+          "type": "string",
+          "description": "The user's registered IP address"
         }
       },
       "required": ["displayName", "email"]
@@ -62,14 +66,17 @@
         },
         "successRate": {
           "type": "number",
-          "description": "The probability percentage of a successful unlock (e.g., 98, 75, 45, 25)"
+          "description": "The probability percentage of a successful unlock"
         },
         "feedback": {
           "type": "array",
           "items": {
             "type": "string"
-          },
-          "description": "Feedback provided by the admin"
+          }
+        },
+        "ipAddress": {
+          "type": "string",
+          "description": "The IP address from which the submission was made"
         },
         "createdAt": {
           "type": "string",
@@ -81,6 +88,21 @@
         }
       },
       "required": ["userId", "model", "price", "imei", "status", "createdAt"]
+    },
+    "banned_ip": {
+      "title": "Banned IP",
+      "description": "An IP address that is blocked from making new submissions",
+      "type": "object",
+      "properties": {
+        "ip": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["ip", "createdAt"]
     },
     "payment_claim": {
       "title": "Payment Claim",
@@ -103,118 +125,41 @@
       "description": "A confirmed and paid unlock order",
       "type": "object",
       "properties": {
-        "orderId": {
-          "type": "string",
-          "description": "The user-facing unique order ID, in #ORD-XXXXX format."
-        },
-        "userId": {
-          "type": "string",
-          "description": "The ID of the user who placed the order"
-        },
-        "submissionId": {
-          "type": "string",
-          "description": "The ID of the original submission"
-        },
-        "imei": {
-          "type": "string",
-          "description": "The IMEI or serial number of the device"
-        },
-        "model": {
-          "type": "string",
-          "description": "The device model"
-        },
-        "price": {
-          "type": "number",
-          "description": "The price paid for the service"
-        },
-        "status": {
-          "type": "string",
-          "enum": ["confirming_payment", "processing", "approved", "declined", "unlocked", "ready_for_activation_bulk", "ready_for_activation"],
-          "description": "The current status of the order"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "format": "date-time"
-        }
+        "orderId": { "type": "string" },
+        "userId": { "type": "string" },
+        "submissionId": { "type": "string" },
+        "imei": { "type": "string" },
+        "model": { "type": "string" },
+        "price": { "type": "number" },
+        "status": { "type": "string", "enum": ["confirming_payment", "processing", "approved", "declined", "unlocked", "ready_for_activation_bulk", "ready_for_activation"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["orderId", "userId", "submissionId", "imei", "model", "price", "status", "createdAt"]
     },
     "ticket": {
       "title": "Support Ticket",
-      "description": "A support request from a user",
       "type": "object",
       "properties": {
         "userId": { "type": "string" },
         "userEmail": { "type": "string" },
         "userName": { "type": "string" },
-        "orderId": { "type": "string", "description": "Optional related Order ID" },
-        "category": {
-          "type": "string",
-          "enum": ["Refund Request", "Order Issue", "Activation Delay", "Payment Inquiry", "Other"]
-        },
+        "category": { "type": "string" },
         "subject": { "type": "string" },
         "message": { "type": "string" },
-        "status": {
-          "type": "string",
-          "enum": ["open", "in_review", "replied", "resolved", "closed"]
-        },
-        "replies": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "message": { "type": "string" },
-              "sender": { "type": "string", "enum": ["client", "admin"] },
-              "createdAt": { "type": "string", "format": "date-time" }
-            }
-          }
-        },
-        "internalNotes": { "type": "string", "description": "Admin only notes" },
-        "createdAt": { "type": "string", "format": "date-time" },
-        "updatedAt": { "type": "string", "format": "date-time" }
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["userId", "category", "subject", "message", "status", "createdAt"]
     },
     "counters": {
       "title": "Counters",
-      "description": "Site-wide counters for display",
       "type": "object",
       "properties": {
-        "registeredUsers": {
-          "type": "number",
-          "description": "Total number of registered users"
-        },
-        "unlockedDevices": {
-          "type": "number",
-          "description": "Total number of unlocked devices"
-        },
-        "isServerOnline": {
-          "type": "boolean",
-          "description": "Toggle to control the device check server availability"
-        }
+        "registeredUsers": { "type": "number" },
+        "unlockedDevices": { "type": "number" }
       },
       "required": ["registeredUsers", "unlockedDevices"]
-    },
-    "banned_user": {
-      "title": "Banned User",
-      "description": "A user who is blocked from making new submissions",
-      "type": "object",
-      "properties": {
-        "userId": {
-          "type": "string",
-          "description": "The ID of the banned user"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time",
-          "description": "The date the user was banned"
-        }
-      },
-      "required": ["userId", "createdAt"]
     }
   },
   "auth": {
@@ -222,46 +167,36 @@
   },
   "firestore": {
     "/users/{userId}": {
-      "schema": {
-        "$ref": "#/backend/entities/user"
-      },
-      "description": "User profile information"
+      "schema": { "$ref": "#/backend/entities/user" },
+      "description": "User profile"
     },
     "/submissions/{submissionId}": {
-      "schema": {
-        "$ref": "#/backend/entities/submission"
-      },
-      "description": "IMEI submissions from users"
-    },
-    "/orders/{orderId}": {
-      "schema": {
-        "$ref": "#/backend/entities/order"
-      },
-      "description": "Confirmed unlock orders from users"
-    },
-    "/tickets/{ticketId}": {
-      "schema": {
-        "$ref": "#/backend/entities/ticket"
-      },
-      "description": "Support tickets for customer service"
-    },
-    "/counters/metrics": {
-      "schema": {
-        "$ref": "#/backend/entities/counters"
-      },
-      "description": "Holds site-wide metrics like user and device counts"
+      "schema": { "$ref": "#/backend/entities/submission" },
+      "description": "Device check submissions"
     },
     "/banned_users/{userId}": {
-      "schema": {
-        "$ref": "#/backend/entities/banned_user"
-      },
-      "description": "List of user IDs who are banned from making new submissions"
+      "schema": { "type": "object", "properties": { "userId": { "type": "string" }, "createdAt": { "type": "string" } } },
+      "description": "Banned user IDs"
+    },
+    "/banned_ips/{ipId}": {
+      "schema": { "$ref": "#/backend/entities/banned_ip" },
+      "description": "Banned IP addresses"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/backend/entities/order" },
+      "description": "Unlock orders"
+    },
+    "/tickets/{ticketId}": {
+      "schema": { "$ref": "#/backend/entities/ticket" },
+      "description": "Support tickets"
+    },
+    "/counters/metrics": {
+      "schema": { "$ref": "#/backend/entities/counters" },
+      "description": "Site metrics"
     },
     "/payment_claims/{claimId}": {
-      "schema": {
-        "$ref": "#/backend/entities/payment_claim"
-      },
-      "description": "Claims made by users after clicking 'I Paid'"
+      "schema": { "$ref": "#/backend/entities/payment_claim" },
+      "description": "Payment claims"
     }
   }
 }
