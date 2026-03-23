@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -73,10 +74,15 @@ export default function NewTicketPage() {
       .then(() => {
         // Send Telegram notification using existing bot route
         const tgMessage = `🎫 <b>New Support Ticket Submitted!</b> 🎫\n\n<b>User ID:</b> ${user.uid}\n<b>Category:</b> ${category}\n<b>Subject:</b> ${subject.trim()}`;
+        
         fetch('/api/telegram', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: tgMessage }),
+        }).then(res => {
+          if (!res.ok) {
+            console.error('Ticket notification failed to send. Check server configuration.');
+          }
         }).catch(err => console.error("Telegram notification failed:", err));
 
         toast({ title: "Ticket Submitted" });
