@@ -1,18 +1,27 @@
 import { NextResponse } from 'next/server';
 
+export async function GET() {
+  // Status check endpoint to verify configuration
+  return NextResponse.json({ 
+    status: 'Telegram API Route is Active',
+    config_status: {
+      bot_token_set: !!process.env.TELEGRAM_BOT_TOKEN,
+      chat_id_set: !!process.env.TELEGRAM_CHAT_ID,
+      token_preview: process.env.TELEGRAM_BOT_TOKEN ? `${process.env.TELEGRAM_BOT_TOKEN.slice(0, 5)}...` : 'none'
+    }
+  });
+}
+
 export async function POST(request: Request) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
 
-  // Log status for Netlify function logs
-  console.log('Telegram API called');
-  
   if (!botToken || !chatId) {
-    console.error('MISSING CONFIG: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is not set in environment variables.');
+    console.error('TELEGRAM CONFIG ERROR: Missing credentials in environment variables.');
     return NextResponse.json(
       { 
-        error: 'Telegram configuration is missing on the server.',
-        details: 'Ensure TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are set in Netlify Environment Variables.'
+        error: 'Telegram credentials missing on server.',
+        help: 'Ensure TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are set in your hosting dashboard (Netlify/Vercel).'
       },
       { status: 500 }
     );
@@ -23,16 +32,14 @@ export async function POST(request: Request) {
     const message = body.message;
 
     if (!message) {
-      return NextResponse.json({ error: 'Message is required.' }, { status: 400 });
+      return NextResponse.json({ error: 'Message content is required.' }, { status: 400 });
     }
 
     const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chat_id: chatId,
         text: message,
@@ -43,19 +50,18 @@ export async function POST(request: Request) {
     const result = await response.json();
 
     if (!result.ok) {
-      console.error('Telegram API error response:', result);
+      console.error('TELEGRAM API REJECTION:', result);
       return NextResponse.json(
-        { error: `Telegram API error: ${result.description}` },
+        { error: `Telegram API Error: ${result.description}` },
         { status: 500 }
       );
     }
 
-    console.log('Telegram message sent successfully');
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Failed to send Telegram notification:', error);
+    console.error('TELEGRAM ROUTE CRASH:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Unknown error' },
+      { error: error instanceof Error ? error.message : 'Unknown internal error' },
       { status: 500 }
     );
   }
