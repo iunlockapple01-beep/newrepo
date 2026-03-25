@@ -213,7 +213,7 @@ export default function ServicesPage() {
                       </SheetHeader>
                       <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors">Home</Link>
-                        <Link href="/services" className="text-gray-700 hover:text-gray-900 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Services</Link>
+                        <Link href="/services" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors ring-1 ring-inset ring-primary">Services</Link>
                         {user && (
                             <Link href="/my-account" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium transition-colors">My Account</Link>
                         )}
@@ -262,7 +262,7 @@ export default function ServicesPage() {
                                     className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-semibold" 
                                     onClick={() => handleUnlockClick(device)}
                                   >
-                                    Unlock
+                                    Check & Unlock
                                     <ChevronRight className="ml-1 h-4 w-4" />
                                   </Button>
                                 </td>
@@ -296,7 +296,7 @@ export default function ServicesPage() {
                                     className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-semibold" 
                                     onClick={() => handleUnlockClick(device)}
                                   >
-                                    Unlock
+                                    Check & Unlock
                                     <ChevronRight className="ml-1 h-4 w-4" />
                                   </Button>
                                 </td>
@@ -330,7 +330,7 @@ export default function ServicesPage() {
                                     className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-semibold" 
                                     onClick={() => handleUnlockClick(device)}
                                   >
-                                    Unlock
+                                    Check & Unlock
                                     <ChevronRight className="ml-1 h-4 w-4" />
                                   </Button>
                                 </td>
@@ -364,7 +364,7 @@ export default function ServicesPage() {
                                     className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-all font-semibold" 
                                     onClick={() => handleUnlockClick(device)}
                                   >
-                                    Unlock
+                                    Check & Unlock
                                     <ChevronRight className="ml-1 h-4 w-4" />
                                   </Button>
                                 </td>
