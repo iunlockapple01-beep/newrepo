@@ -32,6 +32,8 @@ import { cn } from '@/lib/utils';
 import { TypingAnimation } from '@/components/ui/typing-animation';
 import { Progress } from '@/components/ui/progress';
 import { PaymentVerificationAnimation } from '@/components/ui/payment-verification-animation';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 interface Submission {
   id: string;
@@ -162,6 +164,9 @@ function DeviceCheckContent() {
 
   const isServerOnline = counters?.isServerOnline !== false;
 
+  const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(true);
+  const [policyAccepted, setPolicyAccepted] = useState(false);
+
   const [isPaymentModalOpen, setPaymentModalOpen] = useState(false);
   const [showOtherPayments, setShowOtherPayments] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -193,7 +198,7 @@ function DeviceCheckContent() {
   const ethereumImage = getImage('eth-icon');
   const usdcImage = getImage('usdc-icon');
 
-  const formDisabled = isChecking || isSearching || !!submission || isOfflineSimulating || !!verifyingClaimId;
+  const formDisabled = isChecking || isSearching || !!submission || isOfflineSimulating || !!verifyingClaimId || isPolicyModalOpen;
   const shouldShowLoader = (isChecking || (submission && submission.status === 'waiting') || isOfflineSimulating) && !offlineError;
 
   useEffect(() => {
@@ -977,6 +982,67 @@ function DeviceCheckContent() {
         </div>
       </footer>
       
+      {/* Policy Modal */}
+      <Dialog open={isPolicyModalOpen} onOpenChange={() => {}}>
+        <DialogContent 
+            className="sm:max-w-[550px] p-0 overflow-hidden [&>button]:hidden" 
+            onPointerDownOutside={(e) => e.preventDefault()} 
+            onEscapeKeyDown={(e) => e.preventDefault()}
+        >
+            <DialogHeader className="px-6 py-4 border-b bg-gray-50">
+                <DialogTitle className="text-xl font-bold text-gray-900">Device Check Policy & Account Limits</DialogTitle>
+            </DialogHeader>
+            <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
+                <div className="space-y-4 text-sm text-gray-700 leading-relaxed">
+                    <p className="font-semibold text-gray-900 text-base">For new accounts, you are provided with:</p>
+                    <ul className="list-disc list-inside space-y-1 pl-2">
+                        <li>2 premium checks (detailed device information)</li>
+                        <li>2 standard checks (less detailed information)</li>
+                    </ul>
+                    <p>If no unlock order is placed after these checks, your account will be restricted on the 5th check, and access to iCloud unlock services will be limited.</p>
+                    
+                    <p className="font-semibold text-gray-900 text-base">To restore access, you can:</p>
+                    <ul className="list-disc list-inside space-y-1 pl-2">
+                        <li>Deposit the required amount to unlock a device, or</li>
+                        <li>Contact Admin for assistance</li>
+                    </ul>
+
+                    <p className="font-semibold text-gray-900 text-base">If you make a deposit and the device is not supported, you may either:</p>
+                    <ul className="list-disc list-inside space-y-1 pl-2">
+                        <li>Use the balance to try unlocking another device, or</li>
+                        <li>Request a 100% refund via the same payment method used</li>
+                    </ul>
+
+                    <div className="p-4 bg-yellow-50 border border-yellow-100 rounded-lg text-yellow-800 text-xs">
+                        <p>⚠️ <strong>Please only check devices you are ready to unlock to avoid restrictions.</strong></p>
+                    </div>
+
+                    <p className="text-gray-600 italic">For accounts that have successfully placed unlock orders, all future checks will include premium, detailed device information.</p>
+                </div>
+            </div>
+            <div className="px-6 py-4 border-t bg-gray-50 space-y-4">
+                <div className="flex items-start gap-3">
+                    <Checkbox 
+                        id="policy-check" 
+                        checked={policyAccepted} 
+                        onCheckedChange={(val) => setPolicyAccepted(!!val)} 
+                        className="mt-1"
+                    />
+                    <Label htmlFor="policy-check" className="text-sm font-medium leading-snug cursor-pointer">
+                        I have read and agree to the Device Check Policy & Account Limits
+                    </Label>
+                </div>
+                <Button 
+                    onClick={() => setIsPolicyModalOpen(false)} 
+                    className="w-full btn-primary text-white h-12 font-bold shadow-lg" 
+                    disabled={!policyAccepted}
+                >
+                    OK / Proceed
+                </Button>
+            </div>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={isPaymentModalOpen} onOpenChange={setPaymentModalOpen}>
         <DialogContent className={cn("sm:max-w-[500px] max-h-[90vh] flex flex-col p-0 overflow-hidden transition-all duration-300", showOtherPayments && "lg:max-w-[950px]")}>
             <DialogHeader className="px-5 py-2.5 border-b bg-white">
